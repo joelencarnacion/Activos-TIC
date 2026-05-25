@@ -1,0 +1,194 @@
+<mat-tab-group (selectedTabChange)="onTabChange($event)">
+  <mat-tab label="Tipos Licencias">
+        <form [formGroup]="licenciaForm">
+          <mat-form-field appearance="outline"  class="mt-20">
+            <mat-label>Nombre licencia</mat-label>
+            <input matInput formControlName="nombre">
+          </mat-form-field>&nbsp;
+
+          <div style="display: flex;">
+            <button *ngIf="permisosService.puede('Tipos', 'crear')" mat-raised-button  color="primary" (click)="guardar('licencia')">Guardar</button>&nbsp;
+            <ng-container  *ngIf="currenLicencia.id">
+              <button *ngIf="permisosService.puede('Tipos', 'editar')" mat-raised-button color="warn" (click)="cancelarEdicion('licencia')">Cancelar acción</button>
+            </ng-container>
+          </div>
+        </form>
+
+        <h4 class="mt-20">Lista de tipos de licencias</h4>
+
+           <!-- Spinner de carga  -->
+       <div *ngIf="mostrarSpinner" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <span>Cargando licencias...</span>
+      </div>
+
+        <div  class="table-responsive" >
+          <table mat-table [dataSource]="licenciasList"  *ngIf="!mostrarSpinner">
+            <!-- Position Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef > Id. </th>
+              <td mat-cell *matCellDef="let element" >{{element.id}}  </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="nombre">
+              <th mat-header-cell *matHeaderCellDef> Nombre </th>
+              <td mat-cell *matCellDef="let element" >{{element.nombre}} </td>
+            </ng-container>
+
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef> Acciones </th>
+              <td mat-cell *matCellDef="let item">
+                <button *ngIf="permisosService.puede('Tipos', 'editar')" mat-button class="btnEditTable" (click)="setValueTipoLicencia(item)">
+                  <div class="flex justify-content-center">
+                    <mat-icon>edit</mat-icon>
+                  </div>
+                </button>
+                <ng-container *ngIf="permisosService.puede('Tipos', 'eliminar')">
+                <button mat-button class="btnDeleteTable" (click)="deleteTipoLicencia(item)">
+                  <div class="flex justify-content-center">
+                    <mat-icon>delete</mat-icon>
+                  </div>
+                </button>
+              </ng-container>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+  </mat-tab>
+
+
+  <mat-tab label="Tipos Perifericos">
+
+    <form class="mt-20" [formGroup]="perifericoForm">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre">
+      </mat-form-field>&nbsp;
+
+    </form>
+    <button *ngIf="permisosService.puede('Tipos', 'crear')" mat-raised-button color="primary" (click)="guardar('periferico')">Guardar</button>&nbsp;
+    <ng-container *ngIf="currentPeriferico.id">
+      <button *ngIf="permisosService.puede('Tipos', 'editar')" mat-raised-button color="warn" (click)="cancelarEdicion('periferico')">Cancelar acción</button>
+    </ng-container>
+
+    <h4 class="mt-20">Lista de tipos perifericos</h4>
+
+       <!-- Spinner de carga  -->
+       <div *ngIf="mostrarSpinner" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <span>Cargando Perifericos...</span>
+      </div>
+
+
+      <table mat-table [dataSource]="perifericosList"  *ngIf="!mostrarSpinner">
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef> Id. </th>
+          <td mat-cell *matCellDef="let element" >{{element.id}} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef > Nombre </th>
+          <td mat-cell *matCellDef="let element" >{{element.nombre}}</td>
+        </ng-container>
+
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef> Acciones </th>
+          <td mat-cell *matCellDef="let item">
+            <button *ngIf="permisosService.puede('Tipos', 'editar')" mat-button class="btnEditTable" (click)="setValueTipoPeriferico(item)">
+              <div class="flex justify-content-center">
+                <mat-icon>edit</mat-icon>
+              </div>
+            </button>
+            <ng-container *ngIf="permisosService.puede('Tipos', 'eliminar')">
+            <button mat-button class="btnDeleteTable"(click)="deleteTipoPeriferico(item)">
+              <div class="flex justify-content-center" >
+                <mat-icon>delete</mat-icon>
+              </div>
+            </button>
+          </ng-container>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+  </mat-tab>
+
+  <mat-tab label="Tipos Softwares">
+
+    <form class="mt-20" [formGroup]="softwsreForm">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre">
+      </mat-form-field>&nbsp;
+
+    </form>
+    <button *ngIf="permisosService.puede('Tipos', 'crear')" mat-raised-button color="primary" (click)="guardar('software')">Guardar</button>&nbsp;
+    <ng-container *ngIf="currentSoftware.id">
+      <button *ngIf="permisosService.puede('Tipos', 'editar')" mat-raised-button color="warn" (click)="cancelarEdicion('software')">Cancelar acción</button>
+    </ng-container>
+
+    <h4 class="mt-20">Lista de tipos softwares</h4>
+
+       <!-- Spinner de carga  -->
+       <div *ngIf="mostrarSpinner" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <span>Cargando Softwares...</span>
+      </div>
+
+
+      <table mat-table [dataSource]="softwsresList"  *ngIf="!mostrarSpinner">
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef> Id. </th>
+          <td mat-cell *matCellDef="let element" >{{element.id}} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef > Nombre </th>
+          <td mat-cell *matCellDef="let element" >{{element.nombre}}</td>
+        </ng-container>
+
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef> Acciones </th>
+          <td mat-cell *matCellDef="let item">
+            <button *ngIf="permisosService.puede('Tipos', 'editar')" mat-button class="btnEditTable" (click)="setValueTipoSoftware(item)">
+              <div class="flex justify-content-center">
+                <mat-icon>edit</mat-icon>
+              </div>
+            </button>
+            <ng-container *ngIf="permisosService.puede('Tipos', 'eliminar')">
+            <button mat-button class="btnDeleteTable"(click)="deleteTipoSoftware(item)">
+              <div class="flex justify-content-center" >
+                <mat-icon>delete</mat-icon>
+              </div>
+            </button>
+          </ng-container>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+  </mat-tab>
+
+  </mat-tab-group>
+
+

@@ -1,0 +1,216 @@
+.filters-section {
+  margin-bottom: 32px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  mat-card-header {
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #333;
+    }
+  }
+}
+
+.filters-form {
+  .filters-row {
+    display: grid;
+    grid-template-columns:  1fr 1fr auto;
+    gap: 16px;
+    align-items: center;
+
+    @media (max-width: 1200px) {
+      grid-template-columns:  1fr 1fr;
+
+      .search-field {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+
+      .search-field,
+      .filter-field {
+        grid-column: 1;
+      }
+    }
+  }
+  .filters-rowBusqueda {
+    display: grid;
+    grid-template-columns:  1fr auto;
+    gap: 16px;
+    align-items: center;
+
+    @media (max-width: 1200px) {
+      grid-template-columns:  1fr 1fr;
+
+      .search-field {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+
+      .search-field,
+      .filter-field {
+        grid-column: 1;
+      }
+    }
+  }
+
+  .search-field {
+    width: 100%;
+  }
+
+  .filter-field {
+    width: 100%;
+  }
+}
+
+.carta{
+  display: none;
+}
+
+.img {
+  overflow-clip-margin: content-box;
+  overflow: clip;
+  width: 130px;
+  height: 50px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  display: flex;
+}
+.imgpie{
+  overflow-clip-margin: content-box;
+  overflow: clip;
+  width: 50px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  width: 500px;
+
+}
+.cabecera {
+  text-align: center;
+  display: block;
+  margin: 0 0 12px;
+}
+p {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  margin-top: 5px;
+}
+.nombre{
+  font-weight: 700;
+}
+.cuerpo{
+  text-align: justify;
+}
+.quitarEspacio{
+ margin-top: -20px;
+}
+.agregarEspacio{
+ margin-top: 65px !important;
+}
+
+.firmaEstu{
+  display: flex;
+  justify-content: end;
+  margin-right: 40px;
+  margin-top: -40px;
+}
+
+.firmaVicce{
+  /* margin-top: 60px !important; */
+  margin-left: 40px;
+
+}
+
+.firmaRectora{
+  margin-left: 80px;
+  margin-bottom: -10px;
+}
+.rayaFirmaRec1{
+  margin-bottom: -10px;
+  margin-left: 40px;
+}
+.rayaFirmaRec{
+  margin-bottom: -10px;
+}
+
+.isfoFirma1{
+margin-top: -30px !important;
+margin-left: 70px;
+}
+
+.rayaFirmaRecVic{
+  display: flex;
+  justify-content: end;
+  margin-bottom: 35px;
+}
+.firmaRecVic{
+  display: flex;
+  justify-content: end;
+  margin-right: 75px;
+  margin-top: -20px;
+}
+
+.firmaRecVicraya{
+  display: flex;
+  justify-content: end;
+  margin-top: -10px;
+}
+.agregarEspacioderecho{
+ margin-top: -60px !important;
+}
+.isfoFirma2{
+  margin-left: 50px;
+}
+
+ul {
+  list-style-type: disc; /* viñetas redondas */
+  padding-left: 20px;   /* separa del borde */
+}
+
+ul li {
+  margin-bottom: 8px;   /* espacio entre elementos */
+}
+
+
+
+.firma-section {
+  margin-top: 130px;
+  display: flex; /* Utiliza flexbox para alinear las secciones */
+  justify-content: space-between; /* Espacia las secciones entre sí */
+  align-items: flex-start; /* Alinea los elementos en la parte superior */
+}
+
+.vicerrector-section,
+.estudiante-section {
+  width: 48%; /* O cualquier ancho que desees para que se mantengan alineadas */
+  text-align: center; /* Centra el texto dentro de cada sección */
+}
+
+.firma-line,
+.estudiante-line {
+  margin: 0; /* Elimina márgenes para evitar espacio extra */
+  padding: 0; /* Elimina padding para evitar espacio extra */
+}
+
+.vicerrector-name,
+.vicerrector-title,
+.estudiante-nombre {
+  margin: 0; /* Elimina márgenes para un mejor alineamiento */
+  padding: 0; /* Elimina padding para un mejor alineamiento */
+}

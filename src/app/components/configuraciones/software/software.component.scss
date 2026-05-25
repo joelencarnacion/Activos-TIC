@@ -1,0 +1,225 @@
+// Variables
+$primary-color: #3788d8;
+$secondary-color: #f8f9fa;
+$border-color: #e2e8f0;
+$text-color: #333;
+$text-muted: #6c757d;
+$success-color: #28a745;
+$warning-color: #ffc107;
+$modal-bg: #fff;
+$modal-shadow: rgba(0, 0, 0, 0.2);
+
+// Modal de detalles
+.trip-details-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  .modal-content {
+    background-color: $modal-bg;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px $modal-shadow;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid $border-color;
+
+      h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .close-button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: $text-muted;
+
+        &:hover {
+          color: $text-color;
+        }
+      }
+    }
+
+    .modal-body {
+      padding: 16px;
+
+      .trip-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+
+        h3 {
+          margin: 0;
+          font-size: 18px;
+          font-weight: 500;
+        }
+
+        .trip-status {
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-weight: 500;
+
+          &.pending {
+            background-color: rgba($warning-color, 0.2);
+            color: darken($warning-color, 15%);
+          }
+
+          &.completed {
+            background-color: rgba($success-color, 0.2);
+            color: darken($success-color, 10%);
+          }
+        }
+      }
+
+      .trip-info {
+        margin-bottom: 20px;
+
+        .info-item {
+          display: flex;
+          margin-bottom: 8px;
+
+          .info-label {
+            width: 160px;
+            font-weight: 500;
+            color: $text-muted;
+          }
+        }
+      }
+
+      .trip-destinations {
+        margin-bottom: 20px;
+
+        h4 {
+          margin: 0 0 8px 0;
+          font-size: 16px;
+          font-weight: 500;
+        }
+
+        ul {
+          list-style-type: none;
+          padding: 0;
+          margin: 0;
+
+          li {
+            padding: 4px 0;
+
+            .coordinates {
+              font-size: 12px;
+              color: $text-muted;
+              margin-left: 4px;
+            }
+          }
+        }
+      }
+
+      .trip-justification {
+        margin-bottom: 20px;
+
+        .info-label {
+          font-weight: 500;
+          color: $text-muted;
+          margin-right: 8px;
+        }
+      }
+
+      .trip-documents {
+        h4 {
+          margin: 0 0 8px 0;
+          font-size: 16px;
+          font-weight: 500;
+        }
+
+        .documents-list {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+
+          .document-link {
+            color: $primary-color;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+
+            &:hover {
+              text-decoration: underline;
+            }
+
+            &::before {
+              content: "📄";
+              margin-right: 8px;
+            }
+          }
+        }
+      }
+    }
+
+    .modal-footer {
+      padding: 16px;
+      border-top: 1px solid $border-color;
+      display: flex;
+      justify-content: flex-end;
+
+      .close-btn {
+        background-color: $primary-color;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 16px;
+        font-size: 14px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: darken($primary-color, 10%);
+        }
+      }
+    }
+    .modal-divider {
+      padding: 10px;
+      border-top: 1px solid $border-color;
+      display: flex;
+    }
+  }
+}
+
+
+.trip-status {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+}
+
+/* Estado: Activo */
+.primary {
+  background-color: #0d6efd; /* azul */
+}
+
+/* Estado: Expirada */
+.danger {
+  background-color: #dc3545; /* rojo */
+}
+
+/* Estado: Suspendido */
+.rechazado {
+  background-color: #6c757d; /* gris */
+}

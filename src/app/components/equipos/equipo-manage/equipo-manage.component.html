@@ -1,0 +1,166 @@
+<form [formGroup]="equipoForm">
+  <div style="display: flex; justify-content: flex-end;">
+    <button mat-raised-button class="me-8 mb-8" color="warn" (click)="IrListEquipos()">Lista de equipos</button>
+  </div>
+
+
+  <!-- Información Personal -->
+  <mat-card class="form-section">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>app_registration</mat-icon>
+        Registrar Equipo
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+
+      <div class="form-row-three">
+      <mat-form-field appearance="outline"  class="form-field">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre">
+        <mat-error>Este campo es requerido</mat-error>
+      </mat-form-field>
+
+
+      <mat-form-field appearance="outline"  class="form-field">
+        <mat-label>Código activo fijo</mat-label>
+        <input matInput formControlName="codigoActivoFijo">
+        <mat-error>Este campo es requerido</mat-error>
+      </mat-form-field>
+
+
+      <mat-form-field appearance="outline"  class="form-field">
+        <mat-label>Código bienes Nacionales</mat-label>
+        <input matInput formControlName="codigoBienesNacionales">
+        <mat-error>Este campo es requerido</mat-error>
+      </mat-form-field>
+    </div>
+
+
+      <div class="form-row-three">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Procesador</mat-label>
+          <input matInput formControlName="procesador">
+          <mat-error>Este campo es requerido</mat-error>
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Memoria Ram (Gb)</mat-label>
+          <input matInput type="number" formControlName="memoriaRamGb">
+          <mat-error>Este campo es requerido</mat-error>
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Almacenamiento (Gb)</mat-label>
+          <input matInput type="number" formControlName="almacenamientoGb">
+          <mat-error>Este campo es requerido</mat-error>
+        </mat-form-field>
+      </div>
+
+
+      <div class="form-row-two">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Fecha compra</mat-label>
+          <input matInput [matDatepicker]="PublicacionDatePicker" formControlName="fechaCompra">
+          <mat-datepicker-toggle matSuffix [for]="PublicacionDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #PublicacionDatePicker> </mat-datepicker>
+          <mat-error>Este campo es requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Fecha fin garantia</mat-label>
+          <input matInput [matDatepicker]="CierreDatePicker" formControlName="fechaGarantiaFin">
+          <mat-datepicker-toggle matSuffix [for]="CierreDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #CierreDatePicker></mat-datepicker>
+          <mat-error>Este campo es requerido</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row-three">
+
+
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Modelo</mat-label>
+          <mat-select formControlName="modeloId">
+            <mat-option *ngFor="let item of modeloList" [value]="item.id">{{item.nombre}}</mat-option>
+          </mat-select>
+          <mat-error>Este campo es requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>numeroSerial</mat-label>
+          <input matInput formControlName="numeroSerial">
+          <mat-error>Este campo es requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>ubicacion</mat-label>
+          <input matInput formControlName="ubicacion">
+          <mat-error>Este campo es requerido</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row-three">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Categoria</mat-label>
+          <mat-select formControlName="categoriaId">
+            <mat-option *ngFor="let item of categoriaList" [value]="item.id">{{item.nombre}}</mat-option>
+          </mat-select>
+          <mat-error>Este campo es requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Proveedor</mat-label>
+          <mat-select formControlName="proveedorId">
+            <mat-option *ngFor="let item of proveedorList" [value]="item.id">{{item.nombre}}</mat-option>
+          </mat-select>
+          <mat-error>Este campo es requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="estadoId">
+            <mat-option *ngFor="let item of estadoList" [value]="item.id">{{item.nombre}}</mat-option>
+          </mat-select>
+          <mat-error>Este campo es requerido</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row-three">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Periferico</mat-label>
+          <mat-select formControlName="esPeriferico">
+            <mat-option [value]="true">Sí</mat-option>
+            <mat-option [value]="false">No</mat-option>
+          </mat-select>
+          <mat-error>Este campo es requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field"
+        *ngIf="equipoForm.get('esPeriferico')?.value === true">
+          <mat-label>Tipo periferico</mat-label>
+          <mat-select formControlName="tipoPerifericoId">
+            <mat-option *ngFor="let item of tipoPerifericoList" [value]="item.id">{{item.nombre}}</mat-option>
+          </mat-select>
+          <mat-error>Este campo es requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Recinto</mat-label>
+          <mat-select formControlName="recintoId">
+            <mat-option *ngFor="let item of recintoList" [value]="item.id">{{item.nombre}}</mat-option>
+          </mat-select>
+          <mat-error>Este campo es requerido</mat-error>
+        </mat-form-field>
+      </div>
+
+
+      <button mat-raised-button color="primary" class="mt-4" (click)="guardar()">
+        Guardar<!-- {{idVacanteEditar ? 'Actualizar' : 'Agregar'}} -->
+      </button>
+    </mat-card-content>
+  </mat-card>
+</form>

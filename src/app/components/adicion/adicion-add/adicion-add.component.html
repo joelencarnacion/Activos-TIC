@@ -1,0 +1,550 @@
+<!-- registro-activos.component.html -->
+<div class="app-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+            </path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+        </div>
+        <div class="header-title">
+          <h1>Adición de Activos</h1>
+          <p>Sistema de Gestión Institucional</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn btn-secondary" (click)="limpiarFormulario()" *ngIf="!idAdicion">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+          </svg>
+          Limpiar
+        </button>
+        <button
+        type="button" class="btn btn-primary" (click)="guardarFormulario()"
+        *ngIf="!idAdicion &&  permisosService.puede('Adición', 'crear')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+          Guardar
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <form [formGroup]="formulario">
+      <!-- Datos Generales -->
+      <section class="card" *ngIf="!idAdicion">
+        <div class="card-header">
+          <div class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <span>Datos Generales</span>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="form-grid">
+            <!-- <div class="form-group">
+              <label class="form-label">
+                Número de Formulario
+                <span class="required">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-input"
+                formControlName="noFormulario"
+                placeholder="Ej: FORM-2024-001"
+                [class.input-error]="hasError('noFormulario')">
+              <span class="error-message" *ngIf="hasError('noFormulario')">
+                Este campo es requerido
+              </span>
+            </div> -->
+            <div class="form-group">
+              <label class="form-label">
+                Forma de Adquisición
+                <span class="required">*</span>
+              </label>
+              <select class="form-select" formControlName="formaAdquisicionId"
+                [class.input-error]="hasError('formaAdquisicionId')">
+                <option value="">Seleccionar...</option>
+                <option *ngFor="let item of origenes" [value]="item.id">{{item.nombre}}</option>
+              </select>
+              <span class="error-message" *ngIf="hasError('formaAdquisicionId')">
+                Este campo es requerido
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">
+                Recinto
+                <span class="required">*</span>
+              </label>
+              <select class="form-select" formControlName="recinto" [class.input-error]="hasError('recinto')">
+                <option value="">Seleccionar...</option>
+                <option *ngFor="let item of recintoList" [value]="item.siglas">{{item.siglas}}</option>
+              </select>
+              <span class="error-message" *ngIf="hasError('recinto')">
+                Este campo es requerido
+              </span>
+            </div>
+
+            <!-- <div class="form-group">
+              <label class="form-label">Área</label>
+              <input type="text" class="form-input" formControlName="area" placeholder="Área o departamento">
+            </div> -->
+            <div class="form-group" style="position: relative;">
+              <label class="form-label">Área</label>
+              <input type="text" class="form-input" placeholder="Buscar área o departamento..." #areaInput
+                [value]="areaBusqueda || formulario.get('area')?.value" (input)="buscarAreas(areaInput.value)" />
+
+              <div *ngIf="areaBuscando" style="font-size: 12px; color: #888; margin-top: 4px;">
+                Buscando...
+              </div>
+
+              <ul *ngIf="areaList.length > 0" class="selectOpcion">
+                <li *ngFor="let area of areaList" (click)="seleccionarArea(area)" style="
+                    padding: 10px 14px;
+                    cursor: pointer;
+                    font-size: 14px;
+                    color: #333;
+                    border-bottom: 1px solid #f5f5f5;
+                    transition: background 0.15s;
+                  " onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+                  onmouseout="this.style.background='white'; this.style.color='#333';">
+                  {{ area.nombre || area.name || area.descripcion }}
+                </li>
+              </ul>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Factura</label>
+              <input type="text" class="form-input" formControlName="numFactura" placeholder="Número de factura">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Orden de Compra</label>
+              <input type="text" class="form-input" formControlName="ordenDeCompra" placeholder="Número de orden">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Proveedor</label>
+              <input type="text" class="form-input" formControlName="proveedor" placeholder="Nombre del proveedor">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Costo Total</label>
+              <div class="input-with-prefix">
+                <span class="input-prefix">$</span>
+                <input type="number" class="form-input with-prefix" [value]="calcularCostoTotal()" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Observaciones</label>
+            <textarea class="form-textarea" formControlName="observaciones" rows="3"
+              placeholder="Observaciones generales del formulario..."></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Activos -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+              </path>
+            </svg>
+            <span>Activos</span>
+            <span class="badge">{{ activos.length }}</span>
+          </div>
+
+          <button type="button" class="btn btn-accent" (click)="agregarActivo()" *ngIf="!idAdicion">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Agregar Activo
+          </button>
+        </div>
+        <div class="card-content">
+          <div class="activos-list" formArrayName="activos" *ngIf="activos.length > 0; else noActivos">
+            <div class="activo-item" *ngFor="let activo of activos.controls; let i = index" [formGroupName]="i">
+              <!-- Activo Header -->
+              <div class="activo-header" (click)="toggleActivo(i)">
+                <div class="activo-info">
+                  <span class="activo-number">#{{ i + 1 }}</span>
+                  <span class="activo-marca" *ngIf="getActivoMarca(i)">{{ getActivoMarca(i) }}</span>
+                  <span class="activo-modelo" *ngIf="getActivoModelo(i)">{{ getActivoModelo(i) }}</span>
+                  <span class="activo-placeholder" *ngIf="!getActivoMarca(i) && !getActivoModelo(i)">Nuevo Activo</span>
+                  <span class="activo-invalid" *ngIf="activo.invalid && activo.touched">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    Campos requeridos
+                  </span>
+                </div>
+                <div class="activo-actions">
+                  <span class="activo-costo" *ngIf="getActivoCosto(i)">{{ getActivoCosto(i) |
+                    currency:'DOP':'symbol':'1.2-2':'en-US' }}</span>
+                  <button type="button" class="btn-icon btn-delete"
+                    (click)="eliminarActivo(i); $event.stopPropagation()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M3 6h18"></path>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                  <svg class="chevron" [class.rotated]="activosUI[i]?.expanded" width="20" height="20"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Activo Content -->
+              <div class="activo-content" *ngIf="activosUI[i]?.expanded">
+                <!-- Sección: Información Básica -->
+                <div class="section">
+                  <div class="section-header" (click)="toggleSeccion(i, 'seccionBasica')">
+                    <span class="section-title">Información Básica</span>
+                    <svg class="chevron" [class.rotated]="activosUI[i]?.seccionBasica" width="16" height="16"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </div>
+                  <div class="section-content" *ngIf="activosUI[i]?.seccionBasica">
+                    <div class="form-grid">
+                      <div class="form-group">
+                        <label class="form-label">
+                          Fecha Adquisición
+                          <span class="required">*</span>
+                        </label>
+                        <input type="date" class="form-input" formControlName="fechaAdquisicion"
+                          [class.input-error]="hasActivoError(i, 'fechaAdquisicion')">
+                        <span class="error-message" *ngIf="hasActivoError(i, 'fechaAdquisicion')">
+                          Este campo es requerido
+                        </span>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">
+                          Tipo de Activo
+                          <span class="required">*</span>
+                        </label>
+                        <select class="form-select" formControlName="tipoActivoId"
+                          [class.input-error]="hasActivoError(i, 'tipoActivoId')">
+                          <option value="">Seleccionar...</option>
+                          <option *ngFor="let tipo of activoTipos" [value]="tipo.id">
+                            {{ tipo.nombre }}
+                          </option>
+                        </select>
+                        <span class="error-message" *ngIf="hasActivoError(i, 'tipoActivoId')">
+                          Este campo es requerido
+                        </span>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">
+                          Subtipo de Activo
+                          <span class="required">*</span>
+                        </label>
+                        <select class="form-select" formControlName="subTipoActivoId"
+                          [class.input-error]="hasActivoError(i, 'subTipoActivoId')">
+                          <option value="">Seleccionar...</option>
+                          <option *ngFor="let sub of activosSubtipos[i]" [value]="sub.id">
+                            {{ sub.nombre }}
+                          </option>
+                        </select>
+                        <span class="error-message" *ngIf="hasActivoError(i, 'subTipoActivoId')">
+                          Este campo es requerido
+                        </span>
+                      </div>
+                      <!-- <div class="form-group">
+                        <label class="form-label">
+                          Estado del Activo
+                          <span class="required">*</span>
+                        </label>
+                        <select
+                          class="form-select"
+                          formControlName="activoEstadoId"
+                          [class.input-error]="hasActivoError(i, 'activoEstadoId')">
+                          <option value="">Seleccionar...</option>
+                          <option *ngFor="let item of activoEstado" [value]="item.id">
+                            {{item.nombre}}</option>
+
+                        </select>
+                        <span class="error-message" *ngIf="hasActivoError(i, 'activoEstadoId')">
+                          Este campo es requerido
+                        </span>
+                      </div> -->
+                      <div class="form-group">
+                        <label class="form-label">Código Institucional</label>
+                        <input type="text" class="form-input" formControlName="codInstitucional"
+                          placeholder="Código único">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Código Bienes Nacionales</label>
+                        <input type="text" class="form-input" formControlName="codBienesNacionales"
+                          placeholder="Código único">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">
+                          Marca
+                          <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-input" formControlName="marca" placeholder="Marca del activo"
+                          [class.input-error]="hasActivoError(i, 'marca')">
+                        <span class="error-message" *ngIf="hasActivoError(i, 'marca')">
+                          Este campo es requerido
+                        </span>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Modelo</label>
+                        <input type="text" class="form-input" formControlName="modelo" placeholder="Modelo del activo">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Número de Serie</label>
+                        <input type="text" class="form-input" formControlName="serial" placeholder="Serial number">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Color</label>
+                        <input type="text" class="form-input" formControlName="color" placeholder="Color del activo">
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">
+                          Condición
+                          <span class="required">*</span>
+                        </label>
+                        <select class="form-select" formControlName="condicion"
+                        [class.input-error]="hasActivoError(i, 'condicion')">
+                          <option value="">Seleccionar...</option>
+                          <option value="Bueno">Bueno</option>
+                          <option value="Regular">Regular</option>
+                          <option value="Reparar">Reparar</option>
+                          <option value="Obsoleto">Obsoleto</option>
+                        </select>
+                        <span class="error-message" *ngIf="hasActivoError(i, 'condicion')">
+                          Este campo es requerido
+                        </span>
+                      </div>
+                    </div>
+                    <div class="form-group full-width">
+                      <label class="form-label">Descripción</label>
+                      <textarea class="form-textarea" formControlName="descripcion" rows="2"
+                        placeholder="Descripción detallada del activo..."></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Sección: Ubicación y Asignación -->
+                <div class="section">
+                  <div class="section-header" (click)="toggleSeccion(i, 'seccionUbicacion')">
+                    <span class="section-title">Ubicación y Asignación</span>
+                    <svg class="chevron" [class.rotated]="activosUI[i]?.seccionUbicacion" width="16" height="16"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </div>
+                  <div class="section-content" *ngIf="activosUI[i]?.seccionUbicacion">
+                    <div class="form-grid">
+                      <div class="form-group">
+                        <label class="form-label">
+                          Recinto
+                          <span class="required">*</span>
+                        </label>
+                        <select class="form-select" formControlName="recinto">
+                          <option value="">Seleccionar...</option>
+                          <option *ngFor="let item of recintoList" [value]="item.siglas">{{item.siglas}}</option>
+                        </select>
+                        <!-- <span class="error-message" *ngIf="hasError('recinto')">
+                          Este campo es requerido
+                        </span> -->
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Ubicación Específica</label>
+                        <input type="text" class="form-input" formControlName="ubicacion"
+                          placeholder="Oficina, sala, etc.">
+                      </div>
+                      <!-- <div class="form-group">
+                        <label class="form-label">Responsable</label>
+                        <input type="text" class="form-input" formControlName="responsableAdquisicion" placeholder="Nombre del responsable">
+                      </div> -->
+                      <div class="form-group" style="position: relative;">
+                        <label class="form-label">Responsable Adquisición</label>
+                        <input type="text" class="form-input" placeholder="Buscar responsable..." #responsableInput
+                          [value]="getActivoFormGroup(i).get('responsableAdquisicion')?.value || usuarioBusqueda"
+                          (input)="buscarUsuario(responsableInput.value)" />
+
+                        <ul *ngIf="usuriosList.length > 0" [style.top]="getInputPosition(responsableInput).top"
+                          [style.left]="getInputPosition(responsableInput).left"
+                          [style.width]="getInputPosition(responsableInput).width" style="position: fixed; z-index: 9999; background: white;
+                                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
+                                   margin: 0; padding: 0; list-style: none;
+                                   max-height: 200px; overflow-y: auto;">
+                          <li *ngFor="let usuario of usuriosList" (click)="seleccionarUsuario(usuario, i)"
+                            style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
+                            onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+                            onmouseout="this.style.background='white'; this.style.color='#333';">
+                            {{ usuario.persona.nombre }} {{ usuario.persona.apellidos }}
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Asignado a</label>
+                        <input type="text" class="form-input" formControlName="asignadoA"
+                          placeholder="Usuario asignado">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Sección: Información de Facturación -->
+                <div class="section">
+                  <div class="section-header" (click)="toggleSeccion(i, 'seccionFacturacion')">
+                    <span class="section-title">Información de Facturación</span>
+                    <svg class="chevron" [class.rotated]="activosUI[i]?.seccionFacturacion" width="16" height="16"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </div>
+                  <div class="section-content" *ngIf="activosUI[i]?.seccionFacturacion">
+                    <div class="form-grid">
+                      <div class="form-group">
+                        <label class="form-label">
+                          Costo
+                          <span class="required">*</span>
+                        </label>
+                        <div class="input-with-prefix">
+                          <span class="input-prefix">$</span>
+                          <input type="number" class="form-input with-prefix" formControlName="costo" placeholder="0.00"
+                            [class.input-error]="hasActivoError(i, 'costo')">
+                        </div>
+                        <span class="error-message" *ngIf="hasActivoError(i, 'costo')">
+                          Este campo es requerido
+                        </span>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Número de Factura</label>
+                        <input type="text" class="form-input" formControlName="noFactura" placeholder="Factura">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Orden de Compra</label>
+                        <input type="text" class="form-input" formControlName="ordenDeCompra"
+                          placeholder="Orden de compra">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Proveedor</label>
+                        <input type="text" class="form-input" formControlName="proveedor"
+                          placeholder="Nombre del proveedor">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Cuenta Contable Facturación</label>
+                        <input type="text" class="form-input" formControlName="cuentaContableFacturacion"
+                          placeholder="Numero">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Fecha de Pago</label>
+                        <input type="date" class="form-input" formControlName="fechaPago">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Fecha Factura</label>
+                        <input type="date" class="form-input" formControlName="fechaFactura">
+                      </div>
+                      <!-- <div class="form-group">
+                        <label class="form-label">Fecha de Vencimiento Garantía</label>
+                        <input type="date" class="form-input" formControlName="fechaVencimientoGarantia">
+                      </div> -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Sección: Información Presupuestaria y SIAB -->
+                <div class="section">
+                  <div class="section-header" (click)="toggleSeccion(i, 'seccionPresupuesto')">
+                    <span class="section-title">Información Presupuestaria y SIAB</span>
+                    <svg class="chevron" [class.rotated]="activosUI[i]?.seccionPresupuesto" width="16" height="16"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </div>
+                  <div class="section-content" *ngIf="activosUI[i]?.seccionPresupuesto">
+                    <div class="form-grid">
+                      <div class="form-group">
+                        <label class="form-label">Guía Presupuestaria</label>
+                        <input type="text" class="form-input" formControlName="codGuiaPresupuestaria"
+                          placeholder="Código de guía">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Código SIAB</label>
+                        <input type="text" class="form-input" formControlName="codSiab" placeholder="Código SIAB">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Número transacciòn SIAB</label>
+                        <input type="text" class="form-input" formControlName="noTransaccionSiab"
+                          placeholder="Registro contable">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Cuenta Contable Registro</label>
+                        <input type="text" class="form-input" formControlName="cuentaContableRegistroContable"
+                          placeholder="Número de cuenta">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">No. Libramiento</label>
+                        <input type="text" class="form-input" formControlName="noLibramiento"
+                          placeholder="Número de libramiento">
+                      </div>
+                      <!-- <div class="form-group">
+                        <label class="form-label">Vida Útil (años)</label>
+                        <input type="number" class="form-input" formControlName="vidaUtil" placeholder="Años">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Valor Residual</label>
+                        <div class="input-with-prefix">
+                          <span class="input-prefix">$</span>
+                          <input type="number" class="form-input with-prefix" formControlName="valorResidual" placeholder="0.00">
+                        </div>
+                      </div> -->
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display: flex; justify-content: end;">
+                  <button type="button" class="btn btn-primary" (click)="updateActivo(activo)"
+                  *ngIf="idAdicion &&  permisosService.puede('Adición', 'editar')">
+                    Editar Activo
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #noActivos>
+            <div class="empty-state">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path
+                  d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                </path>
+              </svg>
+              <h3>No hay activos registrados</h3>
+              <p>Haz clic en "Agregar Activo" para comenzar a registrar los activos del formulario.</p>
+            </div>
+          </ng-template>
+        </div>
+      </section>
+    </form>
+  </main>
+</div>

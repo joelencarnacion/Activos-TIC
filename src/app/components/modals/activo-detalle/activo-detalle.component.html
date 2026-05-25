@@ -1,0 +1,323 @@
+
+<div class="detalle-wrapper">
+  <!-- Hero Header -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="3" width="20" height="14" rx="2"/>
+          <path d="M8 21h8M12 17v4"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="hero-title">{{ activo.marca }} <span class="hero-model">{{ activo.modelo }}</span></h1>
+        <div class="hero-breadcrumb">
+          <span>{{ activo.subTipoActivo.tipoActivo.nombre }}</span>
+          <span class="sep">›</span>
+          <span>{{ activo.subTipoActivo.nombre }}</span>
+          <span class="sep">›</span>
+          <span class="recinto-pill">{{ activo.recinto }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <span
+      class="estado-badge"
+      [ngClass]="'estado-' + (activo.estado | lowercase)">
+      {{ activo.estado }}
+    </span>
+    </div>
+  </div>
+
+  <!-- Métricas rápidas -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-icon metric-icon--green">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      </div>
+      <div>
+        <p class="metric-label">Costo</p>
+        <p class="metric-value">{{ activo.costo | currency:'DOP':'symbol':'1.2-2':'en-US' }}</p>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon metric-icon--blue">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      <div>
+        <p class="metric-label">Fecha adquisición</p>
+        <p class="metric-value">{{ activo.fechaAdquisicion | date:'dd/MM/yyyy' }}</p>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon metric-icon--purple">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+        </svg>
+      </div>
+      <div>
+        <p class="metric-label">No. formulario</p>
+        <p class="metric-value">{{ activo.adicion.noFormulario }}</p>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon metric-icon--amber">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+        </svg>
+      </div>
+      <div>
+        <p class="metric-label">Recinto</p>
+        <p class="metric-value">{{ activo.recinto }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Secciones colapsables -->
+  <div class="sections">
+
+    <!-- Información Básica -->
+    <div class="section-card" [class.open]="secciones.basica">
+      <div class="section-header" (click)="toggleSeccion('basica')">
+        <div class="section-header-left">
+          <div class="section-icon si">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+            </svg>
+          </div>
+          <span class="section-title">Información básica</span>
+        </div>
+        <svg class="chev" [class.chev--open]="secciones.basica" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body" *ngIf="secciones.basica">
+        <div class="fields-grid">
+          <div class="field">
+            <span class="field-label">Marca</span>
+            <span class="field-value">{{ activo.marca || '—' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Modelo</span>
+            <span class="field-value">{{ activo.modelo || '—' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Serial</span>
+            <span class="field-value mono">{{ activo.serial || '—' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Color</span>
+            <span class="field-value">{{ activo.color || '—' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Cód. institucional</span>
+            <span class="field-value mono">{{ activo.codInstitucional || '—' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Cód. bienes nacionales</span>
+            <span class="field-value mono">{{ activo.codBienesNacionales || '—' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Tipo de activo</span>
+            <span class="field-value">{{ activo.subTipoActivo.tipoActivo.nombre }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Subtipo</span>
+            <span class="field-value">{{ activo.subTipoActivo.nombre }}</span>
+          </div>
+          <div class="field field--full">
+            <span class="field-label">Descripción</span>
+            <span class="field-value" [class.field-empty]="!activo.descripcion">
+              {{ activo.descripcion || 'Sin descripción registrada' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ubicación y Asignación -->
+    <div class="section-card" [class.open]="secciones.ubicacion">
+      <div class="section-header" (click)="toggleSeccion('ubicacion')">
+        <div class="section-header-left">
+          <div class="section-icon si">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+          </div>
+          <span class="section-title">Ubicación y asignación</span>
+        </div>
+        <svg class="chev" [class.chev--open]="secciones.ubicacion" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body" *ngIf="secciones.ubicacion">
+        <div class="fields-grid">
+          <div class="field">
+            <span class="field-label">Recinto</span>
+            <span class="field-value">{{ activo.recinto || '—' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Ubicación específica</span>
+            <span class="field-value" [class.field-empty]="!activo.ubicacion">{{ activo.ubicacion || 'No especificada' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Responsable adquisición</span>
+            <span class="field-value" [class.field-empty]="!activo.responsableAdquisicion">{{ activo.responsableAdquisicion || 'No asignado' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Asignado a</span>
+            <span class="field-value" [class.field-empty]="!activo.asignadoA">{{ activo.asignadoA || 'No asignado' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Facturación -->
+    <div class="section-card" [class.open]="secciones.facturacion">
+      <div class="section-header" (click)="toggleSeccion('facturacion')">
+        <div class="section-header-left">
+          <div class="section-icon si">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </div>
+          <span class="section-title">Información de facturación</span>
+        </div>
+        <svg class="chev" [class.chev--open]="secciones.facturacion" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body" *ngIf="secciones.facturacion">
+        <div class="fields-grid">
+          <div class="field">
+            <span class="field-label">Costo</span>
+            <span class="field-value cost-value">{{ activo.costo | currency:'DOP':'symbol':'1.2-2':'en-US' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">No. factura</span>
+            <span class="field-value mono" [class.field-empty]="!activo.noFactura">{{ activo.noFactura || 'No registrado' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Fecha factura</span>
+            <span class="field-value" [class.field-empty]="!activo.fechaFactura">{{ activo.fechaFactura ? (activo.fechaFactura | date:'dd/MM/yyyy') : 'No registrada' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Fecha de pago</span>
+            <span class="field-value" [class.field-empty]="!activo.fechaPago">{{ activo.fechaPago ? (activo.fechaPago | date:'dd/MM/yyyy') : 'No registrada' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Proveedor</span>
+            <span class="field-value" [class.field-empty]="!activo.proveedor">{{ activo.proveedor || 'No registrado' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Orden de compra</span>
+            <span class="field-value mono" [class.field-empty]="!activo.ordenDeCompra">{{ activo.ordenDeCompra || 'No registrada' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Cuenta contable facturación</span>
+            <span class="field-value mono" [class.field-empty]="!activo.cuentaContableFacturacion">{{ activo.cuentaContableFacturacion || 'No registrada' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Presupuesto y SIAB -->
+    <div class="section-card" [class.open]="secciones.siab">
+      <div class="section-header" (click)="toggleSeccion('siab')">
+        <div class="section-header-left">
+          <div class="section-icon si">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <span class="section-title">Presupuestaria y SIAB</span>
+        </div>
+        <svg class="chev" [class.chev--open]="secciones.siab" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body" *ngIf="secciones.siab">
+        <div class="fields-grid">
+          <div class="field">
+            <span class="field-label">Cód. guía presupuestaria</span>
+            <span class="field-value mono" [class.field-empty]="!activo.codGuiaPresupuestaria">{{ activo.codGuiaPresupuestaria || 'No registrado' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Cód. SIAB</span>
+            <span class="field-value mono" [class.field-empty]="!activo.codSiab">{{ activo.codSiab || 'No registrado' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">No. transacción SIAB</span>
+            <span class="field-value mono" [class.field-empty]="!activo.noTransaccionSiab">{{ activo.noTransaccionSiab || 'No registrado' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Cuenta contable registro</span>
+            <span class="field-value mono" [class.field-empty]="!activo.cuentaContableRegistroContable">{{ activo.cuentaContableRegistroContable || 'No registrada' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">No. libramiento</span>
+            <span class="field-value mono" [class.field-empty]="!activo.noLibramiento">{{ activo.noLibramiento || 'No registrado' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adición relacionada -->
+    <div class="section-card" [class.open]="secciones.adicion">
+      <div class="section-header" (click)="toggleSeccion('adicion')">
+        <div class="section-header-left">
+          <div class="section-icon si--gray">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+          </div>
+          <span class="section-title">Adición relacionada</span>
+        </div>
+        <svg class="chev" [class.chev--open]="secciones.adicion" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body" *ngIf="secciones.adicion">
+        <div class="fields-grid">
+          <div class="field">
+            <span class="field-label">No. formulario</span>
+            <span class="field-value mono">{{ activo.adicion.noFormulario }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Forma adquisición</span>
+            <span class="field-value">{{ activo.adicion.formaAdquisicion.nombre }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Recinto</span>
+            <span class="field-value">{{ activo.adicion.recinto }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Área</span>
+            <span class="field-value">{{ activo.adicion.area }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Proveedor</span>
+            <span class="field-value" [class.field-empty]="!activo.adicion.proveedor">{{ activo.adicion.proveedor || '—' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">No. factura</span>
+            <span class="field-value mono" [class.field-empty]="!activo.adicion.numFactura">{{ activo.adicion.numFactura || '—' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Costo total adición</span>
+            <span class="field-value cost-value">{{ activo.adicion.costoTotal | currency:'DOP':'symbol':'1.2-2':'en-US' }}</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Total activos</span>
+            <span class="field-value">{{ activo.adicion.activos }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

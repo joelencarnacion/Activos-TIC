@@ -1,0 +1,302 @@
+<div class="d-flex justify-content-end">
+  <button mat-raised-button class="me-8 mb-8" color="primary" (click)="toggleSearchPanel()">
+    <i class="material-icons">{{ searchExpanded ? 'expand_less' : 'search' }}</i>
+    {{ searchExpanded ? 'Ocultar filtros' : 'Buscar asignación' }}
+  </button>
+  <ng-container *ngIf="permisosService.puede('Asignación', 'crear')">
+    <button mat-raised-button class="me-8 mb-8" color="warn" (click)="toggleAsignacionPanel()">
+      <i class="material-icons">{{ asignacionExpanded ? 'expand_less' : 'add' }}</i>
+      {{ asignacionExpanded ? 'Ocultar panel' : 'Agregar asignación' }}</button>
+  </ng-container>
+  <!-- <button mat-raised-button class="me-8 mb-8" color="warn" (click)="IrManageVacantes()">Agregar Vacante</button> -->
+</div>
+<!-- Filtros -->
+<mat-card class="filters-section" *ngIf="searchExpanded">
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon>filter_list</mat-icon>
+      Filtros de Búsqueda
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="searchForm" class="filters-form">
+      <div class="filters-rowBusqueda">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Buscar asignación</mat-label>
+          <input matInput formControlName="buscar"
+            placeholder="Buscar por matrícula, nombre, apellido, cédula o serial">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+    </form>
+        <button mat-raised-button color="primary" type="button" (click)="buscarByMatricula()">
+          <mat-icon>search</mat-icon>
+          Buscar
+        </button>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="filters-section" *ngIf="asignacionExpanded">
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon>add</mat-icon>
+      Agregar Asignación
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="asignacionForm" class="filters-form">
+      <div class="filters-row">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Matrícula</mat-label>
+          <input matInput formControlName="estudiante" placeholder="Matrícula del estudiante">
+          <!-- <mat-icon matSuffix>search</mat-icon> -->
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Equipo</mat-label>
+          <input matInput formControlName="equipo" placeholder="Serial del equipo">
+          <!-- <mat-icon matSuffix>search</mat-icon> -->
+        </mat-form-field>
+
+      </div>
+    </form>
+    <ng-container *ngIf="currentAsignacion.id">
+      <button mat-raised-button color="warn" (click)="cancelarEdicion()">Cancelar acción</button>&nbsp;
+    </ng-container>
+
+    <button mat-raised-button color="primary" type="button" (click)="guardar()">
+      <mat-icon>add</mat-icon>
+      guardar
+    </button>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="w-100">
+  <mat-card-content>
+    <h3 class="mb-40">Lista de asignaciones</h3>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="estudianteAsignadoList" class="text-nowrap w-100">
+
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef> Nombres </th>
+          <td mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{element.nombre
+              }}</p>
+            <p class="mb-0 fw-normal op-5">{{ element.apellido }}</p>
+          </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="matricula">
+          <th mat-header-cell *matHeaderCellDef> Matrícula </th>
+          <td mat-cell class="fw-medium" *matCellDef="let element"> {{element.matricula}} </td>
+        </ng-container>
+
+        <!-- Project Column -->
+        <ng-container matColumnDef="cedula">
+          <th mat-header-cell *matHeaderCellDef> Cédula </th>
+          <td mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{element.cedula}}</p>
+
+          </td>
+        </ng-container>
+
+        <!-- Budget Column -->
+        <ng-container matColumnDef="recinto">
+          <th mat-header-cell *matHeaderCellDef> Recinto </th>
+          <td mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium op-5"> {{element.recinto.siglas}} </p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="equipo">
+          <th mat-header-cell *matHeaderCellDef> Equipo </th>
+          <td mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{element.equipoAsignado.nombre}}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="serial">
+          <th mat-header-cell *matHeaderCellDef>Serial</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="mb-0 fw-medium">{{element.equipoAsignado.numeroSerial}}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef> Acciones </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button [matMenuTriggerFor]="menu4">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu4="matMenu">
+              <ng-container>
+                <button mat-menu-item (click)="printMe(element)">
+                  <mat-icon class="btnInfoTable">print</mat-icon>
+                  <span>Imprimir</span>
+                </button>
+              </ng-container>
+
+              <button  *ngIf="permisosService.puede('Asignación', 'editar')" mat-menu-item (click)="setValueAsigancion(element)">
+                <mat-icon class="btnEditTable">edit</mat-icon>
+                <span>Editar</span>
+              </button>
+
+
+              <button  *ngIf="permisosService.puede('Asignación', 'eliminar')" mat-menu-item (click)="deleteAsignacion(element)">
+                <mat-icon class="btnDeleteTable">delete</mat-icon>
+                <span>Eliminar</span>
+              </button>
+
+            </mat-menu>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+
+    <!-- Spinner de carga  -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Cargando Asignaciones...</span>
+    </div>
+
+    <!-- Sin resultados -->
+    <div *ngIf="!isLoading && estudianteAsignadoList.length === 0" class="no-results">
+      <mat-icon>search_off</mat-icon>
+      <h3>No se encontraron asignaciones</h3>
+      <p>Intenta ajustar los filtros de búsqueda</p>
+    </div>
+
+
+
+
+    <div class="pagination-container">
+      <mat-paginator *ngIf="estudianteAsignadoList && pagination"
+        [length]="pagination.totalItems || 0"
+        [pageSize]="pagination.pageSize || 10"
+        [pageIndex]="(pagination.currentPage || 1) - 1"
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+
+
+<div class="carta" id="print-section">
+  <div class="cabecera">
+    <img class="img" src="../../../assets/images/ImagenlogoImprimir.png" alt="escudo">
+    <p class="nombre"><u>CARTA DE ENTREGA DE DISPOSITIVO TIPO LAPTOP</u></p>
+    <p class="nombre" style="margin-top: -10px;">RECINTO: {{this.recinto}}</p>
+  </div>
+  <div class="cuerpo">
+
+    <p style="padding-top: 20px;">Quien suscribe, el (la) estudiante <strong>{{this.estudiante}}
+        {{this.apellido}}</strong> portador (a)
+      de la Cédula de Identidad y Electoral No. <strong>{{this.cedula}}</strong>, matrícula No.
+      <strong>{{this.matricula}}</strong>,
+      DECLARO HABER RECIBIDO de la Vicerrectoría Ejecutiva del Recinto {{this.recinto}},
+      el equipo que se detalla a continuación:</p>
+
+    <p><strong>ÚNICO:</strong>
+      LAPTOP {{this.marca}} {{this.modelo}}, SERIAL: {{this.serial}}</p>
+
+    <p>EL ISFODOSU como institución de Educación Superior de servicio público, me otorga como
+      única entrega este dispositivo para ser utilizado en el desarrollo de mi proceso formativo
+      por ser una herramienta imprescindible para mi formación como docente de calidad. Un
+      dispositivo nuevo y de última generación para su debido uso, por lo tanto, me comprometo
+      a cuidarlo, mantenerlo en buen estado, y utilizarlo única y exclusivamente para asuntos
+      relacionados con mi actividad académica, preservando los buenos principios éticos y morales.
+      En caso de que por alguna razón tuviese que retirarme de la carrera entregaré el dispositivo
+      recibido a la Vicerrectoría Ejecutiva de mi recinto, a los fines de ser reasignado a otro
+      estudiante que pueda culminar con el programa de estudio del ISFODOSU. </p>
+
+    <p>Yo, como estudiante beneficiario, reconozco que no puedo vender,
+      cambiar ni ceder el
+      dispositivo a otras personas mientras sea un estudiante del ISFODOSU, ya que en caso
+      de pérdida por cualquier circunstancia el Instituto no me proveerá de otro dispositivo.</p>
+
+    <p>En ese tenor es de mi conocimiento que: </p>
+
+    <ul>
+      <p>
+        <li>Este equipo tiene una garantía de ({{this.garantia}}) año(s) por el fabricante y la misma
+          es ofrecida a través de la empresa {{this.proveedor}}. Mientras el equipo esté en garantía,
+          no se podrá abrir, ni sustituirle piezas internas o externas. </li>
+      </p>
+
+      <p>
+        <li>Si el tiempo de garantía ha finalizado, cualquier reparación
+          será responsabilidad del estudiante beneficiario del dispositivo.</li>
+      </p>
+
+      <!-- <li>Mientras el estudiante beneficiario del equipo este activo en el Instituto,
+        el licenciamiento de Microsoft 365, será proporcionado por el ISFODOSU.
+        (De manera provisional se proveerá una licencia A1 para estudiantes, la cual será
+        sustituida más adelante por una licencia A3 para estudiantes). En caso del estudiante
+        retirarse del ISFODOSU se inhabilitará la licencia del office del dispositivo.</li> -->
+    </ul>
+
+    <div style="margin-top: -10px;" class="cabecera">
+      <img class="imgpie" src="../../../assets/images/pie.PNG" alt="escudo">
+    </div>
+    <div class="cabecera" style="margin-top: 30px;">
+      <img class="img" src="../../../assets/images/ImagenlogoImprimir.png" alt="escudo">
+    </div>
+    <p><strong>NOTAS IMPORTANTES:</strong></p>
+
+    <ul>
+      <li>En el caso de hacer uso del dispositivo entregado de manera diferente
+        al fin para el cual me fue otorgado, la Vicerrectoría Ejecutiva del
+        Recinto correspondiente me aplicará una amonestación por escrito a
+        través del Comité de Disciplina. Si la acción se hace reiterativa,
+        la Vicerrectoría Ejecutiva del recinto procederá a retirarme el dispositivo
+        sin más trámite y lo devolverá a la División de Activo Fijo del ISFODOSU,
+        para su posterior reasignación estudiantil.</li>
+    </ul>
+
+    <p><strong class="agregarEspacio">Fecha de entrega del equipo: {{this.fechaAsignacion | date:'longDate':'':'es'}}</strong></p>
+    <!-- <div class="agregarEspacio">
+      <p class="rayaFirmaRec1"><strong>_____________________</strong></p>
+      <p class="firmaRectora"><strong>Rectora</strong></p>
+      <p><strong class="isfoFirma1">ISFODOSU</strong></p>
+    </div>
+    <div class="agregarEspacioderecho">
+      <p class="rayaFirmaRecVic"><strong>_______________________________________</strong></p>
+      <p><strong class="firmaEstu">Vicerrectora Académica</strong></p>
+      <p class="rayaFirmaRecVic"><strong class="firmaRecVic">ISFODOSU</strong></p>
+    </div> -->
+    <!-- <div class="agregarEspacio">
+      <p class="rayaFirmaRec"><strong>__________________________________________</strong></p>
+      <p><strong class="isfoFirma2">{{this.vicerretor}}</strong></p>
+      <p style="margin-bottom: -10px;"><strong class="firmaVicce">Vicerrector/a Ejecutivo/a</strong></p>
+    </div> -->
+    <div class="firma-section">
+      <div class="vicerrector-section">
+        <p class="firma-line"><strong>___________________________</strong></p>
+        <strong class="vicerrector-name">{{ this.vicerretor }}</strong><br> <!-- Salto de línea -->
+        <strong class="vicerrector-title">Vicerrector/a Ejecutivo/a</strong>
+      </div>
+
+      <div class="estudiante-section">
+        <p class="estudiante-line"><strong>_____________________________</strong></p>
+        <strong class="estudiante-nombre">Estudiante Beneficiario</strong>
+      </div>
+    </div>
+
+
+
+
+    <div style="margin-top: 300px;" class="cabecera">
+      <img class="imgpie" src="../../../assets/images/pie.PNG" alt="escudo">
+    </div>
+    <!-- <p><strong class="firmaEstu">Estudiante Beneficiario</strong></p> -->
+
+  </div>
+
+
+</div>

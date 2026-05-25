@@ -1,0 +1,65 @@
+
+<form [formGroup]="proveedoresForm" class="mt-20">
+  <mat-form-field appearance="outline"  style="width: 48.5%;">
+    <mat-label>Nombre</mat-label>
+    <input matInput formControlName="nombre">
+  </mat-form-field>&nbsp;
+
+  <mat-form-field appearance="outline"  style="width: 48.5%;">
+    <mat-label>RNC</mat-label>
+    <input matInput formControlName="rnc">
+  </mat-form-field>
+
+  <button *ngIf="permisosService.puede('Proveedores', 'crear')" mat-raised-button color="primary" (click)="guardar()">Guardar</button>&nbsp;
+  <ng-container  *ngIf="currentProveedor.id">
+    <button *ngIf="permisosService.puede('Proveedores', 'editar')" mat-raised-button color="warn" (click)="cancelarEdicion()">Cancelar acción</button>
+  </ng-container>
+</form>
+
+<h4 class="mt-20">Lista de proveedores</h4>
+
+   <!-- Spinner de carga  -->
+   <div *ngIf="mostrarSpinner" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Cargando espacios...</span>
+  </div>
+
+
+  <table mat-table [dataSource]="proveedoresList" *ngIf="!mostrarSpinner">
+
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="nombre">
+      <th mat-header-cell *matHeaderCellDef > Nombre </th>
+      <td mat-cell *matCellDef="let element" > {{element.nombre}} </td>
+    </ng-container>
+
+    <!-- Weight Column -->
+    <ng-container matColumnDef="rnc">
+      <th mat-header-cell *matHeaderCellDef > RNC </th>
+      <td mat-cell *matCellDef="let element"> {{element.rnc}} </td>
+    </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> Acciones </th>
+      <td mat-cell *matCellDef="let item">
+        <button *ngIf="permisosService.puede('Proveedores', 'editar')" mat-button class="btnEditTable"  (click)="setvalueForm(item)">
+          <div class="flex justify-content-center">
+            <mat-icon>edit</mat-icon>
+          </div>
+        </button>
+        <ng-container *ngIf="permisosService.puede('Proveedores', 'eliminar')">
+        <button mat-button class="btnDeleteTable"  (click)="deleteProveedor(item)">
+          <div class="flex justify-content-center" >
+            <mat-icon>delete</mat-icon>
+          </div>
+        </button>
+      </ng-container>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+

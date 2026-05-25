@@ -1,0 +1,153 @@
+<div class="preview-wrapper" *ngIf="movimientoObtenido">
+
+  <!-- DOCUMENTO (se copia al imprimir) -->
+  <div id="print-asignacion-doc" class="form-doc">
+
+    <!-- Header -->
+    <div class="f-header">
+      <div class="f-logo-cell">
+        <div class="f-logo">
+          <img src="assets/Logo.png" alt="Logo.png" class="f-logo-img">
+        </div>
+      </div>
+      <div class="f-title-cell">
+        <div class="f-title-main">Formulario</div>
+        <div class="f-title-sub">{{ movimientoObtenido.tipoMovimiento.nombre || ''}} de Activos</div>
+      </div>
+      <div class="f-meta-cell">
+        <div class="f-meta-row">
+          <span class="f-meta-label">No. Formulario:</span>
+          <span class="f-meta-val">{{movimientoObtenido.noFormulario|| ''}}</span>
+        </div>
+        <div class="f-meta-row">
+          <span class="f-meta-label">Estado:</span>
+          <span class="f-meta-val">{{movimientoObtenido.estado|| ''}}</span>
+        </div>
+        <div class="f-meta-row">
+          <span class="f-meta-label">Fecha:</span>
+          <span class="f-meta-val">{{fechaHoy}}</span>
+        </div>
+        <div class="f-meta-row">
+          <span class="f-meta-label">Código:</span>
+          <span class="f-meta-val">A-GLO-FOR-022</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dates bar -->
+    <div class="f-dates">
+      <div class="f-date-cell">
+        <span class="f-date-label">Fecha de Creación:</span>
+        <span class="f-date-val">{{formatearFecha(movimientoObtenido.fechaCreacion)}}</span>
+      </div>
+      <div class="f-date-cell">
+        <span class="f-date-label"></span>
+      </div>
+    </div>
+
+    <!-- Info rows -->
+    <div class="f-info-grid">
+      <div class="f-info-cell">
+        <div class="f-lbl">Recinto</div>
+        <div class="f-val">{{ movimientoObtenido.recinto }}</div>
+      </div>
+      <div class="f-info-cell">
+        <div class="f-lbl">Unidad Organizativa</div>
+        <div class="f-val">{{ movimientoObtenido.area }}</div>
+      </div>
+
+    </div>
+
+    <div class="f-info-grid">
+      <div class="f-info-cell">
+        <div class="f-lbl">Responsable</div>
+        <div class="f-val">{{ movimientoObtenido.responsable }}</div>
+      </div>
+      <!-- <div class="f-info-cell span2">
+
+      </div> -->
+      <div class="f-info-cell">
+        <div class="f-lbl">Número de Factura</div>
+        <div class="f-val">{{ movimientoObtenido.numeroFactura }}</div>
+      </div>
+    </div>
+
+    <!-- <div class="f-info-grid">
+      <div class="f-info-cell">
+        <div class="f-lbl">Responsable</div>
+        <div class="f-val">{{ data.responsable }}</div>
+      </div>
+      <div class="f-info-cell span2">
+        <div class="f-lbl">Cargo</div>
+        <div class="f-val">{{ data.cargoResponsable }}</div>
+      </div>
+    </div> -->
+
+    <div class="f-info-grid">
+      <div class="f-info-cell span4 bg-alt">
+        <div class="f-lbl">Tipo de Movimiento</div>
+        <div class="f-val">{{ movimientoObtenido.tipoMovimiento.nombre }}</div>
+      </div>
+    </div>
+
+    <!-- Items table -->
+    <div class="f-section-head">Detalle de Activos Fijos</div>
+    <table class="f-table">
+      <thead>
+        <tr>
+          <th style="width:30px">No.</th>
+          <th>Código Institucional</th>
+          <th>Código de Bienes Nacionales</th>
+          <th>Descripciones Específicas<br>(Marca, modelo, color)</th>
+          <th>Serial</th>
+          <th>Condición</th>
+          <th>Costo</th>
+          <!-- <th>Condición</th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of activos; let i = index" class="filled">
+          <td>{{ i + 1 }}</td>
+          <td>{{ item.codInstitucional || ''}}</td>
+          <td>{{ item.codBienesNacionales || ''}}</td>
+          <td class="desc">
+            Marca:{{ item.marca }}, modelo:{{ item.serial }}, color: {{item.color}}</td>
+          <td>{{ item.serial ||  ''}}</td>
+          <td>{{ item.condicion || ''}}</td>
+          <td>{{ item.costo | number:'1.2-2' }}</td>
+        </tr>
+        <tr *ngFor="let e of emptyRows; let i = index">
+          <td>{{ (data.items?.length ?? 0) + i + 1 }}</td>
+          <td></td><td></td><td class="desc"></td><td></td><td></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Observations -->
+    <div class="f-obs-head">Observaciones</div>
+    <div class="f-obs-body">{{ movimientoObtenido.observaciones }}</div>
+
+    <!-- Signatures -->
+    <div class="f-sigs">
+      <div class="f-sig-cell">
+        <div class="f-sig-label">Entregado</div>
+        <div class="f-sig-line"></div>
+        <div class="f-sig-name">{{ data.entregadoNombre | uppercase }}</div>
+        <div class="f-sig-role">{{ data.entregadoCargo }}</div>
+      </div>
+      <div class="f-sig-cell">
+        <div class="f-sig-label">Recibido</div>
+        <div class="f-sig-line"></div>
+        <div class="f-sig-name">{{ data.recibidoNombre  | uppercase}}</div>
+        <div class="f-sig-role">{{ data.recibidoCargo }}</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="f-footer">
+      <span class="f-footer-code">A-GLO-FOR-022</span>
+      <span class="f-footer-ver">{{movimientoObtenido.noFormulario|| ''}}</span>
+    </div>
+
+  </div>
+</div>

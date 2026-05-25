@@ -1,0 +1,123 @@
+<!-- <mat-card class="w-100"> -->
+  <mat-card-content>
+<h4 class="mb-32">Usuarios</h4 >
+  <form [formGroup]="usuarioForm">
+    <div class="row">
+      <div class="col-md-6">
+        <mat-form-field class="w-100 fs-16" appearance="outline">
+          <mat-label>Usuario</mat-label>
+          <input
+          type="text"
+          placeholder="Buscar usuario"
+          matInput
+          [formControl]="usuarioCtrl"
+          [matAutocomplete]="auto">
+          <mat-icon matSuffix *ngIf="mostrarCargando">
+            <mat-progress-spinner diameter="20" mode="indeterminate" color="primary"></mat-progress-spinner>
+          </mat-icon>
+
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let u of filteredUsuarios | async" [value]="u">
+            {{u.persona.nombre}} {{u.persona.apellidos}} ({{u.usuario}})
+          </mat-option>
+        </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field class="w-100 fs-16" appearance="outline">
+          <mat-label>Nivel de usuario</mat-label>
+          <mat-select required formControlName="idRol">
+            <mat-option *ngFor="let item of RolesList" [value]="item.idRol">{{item.nombre}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+
+
+
+    <div class="d-flex justify-content-end" *ngIf="permisosService.puede('Usuarios', 'crear')">
+      <button mat-raised-button class="me-8 mb-8" color="primary" (click)="guardar()">Guardar</button>
+    </div>
+
+  </form>
+    <h4 class="mb-40">Lista Usuarios</h4>
+
+    <!-- Spinner de carga  -->
+    <div *ngIf="mostrarCargando" class="loading-spinner">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Cargando...</span>
+    </div>
+
+
+
+  <div class="table-responsive">
+    <table mat-table [dataSource]="usuarioList" *ngIf="!mostrarCargando" class="text-nowrap w-100">
+      <!-- Assigned Column -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+        <td mat-cell *matCellDef="let element">
+          <p class="mb-0 fw-medium"> {{element.persona.nombre}} </p>
+          <!-- <p class="mb-0 fw-normal op-5">{{ element.ficha }}</p> -->
+        </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="apellido">
+        <th mat-header-cell *matHeaderCellDef> Apellidos</th>
+        <td mat-cell *matCellDef="let element">
+          <p class="mb-0 fw-medium op-5">{{element.persona.apellidos}} </p>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="usuario">
+        <th mat-header-cell *matHeaderCellDef> Usuario </th>
+        <td mat-cell *matCellDef="let element">
+          <p class="mb-0 fw-medium op-5">{{element.usuario}}</p>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="recinto">
+        <th mat-header-cell *matHeaderCellDef> Recinto </th>
+        <td mat-cell *matCellDef="let element">
+          <p class="mb-0 fw-medium">{{element.persona.recinto.siglas}}</p>
+          <!-- <p class="mb-0 fw-medium op-5">{{element.modelo.tipoVehiculo.nombre}}</p> -->
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="rol">
+        <th mat-header-cell *matHeaderCellDef>Rol</th>
+        <td mat-cell *matCellDef="let element">
+          <p class="mb-0 fw-medium op-5">{{element.rol.nombre}}</p>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones" >
+        <th mat-header-cell *matHeaderCellDef style="width: 20%;" > Acciones </th>
+        <td mat-cell *matCellDef="let element" style="width: 20%;" style="width: 3%;" >
+
+          <ng-container *ngIf="permisosService.puede('Usuarios', 'eliminar')">
+            <button mat-button class="btnDeleteTable"
+            [disabled]="element.idUsuario == usuarioActual.id"
+              (click)="deleteUsuario(element)">
+              <div class="flex justify-content-center">
+                <mat-icon>delete</mat-icon>
+              </div>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+
+    <div class="pagination-container">
+      <mat-paginator *ngIf="totalPage" [length]="totalItem || 0" [pageSize]="10"
+        [pageIndex]="(currentPage || 1) - 1" [pageSizeOptions]="[5,10,20,50]"
+        (page)="getUsuarios($event.pageIndex + 1, $event.pageSize)">
+      </mat-paginator>
+    </div>
+  </div>
+</mat-card-content>
+<!-- </mat-card> -->

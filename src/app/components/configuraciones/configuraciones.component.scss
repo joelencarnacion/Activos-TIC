@@ -1,0 +1,28 @@
+.options {
+
+  .list-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px;
+  }
+
+  .sidebar-menu {
+    padding: 13px 16px;
+    border-radius: 25px;
+    font-size: 15px;
+
+    &.activelink {
+      background-color: #EC801E !important;
+      color: #fff !important;
+    }
+  }
+}
+
+.mensaje-centro {
+  height: 100%;
+  display: flex;
+  justify-content: center;   /* horizontal */
+  align-items: center;       /* vertical */
+  text-align: center;
+}
+

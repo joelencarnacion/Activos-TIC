@@ -1,0 +1,74 @@
+.body{
+  padding: 20px;
+}
+.tableRespon {
+  overflow-x: auto;
+}
+
+.tdtable {
+  padding: 16px;
+}
+
+.thtable:first-of-type,
+.tdtable:first-of-type,
+.tdtable:first-of-type {
+  padding: 16px;
+}
+
+.thtable {
+  padding: 16px;
+  text-align: left;
+}
+
+.headertable {
+  font-size: 14px;
+}
+
+::ng-deep .mat-mdc-slide-toggle.custom-toggle {
+  /* Track apagado */
+  .mdc-switch__track {
+    background-color: #e74c3c !important; /* rojo */
+    opacity: 1 !important;
+  }
+
+  /* Track encendido */
+  &.mat-mdc-slide-toggle-checked .mdc-switch__track {
+    background-color: #EC801E !important; /* naranja */
+  }
+
+  /* Bolita */
+  .mdc-switch__handle {
+    background-color: #ffffff !important; /* apagado */
+  }
+
+  &.mat-mdc-slide-toggle-checked .mdc-switch__handle {
+    background-color: #f1c40f !important; /* encendido */
+  }
+}
+
+
+.verdeColor{
+  color:#2ecc71;
+}
+
+
+
+
+.close-btn {
+  background-color:#f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: darken(#f44336, 10%);
+  }
+}
+
+.cabeza{
+  display: flex;
+  justify-content: space-between;
+}

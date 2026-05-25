@@ -1,0 +1,37 @@
+<div class="row">
+  <!-- Columna izquierda con dos cards uno debajo del otro -->
+  <div class="col-lg-3">
+    <mat-card class="w-100 mb-3">
+      <mat-card-content>
+        <div class="sidenav-container">
+          <div class="options">
+            <li class="list-group mb-2" *ngFor="let sidenav of sidebarMenu">
+              <a matRipple [matRippleColor]="'#f7f8f443'"
+                [routerLink]="[{ outlets: { movimiento: [sidenav.link] } }]"
+                class="sidebar-menu w-100 d-flex align-items-center"
+                [routerLinkActive]="routerActive">
+                <mat-icon class="material-symbols-outlined">{{sidenav.icon}}</mat-icon>
+                <!-- <i-feather [name]="sidenav.icon" class="feather-base me-12"></i-feather> -->
+                <span class="ps-4">{{ sidenav.menu }}</span>
+              </a>
+            </li>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Columna derecha -->
+  <div class="col-lg-9">
+    <mat-card class="w-100" style="display: flex; flex-direction: column; height: 100%; min-height: 500px;">
+      <mat-card-content style="flex-grow: 1">
+        <div class="configuracionForms">
+          <router-outlet name="movimiento"(activate)="onActivate()" ></router-outlet>
+          <div *ngIf="!outletActivo" class="mensaje-centro ">
+            <h4>Seleccione una opción del menú</h4>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

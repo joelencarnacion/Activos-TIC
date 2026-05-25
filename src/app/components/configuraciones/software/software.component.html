@@ -1,0 +1,406 @@
+<mat-tab-group (selectedTabChange)="onTabChange($event)">
+  <mat-tab label="Software">
+    <form [formGroup]="softwareForm">
+      <mat-form-field appearance="outline" class="mt-20" style="width: 32%;">
+        <mat-label>Nombre software</mat-label>
+        <input matInput formControlName="nombre">
+      </mat-form-field>&nbsp;
+
+      <mat-form-field appearance="outline" style="width: 32%;">
+        <mat-label>Versión</mat-label>
+        <input matInput formControlName="version">
+      </mat-form-field>&nbsp;
+
+      <mat-form-field appearance="outline" style="width: 32%;">
+        <mat-label>Fabricante</mat-label>
+        <input matInput formControlName="fabricante">
+      </mat-form-field>&nbsp;
+
+      <mat-form-field appearance="outline" style="width: 48.5%;">
+        <mat-label>Seleccione el tipo de software</mat-label>
+        <mat-select disableRipple formControlName="tipoSoftwareId">
+          <ng-container>
+            <mat-option *ngFor="let item of tipoSoftwareList " [value]="item.id">
+              {{item.nombre}}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>&nbsp;
+
+      <mat-form-field appearance="outline" style="width: 48.5%;">
+        <mat-label>Seleccione la licencia</mat-label>
+        <mat-select disableRipple formControlName="licenciaId">
+          <ng-container>
+            <mat-option *ngFor="let item of licenciaList " [value]="item.id">
+              {{item.nombre}}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>&nbsp;
+
+
+      <div style="display: flex;">
+        <button mat-raised-button color="primary" *ngIf="permisosService.puede('Software', 'crear')" (click)=" guardarSofteware()">Guardar</button>&nbsp;
+        <ng-container *ngIf="currentSoftware.id">
+          <button *ngIf="permisosService.puede('Software', 'editar')" mat-raised-button color="warn" (click)="cancelarEdicion()">Cancelar acción</button>
+        </ng-container>
+      </div>
+    </form>
+
+    <h4 class="mt-20">Lista de softwares</h4>
+
+    <!-- Spinner de carga  -->
+    <div *ngIf="mostrarSpinner" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Cargando...</span>
+    </div>
+
+    <div class="table-responsive" *ngIf="!mostrarSpinner">
+      <table mat-table [dataSource]="SoftwareList">
+
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef> Nombre </th>
+          <td mat-cell *matCellDef="let element">{{element.nombre}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="fabricante">
+          <th mat-header-cell *matHeaderCellDef> Fabricante </th>
+          <td mat-cell *matCellDef="let element">{{element.fabricante}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="version">
+          <th mat-header-cell *matHeaderCellDef> Versión </th>
+          <td mat-cell *matCellDef="let element">{{element.version}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="tipoSoftware">
+          <th mat-header-cell *matHeaderCellDef> Tipo Software </th>
+          <td mat-cell *matCellDef="let element">{{element.tipoSoftware.nombre}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="licencia">
+          <th mat-header-cell *matHeaderCellDef> Licencia </th>
+          <td mat-cell *matCellDef="let element">{{element.licencia?.nombre || 'N/A'}}</td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef> Acciones </th>
+          <td mat-cell *matCellDef="let item">
+            <button *ngIf="permisosService.puede('Software', 'editar')" mat-button class="btnEditTable" (click)="setvalueFormSowtware(item)">
+              <div class="flex justify-content-center">
+                <mat-icon>edit</mat-icon>
+              </div>
+            </button>
+            <ng-container>
+              <button mat-button class="btnDeleteTable" *ngIf="permisosService.puede('Software', 'eliminar')" (click)="deleteSoftware(item)">
+                <div class="flex justify-content-center">
+                  <mat-icon>delete</mat-icon>
+                </div>
+              </button>
+            </ng-container>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsSoftware"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsSoftware;"></tr>
+      </table>
+           <!-- Sin resultados -->
+           <div *ngIf="!mostrarSpinner && SoftwareList.length === 0" class="no-results">
+            <mat-icon>search_off</mat-icon>
+            <h3>No se encontraron registros</h3>
+            <!-- <p>Intenta ajustar los filtros de búsqueda</p> -->
+          </div>
+    </div>
+  </mat-tab>
+
+
+  <mat-tab label="Licencias">
+    <form class="mt-20" [formGroup]="licenciaForm">
+
+      <mat-form-field appearance="outline" class="mt-20" style="width: 32%;">
+        <mat-label>Nombre Licencia</mat-label>
+        <input matInput formControlName="nombre">
+      </mat-form-field>&nbsp;
+
+      <mat-form-field appearance="outline" style="width: 32%;">
+        <mat-label>Número</mat-label>
+        <input matInput formControlName="numeroLicencia">
+      </mat-form-field>&nbsp;
+
+      <mat-form-field appearance="outline" style="width: 32%;">
+        <mat-label>costo</mat-label>
+        <input matInput type="number" formControlName="costo">
+      </mat-form-field>&nbsp;
+
+      <mat-form-field appearance="outline" style="width: 48.5%;">
+        <mat-label>Seleccione el proveedor</mat-label>
+        <mat-select disableRipple formControlName="proveedorId">
+          <ng-container>
+            <mat-option *ngFor="let item of proveedoresList" [value]="item.id">
+              {{item.nombre}} - {{item.rnc}}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>&nbsp;
+
+      <mat-form-field appearance="outline" style="width: 48.5%;">
+        <mat-label>Seleccione el tipo de licencia</mat-label>
+        <mat-select disableRipple formControlName="tipoLicenciaId">
+          <ng-container>
+            <mat-option *ngFor="let item of tipoLicenciaList" [value]="item.id">
+              {{item.nombre}}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>&nbsp;
+
+
+      <mat-form-field appearance="outline" style="width: 48.5%;">
+        <mat-label>Fecha Inicio</mat-label>
+        <input matInput type="date" formControlName="fechaIncio">
+      </mat-form-field>&nbsp;
+
+      <mat-form-field appearance="outline" style="width: 48.5%;">
+        <mat-label>Fecha Vencimiento</mat-label>
+        <input matInput type="date" formControlName="fechaVencimiento">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" style="width: 32%;">
+        <mat-label>Correo responsable</mat-label>
+        <input matInput type="email" required formControlName="responsableEmailTo">
+      </mat-form-field>&nbsp;
+
+      <mat-form-field appearance="outline" style="width: 32%;">
+        <mat-label>Correo copia</mat-label>
+        <input matInput type="email" formControlName="responsableEmailCc">
+      </mat-form-field>&nbsp;
+
+      <mat-form-field appearance="outline" style="width: 32%;">
+        <mat-label>Seleccione el estado</mat-label>
+        <mat-select disableRipple requerid formControlName="estado">
+          <ng-container>
+            <mat-option value="Activa">Activa</mat-option>
+            <mat-option value="Expirada">Expirada</mat-option>
+            <mat-option value="Suspendida">Suspendida</mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>&nbsp;
+
+      <button mat-raised-button color="primary" *ngIf="permisosService.puede('Software', 'crear')" (click)="guardarLicencia()">Guardar</button>&nbsp;
+      <ng-container *ngIf="currentLicencia.id">
+        <button *ngIf="permisosService.puede('Software', 'editar')" mat-raised-button color="warn" (click)="cancelarEdicion()">Cancelar acción</button>
+      </ng-container>
+
+    </form>
+
+    <h4 class="mt-20">Lista de licencias</h4>
+
+    <!-- Spinner de carga  -->
+    <div *ngIf="mostrarSpinnerLicencia" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Cargando Licencias...</span>
+    </div>
+
+
+    <table mat-table [dataSource]="licenciaList" *ngIf="!mostrarSpinnerLicencia">
+
+      <!-- Position Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> Id. </th>
+        <td mat-cell *matCellDef="let element">{{element.id}} </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+        <td mat-cell *matCellDef="let element">{{element.nombre}}</td>
+      </ng-container>
+      <ng-container matColumnDef="numeroLicencia">
+        <th mat-header-cell *matHeaderCellDef> Número licencia </th>
+        <td mat-cell *matCellDef="let element">{{element.numeroLicencia}}</td>
+      </ng-container>
+      <ng-container matColumnDef="costo">
+        <th mat-header-cell *matHeaderCellDef> Costo </th>
+        <td mat-cell *matCellDef="let element">RD${{element.costo | number:'1.2-2'}}</td>
+      </ng-container>
+      <ng-container matColumnDef="fechaIncio">
+        <th mat-header-cell *matHeaderCellDef> Fecha inicio/Vencimiento </th>
+        <td mat-cell *matCellDef="let element">
+          <p class="mb-0 fw-medium">{{ element.fechaVencimiento |date }}</p>
+          <p class="mb-0 fw-normal op-5">{{ element.fechaIncio | date}}</p>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef> Estado </th>
+        <td mat-cell *matCellDef="let element">   <span class="trip-status" [ngClass]="{
+          'danger': element.estado === 'Expirada',
+          'primary': element.estado === 'Activa',
+          'rechazado ': element.estado === 'Suspendida'
+        }">{{element.estado}}</span></td>
+      </ng-container>
+
+
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let item">
+          <button mat-icon-button [matMenuTriggerFor]="menu4">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu4="matMenu">
+            <button mat-menu-item *ngIf="permisosService.puede('Software', 'editar')" (click)="setvalueFormLicencia(item)">
+              <mat-icon class="btnEditTable">edit</mat-icon>
+              <span>Editar</span>
+            </button>
+            <button mat-menu-item (click)="openDetailModal(item)">
+              <mat-icon class="btnInfoTable">info</mat-icon>
+              <span>Detalles</span>
+            </button>
+
+            <button *ngIf="permisosService.puede('Software', 'eliminar')" mat-menu-item (click)="deleteLicencia(item)">
+              <mat-icon class="btnDeleteTable">delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumnsLicencia"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumnsLicencia;"></tr>
+    </table>
+
+        <!-- Sin resultados -->
+        <div *ngIf="!mostrarSpinner && licenciaList.length === 0" class="no-results">
+          <mat-icon>search_off</mat-icon>
+          <h3>No se encontraron licencias</h3>
+          <!-- <p>Intenta ajustar los filtros de búsqueda</p> -->
+        </div>
+
+
+    <!-- Modal de detalles del viaje -->
+    <div class="trip-details-modal" *ngIf="isDetailModalOpen && licenciaSelecionada" (click)="closeDetailModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Detalles de la licencia</h2>
+
+          <!-- <button mat-menu-item (click)="printMe()" style="width: 60px;">
+        <mat-icon class="btnEditTable">print</mat-icon>
+      </button> -->
+          <button class="close-button" (click)="closeDetailModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+
+          <div id="print-section">
+
+            <div class="trip-header">
+              <h3>{{ licenciaSelecionada.nombre }}</h3>
+              <span class="trip-status" [ngClass]="{
+            'danger': licenciaSelecionada.estado === 'Expirada',
+            'primary': licenciaSelecionada.estado === 'Activa',
+            'rechazado ': licenciaSelecionada.estado === 'Suspendida'
+          }">{{licenciaSelecionada.estado}}</span>
+            </div>
+
+            <div class="trip-info">
+              <div class="info-item">
+                <span class="info-label">Número Licencia:</span>
+                <span>{{ licenciaSelecionada.numeroLicencia }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Costo:</span>
+                <span> RD${{ licenciaSelecionada.costo   | number:'1.2-2'}}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Fecha Inicio:</span>
+                <span>{{ licenciaSelecionada.fechaIncio | date}}</span>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Fecha Vencimiento:</span>
+                <span>{{ licenciaSelecionada.fechaVencimiento | date}}</span>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Tipo licencia:</span>
+                <span>{{ licenciaSelecionada.tipoLicencia.nombre }}</span>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Correo responsable:</span>
+                <span>{{ licenciaSelecionada.responsableEmailTo }}</span>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Correo en copia:</span>
+                <span>{{ licenciaSelecionada.responsableEmailCc}}</span>
+              </div>
+
+
+
+<!--
+              <div class="modal-divider">
+                <div class="trip-documents" *ngIf="licenciaSelecionada.proveedor">
+                  <h4>Proveedor:</h4>
+                  <div class="trip-info">
+                    <div class="info-item">
+                      <span class="info-label">Tipo:</span>
+                      <span>{{  licenciaSelecionada.proveedor.nombre }}</span>
+                    </div>
+
+                    <div class="info-item">
+                      <span class="info-label">Tipo:</span>
+                      <span>{{ licenciaSelecionada.proveedor.rnc  }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div> -->
+
+              <div class="modal-divider">
+                <div class="trip-documents" *ngIf="licenciaSelecionada.proveedor">
+                  <h4>Proveedor:</h4>
+                  <div class="trip-info">
+                    <div class="info-item">
+                      <span class="info-label">Nombre:</span>
+                      <span>{{ licenciaSelecionada.proveedor.nombre }}</span>
+
+                    </div>
+
+                    <div class="info-item">
+                      <span class="info-label">RNC:</span>
+                      <span>{{ licenciaSelecionada.proveedor.rnc }}</span>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div class="trip-documents"
+          *ngIf="solicitudSelecionada.docUrlJustificacion || solicitudSelecionada.docUrlParticipates">
+          <h4>Documentos:</h4>
+          <div class="documents-list">
+            <a *ngIf="solicitudSelecionada.docUrlJustificacion" [href]="solicitudSelecionada.docUrlJustificacion"
+              target="_blank" class="document-link">
+              Documento de justificación
+            </a>
+            <a *ngIf="solicitudSelecionada.docUrlParticipates" [href]="solicitudSelecionada.docUrlParticipates"
+              target="_blank" class="document-link">
+              Listado de participantes
+            </a>
+          </div>
+        </div> -->
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button class="close-btn" (click)="closeDetailModal()">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </mat-tab>
+</mat-tab-group>

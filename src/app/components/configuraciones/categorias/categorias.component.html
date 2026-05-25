@@ -1,0 +1,84 @@
+<h4 class="mb-32">Categorias</h4 >
+  <form [formGroup]="categoriaForm">
+    <div class="row">
+      <ng-container>
+        <mat-form-field appearance="outline" class="w-100 mb-16">
+          <mat-label>Categoria</mat-label>
+          <input matInput formControlName="nombre" placeholder="Nombre de la categoria">
+        </mat-form-field>
+      </ng-container>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <ng-container *ngIf="currentCategoria.id && permisosService.puede('Categorias', 'editar')">&nbsp;
+        <button mat-raised-button color="warn" (click)="cancelarEdicion()">Cancelar acción</button>&nbsp;
+      </ng-container>
+      <ng-container   *ngIf="permisosService.puede('Categorias', 'crear')">
+        <button mat-raised-button class="me-8 mb-8" color="primary" (click)="guardar()">Guardar</button>
+      </ng-container>
+    </div>
+
+  </form>
+    <h4 class="mb-40">Lista categorias</h4>
+
+    <!-- Spinner de carga  -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Cargando categorias...</span>
+    </div>
+
+
+
+  <div class="table-responsive">
+    <table mat-table [dataSource]="categoriaList" *ngIf="!isLoading" class="text-nowrap w-100">
+      <!-- Assigned Column -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+        <td mat-cell *matCellDef="let element">
+          <p class="mb-0 fw-medium"> {{element.nombre}} </p>
+          <!-- <p class="mb-0 fw-normal op-5">{{ element.ficha }}</p> -->
+        </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="acciones" >
+        <th mat-header-cell *matHeaderCellDef style="width: 20%;" > Acciones </th>
+        <td mat-cell *matCellDef="let element" style="width: 20%;" style="width: 3%;" >
+
+          <ng-container  *ngIf="permisosService.puede('Categorias', 'editar')">
+            <button mat-button class="btnEditTable"
+              (click)="setValueCategoria(element)">
+              <div class="flex justify-content-center">
+                <mat-icon>edit</mat-icon>
+              </div>
+            </button>
+          </ng-container>
+          <ng-container  *ngIf="permisosService.puede('Categorias', 'eliminar')">
+            <button mat-button class="btnDeleteTable"
+              (click)="deleteCategoria(element)">
+              <div class="flex justify-content-center">
+                <mat-icon>delete</mat-icon>
+              </div>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+<!--
+    <div class="pagination-container">
+      <mat-paginator *ngIf="periodoList && pagination"
+        [length]="pagination.totalCount || 0"
+        [pageSize]="pagination.pageSize || 5"
+        [pageIndex]="(pagination.currentPage || 1) - 1"
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+    </div> -->
+  </div>
+
+

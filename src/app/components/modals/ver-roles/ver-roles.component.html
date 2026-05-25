@@ -1,0 +1,55 @@
+<div class="body">
+  <!-- <div class="cabeza"> -->
+    <h4 class="mb-32">Rol {{this.rolForm.get('rolName')?.value}}</h4>
+    <p><mat-slide-toggle
+      class="custom-toggle"
+      labelPosition="before"
+      [checked]="puedeAutorizar"
+      (change)="cambiarPermiso($event.checked)"
+      >Autorizar</mat-slide-toggle></p>
+
+  <!-- </div> -->
+
+    <!-- Spinner de carga  -->
+  <div *ngIf="mostrarCargando" class="loading-spinner">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Cargando...</span>
+  </div>
+
+  <div class="tableRespon" *ngIf="!mostrarCargando">
+    <table class="text-nowrap w-100">
+      <thead class="header-cell">
+        <tr>
+          <th class="thtable">Módulo</th>
+          <th class="thtable">Leer</th>
+          <th class="thtable">Crear</th>
+          <th class="thtable">Editar</th>
+          <th class="thtable">Eliminar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let perm of permisosFormGroups" [formGroup]="perm">
+          <td class="tdtable">{{ perm.value.nombre }}</td>
+          <td class="tdtable">
+            <mat-icon *ngIf="perm.value.leer" class="verdeColor">check_circle</mat-icon>
+            <mat-icon *ngIf="!perm.value.leer"  class="denied">cancel</mat-icon>
+          <td class="tdtable">
+            <mat-icon *ngIf="perm.value.crear" class="verdeColor">check_circle</mat-icon>
+            <mat-icon *ngIf="!perm.value.crear"  class="denied">cancel</mat-icon>
+          <td class="tdtable">
+            <mat-icon *ngIf="perm.value.editar" class="verdeColor">check_circle</mat-icon>
+            <mat-icon *ngIf="!perm.value.editar" class="denied">cancel</mat-icon>
+          <td class="tdtable">
+            <mat-icon *ngIf="perm.value.eliminar" class="verdeColor">check_circle</mat-icon>
+            <mat-icon *ngIf="!perm.value.eliminar" class="denied">cancel</mat-icon>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <button mat-raised-button class="close-btn mt-4" (click)="close()">Cerrar
+    </button>&nbsp;
+  </div>
+</div>
