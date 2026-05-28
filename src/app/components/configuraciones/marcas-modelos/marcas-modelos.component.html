@@ -1,96 +1,128 @@
 <mat-tab-group (selectedTabChange)="onTabChange($event)">
-<mat-tab label="Marcas">
-      <form [formGroup]="marcaForm">
-        <mat-form-field appearance="outline"  class="mt-20">
-          <mat-label>Nombre</mat-label>
-          <input matInput formControlName="nombre">
-        </mat-form-field>&nbsp;
+  <mat-tab label="Marcas">
+    <form [formGroup]="marcaForm">
 
-        <div style="display: flex;">
-          <button mat-raised-button *ngIf="permisosService.puede('Marcas', 'crear')" (click)="guardarMarca()" color="primary">Guardar</button>&nbsp;
-          <ng-container  *ngIf="currentMarcas.id">
-            <button  *ngIf="permisosService.puede('Marcas', 'editar')" mat-raised-button color="warn" (click)="cancelarEdicionMarca()">Cancelar acción</button>
-          </ng-container>
+      <div class="form-gridMarca" style="padding-top: 15px;">
+        <div class="form-group">
+          <!-- <label class="form-label">Nombre</label> -->
+          <input type="text" class="form-input" formControlName="nombre" placeholder="Nombre de la marca">
         </div>
-      </form>
+      </div>
+      <!-- <mat-form-field appearance="outline" class="mt-20">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre">
+      </mat-form-field>&nbsp; -->
 
-      <h4 class="mt-20">Lista de Marcas</h4>
+      <div class="d-flex justify-content-end" style="padding-top: 15px;">
+        <button mat-raised-button *ngIf="permisosService.puede('Marcas', 'crear')" (click)="guardarMarca()"
+          color="primary">Guardar</button>&nbsp;
+        <ng-container *ngIf="currentMarcas.id">
+          <button *ngIf="permisosService.puede('Marcas', 'editar')" mat-raised-button color="warn"
+            (click)="cancelarEdicionMarca()">Cancelar acción</button>
+        </ng-container>
+      </div>
+    </form>
 
-         <!-- Spinner de carga  -->
-     <div *ngIf="mostrarSpinner" class="loading-container">
+    <h4 class="mt-20">Lista de Marcas</h4>
+
+    <!-- Spinner de carga  -->
+    <div *ngIf="mostrarSpinner" class="loading-container">
       <mat-spinner diameter="40"></mat-spinner>
       <span>Cargando espacios...</span>
     </div>
 
-      <div  class="table-responsive" *ngIf="!mostrarSpinner">
-        <table mat-table [dataSource]="marcaList">
-          <!-- Position Column -->
-          <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef > Id. </th>
-            <td mat-cell *matCellDef="let element" > {{element.id}} </td>
-          </ng-container>
+    <div class="table-responsive" *ngIf="!mostrarSpinner">
+      <table mat-table [dataSource]="marcaList">
+        <!-- Position Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef> Id. </th>
+          <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+        </ng-container>
 
-          <!-- Name Column -->
-          <ng-container matColumnDef="nombre">
-            <th mat-header-cell *matHeaderCellDef> Nombre </th>
-            <td mat-cell *matCellDef="let element" > {{element.nombre}} </td>
-          </ng-container>
+        <!-- Name Column -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef> Nombre </th>
+          <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+        </ng-container>
 
-          <!-- Symbol Column -->
-          <ng-container matColumnDef="Acciones">
-            <th mat-header-cell *matHeaderCellDef> Acciones </th>
-            <td mat-cell *matCellDef="let item">
-              <button *ngIf="permisosService.puede('Marcas', 'editar')" mat-button class="btnEditTable" (click)="setValueMarca(item)">
-                <div class="flex justify-content-center">
-                  <mat-icon>edit</mat-icon>
-                </div>
-              </button>
-              <ng-container *ngIf="permisosService.puede('Marcas', 'eliminar')">
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="Acciones">
+          <th mat-header-cell *matHeaderCellDef> Acciones </th>
+          <td mat-cell *matCellDef="let item">
+            <button *ngIf="permisosService.puede('Marcas', 'editar')" mat-button class="btnEditTable"
+              (click)="setValueMarca(item)">
+              <div class="flex justify-content-center">
+                <mat-icon>edit</mat-icon>
+              </div>
+            </button>
+            <ng-container *ngIf="permisosService.puede('Marcas', 'eliminar')">
               <button mat-button class="btnDeleteTable" (click)="deleteMarca(item)">
                 <div class="flex justify-content-center">
                   <mat-icon>delete</mat-icon>
                 </div>
               </button>
             </ng-container>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumnsMarcas"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumnsMarcas;"></tr>
-        </table>
-      </div>
-</mat-tab>
-
-
-<mat-tab label="Modelos">
-
-  <form [formGroup]="modeloForm" class="mt-20">
-    <mat-form-field appearance="outline"   style="width: 37%;">
-      <mat-label>Seleccione un modelo</mat-label>
-      <mat-select disableRipple formControlName="idMarca">
-        <ng-container>
-          <mat-option *ngFor="let item of marcaList " [value]="item.id">
-            {{item.nombre}}
-          </mat-option>
+          </td>
         </ng-container>
-      </mat-select>
-    </mat-form-field>&nbsp;
 
-    <mat-form-field appearance="outline"  style="width: 50%;">
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="nombre">
-    </mat-form-field>&nbsp;
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsMarcas"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsMarcas;"></tr>
+      </table>
+    </div>
+  </mat-tab>
 
-    <button *ngIf="permisosService.puede('Marcas', 'crear')" mat-raised-button color="primary" (click)=" guardarModelo()">Guardar</button>
-  </form>
-  <ng-container  *ngIf="currentModelo.id">
-    <button *ngIf="permisosService.puede('Marcas', 'editar')" mat-raised-button color="warn" (click)="cancelarEdicionModelo()">Cancelar acción</button>
-  </ng-container>
 
-  <h4 class="mt-20">Lista de Modelos</h4>
+  <mat-tab label="Modelos">
 
-     <!-- Spinner de carga  -->
-     <div *ngIf="mostrarSpinner" class="loading-container">
+    <form [formGroup]="modeloForm" class="mt-20">
+      <!-- <mat-form-field appearance="outline" style="width: 37%;">
+        <mat-label>Seleccione un modelo</mat-label>
+        <mat-select disableRipple formControlName="idMarca">
+          <ng-container>
+            <mat-option *ngFor="let item of marcaList " [value]="item.id">
+              {{item.nombre}}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>&nbsp; -->
+
+
+      <div class="form-grid" style="padding-top: 15px;">
+        <div class="form-group">
+          <label class="form-label">
+            Marca
+          </label>
+          <select class="form-select" formControlName="idMarca">
+            <option value=0>Seleccionar marca...</option>
+            <option *ngFor="let item of marcaList" [value]="item.id">{{item.nombre}}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nombre modelo</label>
+          <input type="text" class="form-input" formControlName="nombre" placeholder="Nombre del modelo">
+        </div>
+      </div>
+      <!--
+      <mat-form-field appearance="outline" style="width: 50%;">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre">
+      </mat-form-field>&nbsp; -->
+      <div class="d-flex justify-content-end" style="padding-top: 15px;">
+
+        <button *ngIf="permisosService.puede('Marcas', 'crear')" mat-raised-button color="primary"
+          (click)=" guardarModelo()">Guardar</button>&nbsp;
+        <ng-container *ngIf="currentModelo.id">
+          <button *ngIf="permisosService.puede('Marcas', 'editar')" mat-raised-button color="warn"
+            (click)="cancelarEdicionModelo()">Cancelar acción</button>
+        </ng-container>
+      </div>
+    </form>
+
+    <h4 class="mt-20">Lista de Modelos</h4>
+
+    <!-- Spinner de carga  -->
+    <div *ngIf="mostrarSpinner" class="loading-container">
       <mat-spinner diameter="40"></mat-spinner>
       <span>Cargando espacios...</span>
     </div>
@@ -101,18 +133,18 @@
       <!-- Position Column -->
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef> Id. </th>
-        <td mat-cell *matCellDef="let element" > {{element.id}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
       </ng-container>
 
       <!-- Name Column -->
       <ng-container matColumnDef="modelo">
-        <th mat-header-cell *matHeaderCellDef > Modelo </th>
-        <td mat-cell *matCellDef="let element" > {{element.nombre}} </td>
+        <th mat-header-cell *matHeaderCellDef> Modelo </th>
+        <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
       </ng-container>
 
       <!-- Weight Column -->
       <ng-container matColumnDef="marca">
-        <th mat-header-cell *matHeaderCellDef > Marca </th>
+        <th mat-header-cell *matHeaderCellDef> Marca </th>
         <td mat-cell *matCellDef="let element"> {{element.marca.nombre}} </td>
       </ng-container>
 
@@ -120,18 +152,19 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> Acciones </th>
         <td mat-cell *matCellDef="let item">
-          <button *ngIf="permisosService.puede('Marcas', 'editar')" mat-button class="btnEditTable"  (click)="setValueModelo(item)">
+          <button *ngIf="permisosService.puede('Marcas', 'editar')" mat-button class="btnEditTable"
+            (click)="setValueModelo(item)">
             <div class="flex justify-content-center">
               <mat-icon>edit</mat-icon>
             </div>
           </button>
           <ng-container *ngIf="permisosService.puede('Marcas', 'eliminar')">
-          <button mat-button class="btnDeleteTable" >
-            <div class="flex justify-content-center" (click)="deleteModelo(item)">
-              <mat-icon>delete</mat-icon>
-            </div>
-          </button>
-        </ng-container>
+            <button mat-button class="btnDeleteTable">
+              <div class="flex justify-content-center" (click)="deleteModelo(item)">
+                <mat-icon>delete</mat-icon>
+              </div>
+            </button>
+          </ng-container>
         </td>
       </ng-container>
 
@@ -139,8 +172,6 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumnsModelos;"></tr>
     </table>
 
-</mat-tab>
+  </mat-tab>
 
 </mat-tab-group>
-
-

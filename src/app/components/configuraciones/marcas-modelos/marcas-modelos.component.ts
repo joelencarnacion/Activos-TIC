@@ -189,6 +189,9 @@ guardarModelo(){
   }
   cancelarEdicionModelo(){
     this.modeloForm.reset();
+    this.modeloForm.patchValue({
+      idMarca: 0
+    });
   }
 
   cancelarEdicionMarca(){

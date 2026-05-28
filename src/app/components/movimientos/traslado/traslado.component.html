@@ -80,7 +80,7 @@
 
   <ng-container *ngIf="mostrarBuscar">
     <form [formGroup]="filterForm">
-      <div class="form-gridFilter" >
+      <div class="form-grid" >
 
 
         <div class="form-group">
@@ -97,6 +97,15 @@
             <option *ngFor="let item of tipoTrasladoList" [value]="item.nombre">{{item.nombre}}</option>
           </select>
         </div>
+
+        <div class="form-group">
+          <label class="form-label">CreadoPor</label>
+          <input type="text" formControlName="creadopor" class="form-input"
+          placeholder="Nombre de usuario">
+        </div>
+        </div>
+
+        <div class="form-gridFilter" >
 
         <div class="form-group">
           <label class="form-label">
@@ -361,7 +370,7 @@
       <table mat-table [dataSource]="trasladoList" class="text-nowrap w-100">
 
         <ng-container matColumnDef="noFormulario">
-          <th mat-header-cell *matHeaderCellDef> No. </th>
+          <th mat-header-cell *matHeaderCellDef> No. formulario</th>
           <td mat-cell *matCellDef="let element">
             <p class="mb-0 fw-medium">{{element.noFormulario
               }}</p>
@@ -443,6 +452,13 @@
                 </button>
               </ng-container>
               <ng-container>
+
+                <ng-container>
+                  <button mat-menu-item (click)="imprimir(element)">
+                    <mat-icon class="btnInfoTable">print</mat-icon>
+                    <span>Imprimir</span>
+                  </button>
+                </ng-container>
 
                 <button mat-menu-item (click)="openDetalleActivos(element.id)">
                   <mat-icon class="btnInfoTable">view_in_ar</mat-icon>
@@ -551,6 +567,10 @@
                   <span class="info-label">Tipo Donación:</span>
                   <span>{{ trasladoSelecionado.tipoTraslado.nombre }}</span>
                 </div>
+                <div class="info-item">
+                  <span class="info-label">CreadoPor:</span>
+                  <span>{{ trasladoSelecionado.creadoPor }}</span>
+                </div>
 
                 <div class="info-item" *ngIf="trasladoSelecionado.activos">
                   <span class="info-label">Cantidad de activos:</span>
@@ -575,3 +595,9 @@
           </div>
         </div>
       </div>
+
+<app-print-traslado
+  style="display: none;"
+  #printTraslado
+  [data]="trasladoData">
+</app-print-traslado>

@@ -63,7 +63,7 @@
       <button mat-raised-button color="warn" (click)="cancelarEdicion()">Cancelar acción</button>&nbsp;
     </ng-container>
 
-    <button mat-raised-button color="primary" type="button" (click)="guardar()">
+    <button *ngIf="permisosService.puede('Asignación', 'crear')" mat-raised-button color="primary" type="button" (click)="guardar()">
       <mat-icon>add</mat-icon>
       guardar
     </button>

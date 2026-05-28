@@ -65,24 +65,20 @@
       <div class="header-content">
         <div class="header-left">
           <div class="logo">
-            <svg width="24" height="24" viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
 
-         <!-- bullets -->
-         <line x1="9" y1="6" x2="20" y2="6"></line>
-         <line x1="9" y1="12" x2="20" y2="12"></line>
-         <line x1="9" y1="18" x2="20" y2="18"></line>
+              <!-- bullets -->
+              <line x1="9" y1="6" x2="20" y2="6"></line>
+              <line x1="9" y1="12" x2="20" y2="12"></line>
+              <line x1="9" y1="18" x2="20" y2="18"></line>
 
-         <!-- puntos -->
-         <circle cx="4" cy="6" r="1.5"></circle>
-         <circle cx="4" cy="12" r="1.5"></circle>
-         <circle cx="4" cy="18" r="1.5"></circle>
+              <!-- puntos -->
+              <circle cx="4" cy="6" r="1.5"></circle>
+              <circle cx="4" cy="12" r="1.5"></circle>
+              <circle cx="4" cy="18" r="1.5"></circle>
 
-       </svg>
+            </svg>
           </div>
           <div class="header-title">
             <h1>Lista de adición</h1>
@@ -114,15 +110,15 @@
 
           <!-- Icono agregar (cuando estás en lista) -->
           <button type="button" class="btn btn-primary" (click)="IrAddAdiciones()"
-          *ngIf="permisosService.puede('Adición', 'crear')">
-          <ng-container>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Agregar adición
-          </ng-container>
-        </button>
+            *ngIf="permisosService.puede('Adición', 'crear')">
+            <ng-container>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Agregar adición
+            </ng-container>
+          </button>
         </div>
       </div>
     </div>
@@ -130,8 +126,7 @@
 
     <ng-container *ngIf="mostrarBuscar">
       <form [formGroup]="filterForm">
-        <div class="form-gridFilter">
-
+        <div class="form-gridFilter4">
           <div class="form-group">
             <label class="form-label">Número formulario</label>
             <input type="text" formControlName="noformulario" class="form-input" placeholder="No. Formulario">
@@ -141,12 +136,20 @@
             <label class="form-label">Número factura</label>
             <input type="text" formControlName="numfactura" class="form-input" placeholder="No. serial">
           </div>
+
           <div class="form-group">
             <label class="form-label">Orden compra</label>
             <input type="text" formControlName="ordendecompra" class="form-input" placeholder="Orden de compra">
           </div>
 
+          <div class="form-group">
+            <label class="form-label">Creado por</label>
+            <input type="text" formControlName="creadopor"
+             class="form-input" placeholder="Nombre del usuario">
+          </div>
+        </div>
 
+        <div class="form-gridFilter">
           <div class="form-group">
             <label class="form-label">
               Recinto
@@ -156,6 +159,18 @@
               <option *ngFor="let item of recintoList" [value]="item.siglas">{{item.siglas}}</option>
             </select>
           </div>
+
+          <div class="form-group">
+            <label class="form-label">Fecha desde</label>
+
+            <input type="date" formControlName="desde" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Fecha hasta</label>
+
+            <input type="date" formControlName="hasta" class="form-input">
+          </div>
         </div>
       </form>
 
@@ -164,6 +179,22 @@
 
         </div>
         <div class="header-actions">
+
+          <button type="button" class="btn btn-secondary" (click)="limpiarSearch()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+
+              <path d="M3 6h18"></path>
+              <path d="M8 6V4h8v2"></path>
+              <path d="M19 6l-1 14H6L5 6"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+
+            </svg>
+            Limpiar
+          </button>
+
+
 
           <button type="button" class="btn btn-primary" (click)="searchAdiciones()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -184,8 +215,8 @@
         <ng-container matColumnDef="noFormulario">
           <th mat-header-cell *matHeaderCellDef> No. </th>
           <td mat-cell *matCellDef="let element">
-            <p class="mb-0 fw-medium">{{element.noFormulario
-              }}</p>
+            <p class="mb-0 fw-medium">{{element.noFormulario}}</p>
+            <p class="mb-0 fw-medium op-5">Fecha: {{formatFecha(element.fechaCreacion)}}</p>
             <!-- <p class="mb-0 fw-normal op-5">{{ element.apellido }}</p> -->
           </td>
         </ng-container>
@@ -206,10 +237,19 @@
         <!-- Project Column -->
         <ng-container matColumnDef="recinto">
           <th mat-header-cell *matHeaderCellDef> Recinto </th>
-          <td mat-cell *matCellDef="let element">
+          <td mat-cell *matCellDef="let element"  >
             <p class="mb-0 fw-medium">{{element.recinto}}</p>
-            <p class="mb-0 fw-normal op-5">{{ element.area.length > 30 ?
-              element.area.slice(0,30) + "..." : element.area }}</p>
+            <p class="mb-0 fw-normal op-5"  [matTooltip]="element.area">{{ element.area.length > 25 ?
+              element.area.slice(0,25) + "..." : element.area }}</p>
+          </td>
+        </ng-container>
+
+        <!-- Project Column -->
+        <ng-container matColumnDef="creadopor">
+          <th mat-header-cell *matHeaderCellDef> CreadoPor </th>
+          <td mat-cell *matCellDef="let element"  >
+            <p class="mb-0 fw-medium" [matTooltip]="element.creadoPor">
+            {{ element.creadoPor.length > 15 ? element.creadoPor.slice(0,15) + "..." : element.creadoPor || ''}}</p>
           </td>
         </ng-container>
 
@@ -260,10 +300,16 @@
                   <span>Detalles</span>
                 </button>
               </ng-container>
+
               <ng-container>
+                <button mat-menu-item (click)="imprimir(element)">
+                  <mat-icon class="btnInfoTable">print</mat-icon>
+                  <span>Imprimir</span>
+                </button>
+              </ng-container>
 
+              <ng-container>
                 <button mat-menu-item (click)="IrEditActivos(element.id)">
-
                   <mat-icon class="btnInfoTable">view_in_ar</mat-icon>
                   <span>Activos</span>
                 </button>
@@ -348,27 +394,27 @@
               </div>
               <div class="info-item">
                 <span class="info-label">Número de orden:</span>
-                <span>{{ adicionSelecionado.ordenDeCompra}}</span>
+                <span>{{ adicionSelecionado.ordenDeCompra || ''}}</span>
               </div>
 
               <div class="info-item">
                 <span class="info-label">Proveedor:</span>
-                <span>{{ adicionSelecionado.proveedor }}</span>
+                <span>{{ adicionSelecionado.proveedor || ''}}</span>
               </div>
 
               <div class="info-item">
                 <span class="info-label">Recinto:</span>
-                <span>{{ adicionSelecionado.recinto }}</span>
+                <span>{{ adicionSelecionado.recinto || ''}}</span>
               </div>
 
               <div class="info-item">
                 <span class="info-label">Forma adquisición:</span>
-                <span>{{ adicionSelecionado.formaAdquisicion.nombre }}</span>
+                <span>{{ adicionSelecionado.formaAdquisicion.nombre  || ''}}</span>
               </div>
 
               <div class="info-item">
                 <span class="info-label">Area:</span>
-                <span>{{ adicionSelecionado.area }}</span>
+                <span>{{ adicionSelecionado.area  || ''}}</span>
               </div>
 
               <div class="info-item">
@@ -379,6 +425,14 @@
               <div class="info-item" *ngIf="adicionSelecionado.activos">
                 <span class="info-label">Cantidad de activos:</span>
                 <span>{{ adicionSelecionado.activos}}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Fecha creación:</span>
+                <span>{{formatFecha(adicionSelecionado.fechaCreacion)}}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">CreadoPor:</span>
+                <span>{{adicionSelecionado.creadoPor}}</span>
               </div>
 
               <div class="modal-divider">
@@ -405,3 +459,6 @@
 
   </mat-card-content>
 </mat-card>
+
+<app-print-adicion style="display: none;" #printAdicion [data]="adicionData">
+</app-print-adicion>

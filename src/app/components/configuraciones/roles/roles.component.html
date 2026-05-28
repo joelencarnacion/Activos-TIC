@@ -1,48 +1,54 @@
-
 <div [formGroup]="rolForm">
   <!-- Nombre del Rol -->
-  <ng-container >
+  <!-- <ng-container>
     <mat-form-field appearance="outline" class="w-100 mb-16">
       <mat-label>Nombre del Rol</mat-label>
       <input matInput formControlName="rolName" placeholder="Ej: Administrador">
     </mat-form-field>
-  </ng-container>
+  </ng-container> -->
+
+  <div class="form-gridFilter">
+    <div class="form-group">
+      <input type="text" formControlName="rolName" class="form-input" placeholder="Nombre del Rol">
+    </div>
+  </div>
 
   <!-- <div  *ngIf="rolForm.get('rolName')?.value"> -->
-    <!-- Tabla de permisos -->
-    <div class="tableRespon" >
-      <table class="text-nowrap w-100">
-        <thead class="header-cell">
-          <tr>
-            <th class="thtable">Módulo</th>
-            <th class="thtable">Leer</th>
-            <th class="thtable">Crear</th>
-            <th class="thtable">Editar</th>
-            <th class="thtable">Eliminar</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let perm of permisosFormGroups" [formGroup]="perm">
-            <td class="tdtable">{{ perm.value.nombre }}</td>
-            <td class="tdtable"><mat-slide-toggle class="custom-toggle" formControlName="leer"></mat-slide-toggle></td>
-            <td class="tdtable"><mat-slide-toggle class="custom-toggle" formControlName="crear"></mat-slide-toggle></td>
-            <td class="tdtable"><mat-slide-toggle class="custom-toggle" formControlName="editar"></mat-slide-toggle>
-            </td>
-            <td class="tdtable"><mat-slide-toggle class="custom-toggle" formControlName="eliminar"></mat-slide-toggle>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <!-- Tabla de permisos -->
+  <div class="tableRespon">
+    <table class="text-nowrap w-100">
+      <thead class="header-cell">
+        <tr>
+          <th class="thtable">Módulo</th>
+          <th class="thtable">Leer</th>
+          <th class="thtable">Crear</th>
+          <th class="thtable">Editar</th>
+          <th class="thtable">Eliminar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let perm of permisosFormGroups" [formGroup]="perm">
+          <td class="tdtable">{{ perm.value.nombre }}</td>
+          <td class="tdtable"><mat-slide-toggle class="custom-toggle" formControlName="leer"></mat-slide-toggle></td>
+          <td class="tdtable"><mat-slide-toggle class="custom-toggle" formControlName="crear"></mat-slide-toggle></td>
+          <td class="tdtable"><mat-slide-toggle class="custom-toggle" formControlName="editar"></mat-slide-toggle>
+          </td>
+          <td class="tdtable"><mat-slide-toggle class="custom-toggle" formControlName="eliminar"></mat-slide-toggle>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <!-- </div> -->
 
   <div class="mt-4 d-flex justify-content-end" style="padding-bottom: 50px;">
     <ng-container *ngIf="rolForm.get('idRol')?.value">&nbsp;
-      <button *ngIf="permisosService.puede('Roles', 'editar')" mat-raised-button color="warn" (click)="limpiarTodo()">Cancelar acción</button>&nbsp;
+      <button *ngIf="permisosService.puede('Roles', 'editar')" mat-raised-button color="warn"
+        (click)="limpiarTodo()">Cancelar acción</button>&nbsp;
     </ng-container>
 
     <ng-container *ngIf="permisosService.puede('Roles', 'crear')">
-      <button  mat-raised-button color="primary" (click)="guardarRol()">Guardar</button>
+      <button mat-raised-button color="primary" (click)="guardarRol()">Guardar</button>
     </ng-container>
   </div>
 
@@ -99,9 +105,8 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 </div>
-    <!-- Spinner de carga  -->
-    <div *ngIf="mostrarCargando" class="loading-spinner">
-      <mat-spinner diameter="40"></mat-spinner>
-      <span>Cargando...</span>
-    </div>
-
+<!-- Spinner de carga  -->
+<div *ngIf="mostrarCargando" class="loading-spinner">
+  <mat-spinner diameter="40"></mat-spinner>
+  <span>Cargando...</span>
+</div>

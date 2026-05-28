@@ -74,24 +74,23 @@
       <div class="ms-auto">
         <button mat-button class="fs-16 pt-4 pb-4 ps-8 pe-8 text-light-muted d-flex align-items-center" [matMenuTriggerFor]="menu">
           <div class="d-flex align-items-center">
-            <img src="assets/images/user2.webp" class="rounded-circle" alt="">
-            <span class="fw-light ms-8 text-secondary">Hi,</span>
-            <span class="fw-bold ms-8">Julia</span>
+            <mat-icon class="btnInfoTable">account_circle</mat-icon>
+            <span class="fw-light ms-8 text-secondary">Hola,</span>
+            <span class="fw-bold ms-8 btnInfoTable btnInfoTable">{{usuarioActual.nombre}}</span>
             <i-feather name="chevron-down" class="feather-base"></i-feather>
           </div>
         </button>
         <mat-menu #menu="matMenu" class="profile-dropdown">
           <div class="p-16 mb-4">
-            <button mat-menu-item class="fs-16">Edit Profile</button>
-            <button mat-menu-item class="fs-16">Account</button>
-            <button mat-menu-item class="fs-16">Change Password</button>
-            <button mat-menu-item class="fs-16">My Settings</button>
+            <button mat-menu-item class="fs-16"  disabled="true">Editar Perfil</button>
+            <button mat-menu-item class="fs-16" routerLink="/configuracion"
+            *ngIf="permisosService.puede('Configuraciones', 'leer')">Configuraciones</button>
           </div>
 
           <hr>
 
           <div class="p-16">
-            <button mat-flat-button color="accent" class="w-100 text-white">Logout</button>
+            <button mat-flat-button color="accent" class="w-100 text-white" (click)="logOut()">Salir</button>
           </div>
 
         </mat-menu>

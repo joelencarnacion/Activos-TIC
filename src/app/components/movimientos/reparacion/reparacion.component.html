@@ -70,11 +70,16 @@
   </header>
   <ng-container *ngIf="mostrarBuscar">
     <form [formGroup]="filterForm">
-      <div class="form-grid" >
-
+      <div class="form-gridFilter" >
         <div class="form-group">
           <label class="form-label">No. formulario</label>
           <input type="text" formControlName="noformulario" class="form-input" placeholder="No. formulario">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">CreadoPor</label>
+          <input type="text" formControlName="creadopor" class="form-input"
+          placeholder="Nombre de usuario">
         </div>
 
         <div class="form-group">
@@ -302,7 +307,7 @@
       <table mat-table [dataSource]="reparacionList" class="text-nowrap w-100">
 
         <ng-container matColumnDef="noFormulario">
-          <th mat-header-cell *matHeaderCellDef> No. </th>
+          <th mat-header-cell *matHeaderCellDef> No. formulario</th>
           <td mat-cell *matCellDef="let element">
             <p class="mb-0 fw-medium">{{element.noFormulario
               }}</p>
@@ -369,6 +374,12 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu4="matMenu">
+              <ng-container>
+                <button mat-menu-item (click)="imprimir(element)">
+                  <mat-icon class="btnInfoTable">print</mat-icon>
+                  <span>Imprimir</span>
+                </button>
+              </ng-container>
               <ng-container>
                 <button mat-menu-item (click)="openDetailModal(element)">
                   <mat-icon class="btnInfoTable">visibility</mat-icon>
@@ -475,6 +486,10 @@
                 <span class="info-label">Recinto:</span>
                 <span>{{ reparacionSelecionado.recinto }}</span>
               </div>
+              <div class="info-item">
+                <span class="info-label">CreadoPor:</span>
+                <span>{{ reparacionSelecionado.creadoPor }}</span>
+              </div>
 
               <div class="info-item">
                 <span class="info-label">Tipo Donación:</span>
@@ -504,4 +519,10 @@
         </div>
       </div>
     </div>
+
+<app-print-reparacion
+  style="display: none;"
+  #printReparacion
+  [data]="reparacionData">
+</app-print-reparacion>
 

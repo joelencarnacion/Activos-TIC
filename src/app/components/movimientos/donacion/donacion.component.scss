@@ -91,6 +91,11 @@
   /* ========================================
      FORMULARIOS
      ======================================== */
+     .form-gridFilter3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.25rem;
+    }
      .form-gridFilter {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

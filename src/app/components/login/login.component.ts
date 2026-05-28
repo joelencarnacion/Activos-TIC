@@ -79,7 +79,6 @@ getPermission(){
       'processRequest',
       JSON.stringify(processRequest)
     );
-    console.log(processRequest);
     hideLoading();
     this.router.navigate(['/tablero']);
   })

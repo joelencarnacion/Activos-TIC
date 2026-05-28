@@ -1,0 +1,186 @@
+<div class="preview-wrapper" *ngIf="adicionObtenida">
+
+
+
+    <!-- DOCUMENTO (se copia al imprimir) -->
+    <div id="print-adicion-doc" class="form-doc">
+
+      <!-- Header -->
+      <div class="f-header">
+        <div class="f-logo-cell">
+          <div class="f-logo">
+            <img src="assets/Logo.png" alt="Logo.png" class="f-logo-img">
+          </div>
+        </div>
+        <div class="f-title-cell">
+          <div class="f-title-main">Formulario</div>
+          <div class="f-title-sub">Adición de Activos</div>
+        </div>
+        <div class="f-meta-cell">
+          <div class="f-meta-row">
+            <span class="f-meta-label">No. Formulario:</span>
+            <span class="f-meta-val">{{adicionObtenida.noFormulario|| ''}}</span>
+          </div>
+          <div class="f-meta-row">
+            <span class="f-meta-label">Estado:</span>
+            <span class="f-meta-val">{{adicionObtenida.estado|| ''}}</span>
+          </div>
+          <div class="f-meta-row">
+            <span class="f-meta-label">Fecha:</span>
+            <span class="f-meta-val">{{fechaHoy}}</span>
+          </div>
+          <div class="f-meta-row">
+            <span class="f-meta-label">Código:</span>
+            <span class="f-meta-val">A-GLO-FOR-007</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dates bar -->
+      <div class="f-dates">
+        <div class="f-date-cell">
+          <span class="f-date-label">Fecha creación:</span>
+          <span class="f-date-val">{{formatearFecha(adicionObtenida.fechaCreacion)}}</span>
+        </div>
+        <!-- <div class="f-date-cell">
+          <span class="f-date-label">Datos :</span>
+        </div> -->
+      </div>
+
+      <!-- Info rows -->
+      <div class="f-info-grid">
+        <div class="f-info-cell">
+          <div class="f-lbl">Recinto</div>
+          <div class="f-val">{{ adicionObtenida.recinto }}</div>
+        </div>
+        <div class="f-info-cell">
+          <div class="f-lbl">Tipo de adición</div>
+          <div class="f-val">{{ adicionObtenida.formaAdquisicion.nombre}}</div>
+        </div>
+        <div class="f-info-cell">
+          <div class="f-lbl">Orden de compra</div>
+          <div class="f-val">{{ adicionObtenida.ordenDeCompra|| ''}}</div>
+        </div>
+      </div>
+
+      <div class="f-info-grid">
+
+        <div class="f-info-cell">
+          <div class="f-lbl">Unidad organizativa</div>
+          <div class="f-val">{{adicionObtenida.area}}</div>
+        </div>
+
+        <div class="f-info-cell">
+          <div class="f-lbl">No. factura</div>
+          <div class="f-val">{{ adicionObtenida.numFactura}}</div>
+        </div>
+
+        <div class="f-info-cell">
+          <div class="f-lbl">Proveedor</div>
+          <div class="f-val">{{ adicionObtenida.proveedor}}</div>
+        </div>
+
+      </div>
+
+      <!-- <div class="f-info-grid">
+        <div class="f-info-cell">
+          <div class="f-lbl">Responsable</div>
+          <div class="f-val">{{ adicionObtenida.responsable }}</div>
+        </div>
+
+        <div class="f-info-cell">
+          <div class="f-lbl">Área Suplidora</div>
+          <div class="f-val">{{ adicionObtenida.areaSuplidor}}</div>
+        </div>
+      </div> -->
+
+      <!-- <div class="f-info-grid">
+        <div class="f-info-cell">
+          <div class="f-lbl">Responsable</div>
+          <div class="f-val">{{ data.responsable }}</div>
+        </div>
+        <div class="f-info-cell span2">
+          <div class="f-lbl">Cargo</div>
+          <div class="f-val">{{ data.cargoResponsable }}</div>
+        </div>
+      </div> -->
+
+      <!-- <div class="f-info-grid">
+        <div class="f-info-cell span4 bg-alt">
+          <div class="f-lbl">Fecha creación</div>
+          <div class="f-val">{{formatearFecha(adicionObtenida.fechaCreacion)}}</div>
+        </div>
+      </div> -->
+
+      <!-- Items table -->
+      <div class="f-section-head">Detalle de Activos Fijos</div>
+      <table class="f-table">
+        <thead>
+          <tr>
+            <th style="width:30px">No.</th>
+            <th>Código Institucional</th>
+            <th>Código de Bienes Nacionales</th>
+            <th>Descripciones Específicas<br>(Marca, modelo, color)</th>
+            <th>Serial</th>
+            <th>Costo</th>
+            <th>Código SIAB</th>
+            <th>Cuenta contable</th>
+            <th>Objetal</th>
+            <!-- <th>Condición</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of activos; let i = index" class="filled">
+            <td>{{ i + 1 }}</td>
+            <td>{{ item.codInstitucional || ''}}</td>
+            <td>{{ item.codBienesNacionales || ''}}</td>
+            <td class="desc">
+              Marca:{{ item.marca }}, modelo:{{ item.modelo }}, color: {{item.color}}</td>
+            <td>{{ item.serial || ''}}</td>
+            <td>{{ item.costo | number:'1.2-2' }}</td>
+            <td>{{ item.codSiab || ''}}</td>
+            <td>{{ item.cuentaContableRegistroContable || ''}}</td>
+            <td>{{ item.objetalSiab || ''}}</td>
+          </tr>
+          <tr *ngFor="let e of emptyRows; let i = index">
+            <td>{{ (data.items?.length ?? 0) + i + 1 }}</td>
+            <td></td>
+            <td></td>
+            <td class="desc"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Observations -->
+      <div class="f-obs-head">Observaciones</div>
+      <div class="f-obs-body">{{ adicionObtenida.observaciones }}</div>
+
+      <!-- Signatures -->
+
+      <div class="line"></div>
+      <div class="f-sigsCenter">
+        <div class="f-sig-cell">
+          <div class="f-sig-label">Solicita</div>
+          <div class="f-sig-line"></div>
+          <div class="f-sig-name">{{ data.entregadoNombre | uppercase}}</div>
+          <div class="f-sig-role">{{ data.entregadoCargo }}</div>
+        </div>
+      </div>
+      <div class="line"></div>
+
+
+      <!-- Footer -->
+      <div class="f-footer">
+        <span class="f-footer-code">A-GLO-FOR-007</span>
+        <span class="f-footer-ver">{{adicionObtenida.noFormulario|| ''}}</span>
+      </div>
+
+    </div>
+  </div>
+
+

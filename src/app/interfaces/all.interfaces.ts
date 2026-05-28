@@ -409,7 +409,8 @@ ordenDeCompra: string,
 proveedor: string,
 costoTotal: number,
 observaciones: string,
-activos: number
+activos: number,
+creadoPor:string
 }
 
 export interface DonacionI{

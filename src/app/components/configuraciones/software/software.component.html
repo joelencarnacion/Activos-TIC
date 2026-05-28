@@ -1,7 +1,28 @@
 <mat-tab-group (selectedTabChange)="onTabChange($event)">
   <mat-tab label="Software">
     <form [formGroup]="softwareForm">
-      <mat-form-field appearance="outline" class="mt-20" style="width: 32%;">
+      <div class="form-grid3" style="padding-top: 15px;">
+
+
+        <div class="form-group">
+          <label class="form-label">Nombre software</label>
+          <input type="text" class="form-input" formControlName="nombre" placeholder="Nombre del software">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Versión</label>
+          <input type="text" class="form-input" formControlName="version" placeholder="versión del software">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Fabricante</label>
+          <input type="text" class="form-input" formControlName="fabricante" placeholder="Fabricante del software">
+        </div>
+
+
+      </div>
+
+      <!-- <mat-form-field appearance="outline" class="mt-20" style="width: 32%;">
         <mat-label>Nombre software</mat-label>
         <input matInput formControlName="nombre">
       </mat-form-field>&nbsp;
@@ -14,9 +35,31 @@
       <mat-form-field appearance="outline" style="width: 32%;">
         <mat-label>Fabricante</mat-label>
         <input matInput formControlName="fabricante">
-      </mat-form-field>&nbsp;
+      </mat-form-field>&nbsp; -->
 
-      <mat-form-field appearance="outline" style="width: 48.5%;">
+      <div class="form-grid2" style="padding-top: 15px;">
+        <div class="form-group">
+          <label class="form-label">
+            Tipo de software
+          </label>
+          <select class="form-select" formControlName="tipoSoftwareId">
+            <option value=0>Seleccione el tipo de software...</option>
+            <option *ngFor="let item of tipoSoftwareList" [value]="item.id">{{item.nombre}}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Licencia
+          </label>
+          <select class="form-select" formControlName="licenciaId">
+            <option value=0>Seleccione la licencia...</option>
+            <option *ngFor="let item of licenciaList" [value]="item.id">{{item.nombre}}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- <mat-form-field appearance="outline" style="width: 48.5%;">
         <mat-label>Seleccione el tipo de software</mat-label>
         <mat-select disableRipple formControlName="tipoSoftwareId">
           <ng-container>
@@ -36,13 +79,14 @@
             </mat-option>
           </ng-container>
         </mat-select>
-      </mat-form-field>&nbsp;
+      </mat-form-field>&nbsp; -->
 
-
-      <div style="display: flex;">
-        <button mat-raised-button color="primary" *ngIf="permisosService.puede('Software', 'crear')" (click)=" guardarSofteware()">Guardar</button>&nbsp;
+      <div class="d-flex justify-content-end" style="padding-top: 15px;">
+        <button mat-raised-button color="primary" *ngIf="permisosService.puede('Software', 'crear')"
+          (click)=" guardarSofteware()">Guardar</button>&nbsp;
         <ng-container *ngIf="currentSoftware.id">
-          <button *ngIf="permisosService.puede('Software', 'editar')" mat-raised-button color="warn" (click)="cancelarEdicion()">Cancelar acción</button>
+          <button *ngIf="permisosService.puede('Software', 'editar')" mat-raised-button color="warn"
+            (click)="cancelarEdicion()">Cancelar acción</button>
         </ng-container>
       </div>
     </form>
@@ -84,35 +128,60 @@
           <th mat-header-cell *matHeaderCellDef> Licencia </th>
           <td mat-cell *matCellDef="let element">{{element.licencia?.nombre || 'N/A'}}</td>
         </ng-container>
-
-        <!-- Symbol Column -->
         <ng-container matColumnDef="acciones">
           <th mat-header-cell *matHeaderCellDef> Acciones </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button [matMenuTriggerFor]="menu4">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu4="matMenu">
+              <button mat-menu-item *ngIf="permisosService.puede('Software', 'editar')"
+                (click)="setvalueFormSowtware(element)">
+                <mat-icon class="btnEditTable">edit</mat-icon>
+                <span>Editar</span>
+              </button>
+              <ng-container>
+                <button mat-menu-item *ngIf="permisosService.puede('Software', 'eliminar')"
+                  (click)="deleteSoftware(element)">
+                  <mat-icon class="btnDeleteTable">delete</mat-icon>
+                  <span>Eliminar</span>
+                </button>
+              </ng-container>
+
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <!-- <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef> Acciones </th>
           <td mat-cell *matCellDef="let item">
-            <button *ngIf="permisosService.puede('Software', 'editar')" mat-button class="btnEditTable" (click)="setvalueFormSowtware(item)">
+            <button *ngIf="permisosService.puede('Software', 'editar')" mat-button class="btnEditTable"
+              (click)="setvalueFormSowtware(item)">
               <div class="flex justify-content-center">
                 <mat-icon>edit</mat-icon>
               </div>
             </button>
             <ng-container>
-              <button mat-button class="btnDeleteTable" *ngIf="permisosService.puede('Software', 'eliminar')" (click)="deleteSoftware(item)">
+              <button mat-button class="btnDeleteTable" *ngIf="permisosService.puede('Software', 'eliminar')"
+                (click)="deleteSoftware(item)">
                 <div class="flex justify-content-center">
                   <mat-icon>delete</mat-icon>
                 </div>
               </button>
             </ng-container>
           </td>
-        </ng-container>
+        </ng-container> -->
 
         <tr mat-header-row *matHeaderRowDef="displayedColumnsSoftware"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumnsSoftware;"></tr>
       </table>
-           <!-- Sin resultados -->
-           <div *ngIf="!mostrarSpinner && SoftwareList.length === 0" class="no-results">
-            <mat-icon>search_off</mat-icon>
-            <h3>No se encontraron registros</h3>
-            <!-- <p>Intenta ajustar los filtros de búsqueda</p> -->
-          </div>
+      <!-- Sin resultados -->
+      <div *ngIf="!mostrarSpinner && SoftwareList.length === 0" class="no-results">
+        <mat-icon>search_off</mat-icon>
+        <h3>No se encontraron registros</h3>
+        <!-- <p>Intenta ajustar los filtros de búsqueda</p> -->
+      </div>
     </div>
   </mat-tab>
 
@@ -120,7 +189,73 @@
   <mat-tab label="Licencias">
     <form class="mt-20" [formGroup]="licenciaForm">
 
-      <mat-form-field appearance="outline" class="mt-20" style="width: 32%;">
+      <div class="form-grid3" style="padding-top: 15px;">
+        <div class="form-group">
+          <label class="form-label">Nombre Licencia</label>
+          <input type="text" class="form-input" formControlName="nombre"
+          placeholder="Nombre de la licencia">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Número</label>
+          <input type="text" class="form-input" formControlName="numeroLicencia"
+          placeholder="Número de la licencia">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Costo</label>
+          <input type="text" class="form-input" formControlName="costo"
+           placeholder="Costo de la licencia">
+        </div>
+      </div>
+
+      <div class="form-grid2" style="padding-top: 15px;">
+        <div class="form-group">
+          <label class="form-label">
+            Proveedor
+          </label>
+          <select class="form-select" formControlName="proveedorId">
+            <option value=0>Seleccione el proveedor...</option>
+            <option *ngFor="let item of proveedoresList" [value]="item.id">
+              {{item.nombre}} - {{item.rnc}}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Tipo licencia
+          </label>
+          <select class="form-select" formControlName="tipoLicenciaId">
+            <option value=0>Seleccione el tipo de licencia...</option>
+            <option *ngFor="let item of tipoLicenciaList" [value]="item.id">
+              {{item.nombre}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid2" style="padding-top: 15px;">
+        <div class="form-group">
+              <label class="form-label">Fecha inicio</label>
+
+              <input
+                type="date"
+                formControlName="fechaIncio"
+                class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Fecha vencimiento</label>
+
+              <input
+                type="date"
+                formControlName="fechaVencimiento"
+                class="form-input">
+            </div>
+      </div>
+
+
+
+      <!-- <mat-form-field appearance="outline" class="mt-20" style="width: 32%;">
         <mat-label>Nombre Licencia</mat-label>
         <input matInput formControlName="nombre">
       </mat-form-field>&nbsp;
@@ -133,9 +268,9 @@
       <mat-form-field appearance="outline" style="width: 32%;">
         <mat-label>costo</mat-label>
         <input matInput type="number" formControlName="costo">
-      </mat-form-field>&nbsp;
+      </mat-form-field>&nbsp; -->
 
-      <mat-form-field appearance="outline" style="width: 48.5%;">
+      <!-- <mat-form-field appearance="outline" style="width: 48.5%;">
         <mat-label>Seleccione el proveedor</mat-label>
         <mat-select disableRipple formControlName="proveedorId">
           <ng-container>
@@ -155,10 +290,10 @@
             </mat-option>
           </ng-container>
         </mat-select>
-      </mat-form-field>&nbsp;
+      </mat-form-field>&nbsp; -->
 
 
-      <mat-form-field appearance="outline" style="width: 48.5%;">
+      <!-- <mat-form-field appearance="outline" style="width: 48.5%;">
         <mat-label>Fecha Inicio</mat-label>
         <input matInput type="date" formControlName="fechaIncio">
       </mat-form-field>&nbsp;
@@ -166,9 +301,35 @@
       <mat-form-field appearance="outline" style="width: 48.5%;">
         <mat-label>Fecha Vencimiento</mat-label>
         <input matInput type="date" formControlName="fechaVencimiento">
-      </mat-form-field>
+      </mat-form-field> -->
 
-      <mat-form-field appearance="outline" style="width: 32%;">
+      <div class="form-grid3" style="padding-top: 15px;">
+        <div class="form-group">
+          <label class="form-label">Correo responsable</label>
+          <input type="email" class="form-input" formControlName="responsableEmailTo"
+          placeholder="Escriba el correo del responsable">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Correo copia</label>
+          <input type="email" class="form-input" formControlName="responsableEmailCc"
+          placeholder="Copia de correo resposable">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Estado
+          </label>
+          <select class="form-select" formControlName="estado">
+            <option value=0>Seleccione el estado...</option>
+            <option value="Activa">Activa</option>
+            <option value="Expirada">Expirada</option>
+            <option value="Suspendida">Suspendida</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- <mat-form-field appearance="outline" style="width: 32%;">
         <mat-label>Correo responsable</mat-label>
         <input matInput type="email" required formControlName="responsableEmailTo">
       </mat-form-field>&nbsp;
@@ -187,12 +348,16 @@
             <mat-option value="Suspendida">Suspendida</mat-option>
           </ng-container>
         </mat-select>
-      </mat-form-field>&nbsp;
-
-      <button mat-raised-button color="primary" *ngIf="permisosService.puede('Software', 'crear')" (click)="guardarLicencia()">Guardar</button>&nbsp;
+      </mat-form-field>&nbsp; -->
+      <div class="d-flex justify-content-end" style="padding-top: 15px;">
+      <button mat-raised-button color="primary" *ngIf="permisosService.puede('Software', 'crear')"
+        (click)="guardarLicencia()">Guardar</button>&nbsp;
       <ng-container *ngIf="currentLicencia.id">
-        <button *ngIf="permisosService.puede('Software', 'editar')" mat-raised-button color="warn" (click)="cancelarEdicion()">Cancelar acción</button>
+        <button *ngIf="permisosService.puede('Software', 'editar')" mat-raised-button color="warn"
+          (click)="cancelarEdicion()">Cancelar acción</button>
       </ng-container>
+    </div>
+
 
     </form>
 
@@ -229,13 +394,13 @@
       <ng-container matColumnDef="fechaIncio">
         <th mat-header-cell *matHeaderCellDef> Fecha inicio/Vencimiento </th>
         <td mat-cell *matCellDef="let element">
-          <p class="mb-0 fw-medium">{{ element.fechaVencimiento |date }}</p>
-          <p class="mb-0 fw-normal op-5">{{ element.fechaIncio | date}}</p>
+          <p class="mb-0 fw-medium">{{ element.fechaIncio |date }}</p>
+          <p class="mb-0 fw-normal op-5">{{ element.fechaVencimiento | date}}</p>
         </td>
       </ng-container>
       <ng-container matColumnDef="estado">
         <th mat-header-cell *matHeaderCellDef> Estado </th>
-        <td mat-cell *matCellDef="let element">   <span class="trip-status" [ngClass]="{
+        <td mat-cell *matCellDef="let element"> <span class="trip-status" [ngClass]="{
           'danger': element.estado === 'Expirada',
           'primary': element.estado === 'Activa',
           'rechazado ': element.estado === 'Suspendida'
@@ -251,7 +416,8 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #menu4="matMenu">
-            <button mat-menu-item *ngIf="permisosService.puede('Software', 'editar')" (click)="setvalueFormLicencia(item)">
+            <button mat-menu-item *ngIf="permisosService.puede('Software', 'editar')"
+              (click)="setvalueFormLicencia(item)">
               <mat-icon class="btnEditTable">edit</mat-icon>
               <span>Editar</span>
             </button>
@@ -272,12 +438,12 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumnsLicencia;"></tr>
     </table>
 
-        <!-- Sin resultados -->
-        <div *ngIf="!mostrarSpinner && licenciaList.length === 0" class="no-results">
-          <mat-icon>search_off</mat-icon>
-          <h3>No se encontraron licencias</h3>
-          <!-- <p>Intenta ajustar los filtros de búsqueda</p> -->
-        </div>
+    <!-- Sin resultados -->
+    <div *ngIf="!mostrarSpinner && licenciaList.length === 0" class="no-results">
+      <mat-icon>search_off</mat-icon>
+      <h3>No se encontraron licencias</h3>
+      <!-- <p>Intenta ajustar los filtros de búsqueda</p> -->
+    </div>
 
 
     <!-- Modal de detalles del viaje -->
@@ -312,7 +478,7 @@
               </div>
               <div class="info-item">
                 <span class="info-label">Costo:</span>
-                <span> RD${{ licenciaSelecionada.costo   | number:'1.2-2'}}</span>
+                <span> RD${{ licenciaSelecionada.costo | number:'1.2-2'}}</span>
               </div>
               <div class="info-item">
                 <span class="info-label">Fecha Inicio:</span>
@@ -341,7 +507,7 @@
 
 
 
-<!--
+              <!--
               <div class="modal-divider">
                 <div class="trip-documents" *ngIf="licenciaSelecionada.proveedor">
                   <h4>Proveedor:</h4>

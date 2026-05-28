@@ -203,8 +203,14 @@ $modal-shadow: rgba(0, 0, 0, 0.2);
 
 .form-gridFilter {
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+.form-gridFilter4 {
+  display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1.25rem;
+  padding-bottom: 10px;
 }
 
  .form-grid {

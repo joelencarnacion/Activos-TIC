@@ -19,7 +19,7 @@ import { PermisosService } from 'src/app/services/permisos.service';
   styleUrl: './activo.component.scss'
 })
 export class ActivoComponent {
-  displayedColumns: string[] = ['codInstitucional',   'recinto','codBienesNacionales' ,'asignadoA', 'activoEstado','acciones'];
+  displayedColumns: string[] = ['desc','codInstitucional',   'recinto','codBienesNacionales' ,'asignadoA', 'activoEstado','acciones'];
 
   searchExpanded = false;
   ActivosList:Array<ActivoI> = [];
@@ -48,6 +48,9 @@ export class ActivoComponent {
       recinto: [''],
       codbienesnacionales: [''],
       codinstitucional: [''],
+      descripcion: [''],
+      desde: [''],
+      hasta: [''],
     });
    }
   ngOnInit(): void {
@@ -80,6 +83,27 @@ export class ActivoComponent {
     });
   }
 
+  limpiarSearch() {
+    this.filterForm.reset();
+    this.filterForm.patchValue({
+      recinto:''
+    })
+    this.searchActivos();
+  }
+
+
+  formatFecha(fecha: string): string {
+
+    if (!fecha) return '';
+
+    const date = new Date(fecha);
+
+    const dia = String(date.getDate()).padStart(2, '0');
+    const mes = String(date.getMonth() + 1).padStart(2, '0');
+    const anio = date.getFullYear();
+
+    return `${dia}/${mes}/${anio}`;
+  }
 
   getActivos(CurrentPage: number = 1, pageSize: number = 12, params: any = {}): void {
     this.ActivosList = [];
@@ -91,8 +115,6 @@ export class ActivoComponent {
     }
     this.activoService.getActivo(requestParams).subscribe((resp:ResponseI) => {
       this.ActivosList = resp.data;
-      console.log(resp);
-
       this.pagination = resp.pagination;
       this.mostrarCargando = false
     });

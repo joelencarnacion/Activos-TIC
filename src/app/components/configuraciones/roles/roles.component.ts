@@ -116,8 +116,6 @@ export class RolesComponent {
   }
 
   setValueRol(rol: any) {
-    console.log(rol);
-
     this.rolForm.reset();
     this.permisos.clear();
 

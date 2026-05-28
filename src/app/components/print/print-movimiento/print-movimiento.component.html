@@ -100,6 +100,7 @@
           <th>Código de Bienes Nacionales</th>
           <th>Descripciones Específicas<br>(Marca, modelo, color)</th>
           <th>Serial</th>
+          <th>No. factura</th>
           <th>Condición</th>
           <th>Costo</th>
           <!-- <th>Condición</th> -->
@@ -112,13 +113,14 @@
           <td>{{ item.codBienesNacionales || ''}}</td>
           <td class="desc">
             Marca:{{ item.marca }}, modelo:{{ item.serial }}, color: {{item.color}}</td>
-          <td>{{ item.serial ||  ''}}</td>
+            <td>{{ item.serial || ''}}</td>
+          <td>{{ item.noFactura ||  ''}}</td>
           <td>{{ item.condicion || ''}}</td>
           <td>{{ item.costo | number:'1.2-2' }}</td>
         </tr>
         <tr *ngFor="let e of emptyRows; let i = index">
           <td>{{ (data.items?.length ?? 0) + i + 1 }}</td>
-          <td></td><td></td><td class="desc"></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td class="desc"></td><td></td><td></td><td></td>
         </tr>
       </tbody>
     </table>

@@ -1,3 +1,4 @@
+$border:       #b0bac8;
 
 .btnEditTable{
   color: #49AA42!important;
@@ -451,4 +452,15 @@ $modal-shadow: rgba(0, 0, 0, 0.2);
       display: flex;
     }
   }
+}
+
+.line{
+  border-top: 1px solid $border;
+}
+.f-sigsCenter {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin: 4px auto 0 auto;
+  width: 50%;
+  text-align: center;
 }

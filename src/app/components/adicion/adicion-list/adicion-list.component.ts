@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,16 +9,19 @@ import { MaterialModule } from 'src/app/material/material.module';
 import { AdicionService } from 'src/app/services/adicion.service';
 import { EquipoService } from 'src/app/services/equipo.service';
 import { PermisosService } from 'src/app/services/permisos.service';
+import { PrintAdicionComponent } from '../../print/print-adicion/print-adicion.component';
+import { FirmasModalComponent } from '../../modals/firmas-modal/firmas-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-adicion-list',
   standalone: true,
-  imports: [MaterialModule,ClassImports],
+  imports: [MaterialModule,ClassImports, PrintAdicionComponent],
   templateUrl: './adicion-list.component.html',
   styleUrl: './adicion-list.component.scss'
 })
 export class AdicionListComponent {
-  displayedColumns: string[] = ['noFormulario', 'numFactura','ordenDeCompra','recinto', 'formaAdquisicion','estado', 'activos','acciones'];
+  displayedColumns: string[] = ['noFormulario', 'numFactura','ordenDeCompra','recinto','creadopor', 'formaAdquisicion','estado', 'activos','acciones'];
 
   searchExpanded = false;
   adicionList:Array<AdicionI> = [];
@@ -31,6 +34,8 @@ export class AdicionListComponent {
   adicionSelecionado: any = null;
   isDetailModalOpen = false
   mostrarBuscar: boolean = false;
+  adicionData!: any;
+  @ViewChild('printAdicion') printRef!: PrintAdicionComponent;
 
 
   constructor(
@@ -38,7 +43,9 @@ export class AdicionListComponent {
     private adicionService: AdicionService,
     private equipoService: EquipoService,
     private fb: FormBuilder,
-    public permisosService: PermisosService
+    public permisosService: PermisosService,
+    private dialog: MatDialog,
+
 
   ) {
      //formulario de filtro
@@ -47,6 +54,9 @@ export class AdicionListComponent {
       numfactura: [''],
       ordendecompra: [''],
       noformulario: [''],
+      creadopor: [''],
+      desde: [''],
+      hasta: [''],
     });
    }
   ngOnInit(): void {
@@ -87,8 +97,6 @@ export class AdicionListComponent {
     }
     this.adicionService.getAdicion(requestParams).subscribe((resp:ResponseI) => {
       this.adicionList = resp.data;
-      console.log(this.adicionList);
-
       this.pagination = resp.pagination;
       this.mostrarCargando = false
     });
@@ -111,6 +119,21 @@ export class AdicionListComponent {
    })
     }
   }
+
+
+  formatFecha(fecha: string): string {
+
+    if (!fecha) return '';
+
+    const date = new Date(fecha);
+
+    const dia = String(date.getDate()).padStart(2, '0');
+    const mes = String(date.getMonth() + 1).padStart(2, '0');
+    const anio = date.getFullYear();
+
+    return `${dia}/${mes}/${anio}`;
+  }
+
 
   searchAdiciones(){
       // Construir objeto de parámetros de búsqueda
@@ -139,6 +162,34 @@ export class AdicionListComponent {
   openDetailModal(adicion: AdicionI): void {
     this.adicionSelecionado = adicion
     this.isDetailModalOpen = true
+  }
+
+   limpiarSearch() {
+      this.filterForm.reset();
+      this.filterForm.patchValue({
+        recinto:''
+      })
+      this.searchAdiciones();
+    }
+
+  imprimir(data:any): void {
+    const dialogRef = this.dialog.open(FirmasModalComponent, {
+      width: '400px',
+      data: 'adicion'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+
+      if (!result) return;
+      this.adicionData = {
+        ...data,
+        entregadoNombre: result.firmaEntregado.nombre + ' ' + result.firmaEntregado.apellido  ,
+        entregadoCargo: result.firmaEntregado.cargo ,
+      };
+      setTimeout(() => {
+        this.printRef.print();
+      });
+    });
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { alertRemoveSure, infoMessageAlert, successMessageAlert } from 'src/app/helpers/alerts';
@@ -12,11 +12,13 @@ import { UsuarioService } from 'src/app/services/usuario.service';
 import { VerActivosComponent } from '../../modals/ver-activos/ver-activos.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PermisosService } from 'src/app/services/permisos.service';
+import { PrintTrasladoComponent } from '../../print/print-traslado/print-traslado.component';
+import { FirmasModalComponent } from '../../modals/firmas-modal/firmas-modal.component';
 
 @Component({
   selector: 'app-traslado',
   standalone: true,
-  imports: [ClassImports, MaterialModule],
+  imports: [ClassImports, MaterialModule, PrintTrasladoComponent],
   templateUrl: './traslado.component.html',
   styleUrl: './traslado.component.scss'
 })
@@ -54,6 +56,8 @@ export class TrasladoComponent {
   isDetailModalOpen = false
 
   mostrarBuscar: boolean = false;
+  trasladoData!: any;
+
 
 
   displayedColumns: string[] = ['noFormulario', 'tipoTraslado',
@@ -66,6 +70,7 @@ export class TrasladoComponent {
   currentFilters: any = {};
   pagination!: PaginationI
 
+  @ViewChild('printTraslado') printRef!: PrintTrasladoComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -94,6 +99,7 @@ export class TrasladoComponent {
       noformulario: [''],
       origenrecinto: [''],
       destinorecinto: [''],
+      creadopor: [''],
     });
   }
 
@@ -130,7 +136,7 @@ export class TrasladoComponent {
     this.trasladoService.getTraslados(requestParams).subscribe((resp: ResponseI) => {
       this.trasladoList = resp.data;
 
-      console.log(this.trasladoList);
+
 
       this.pagination = resp.pagination;
       this.mostrarCargando = false
@@ -268,7 +274,7 @@ export class TrasladoComponent {
   getTiposTraslados() {
     this.trasladoService.getTrasladosTipos().subscribe((resp: ResponseI) => {
       this.tipoTrasladoList = resp.data
-      console.log(this.tipoTrasladoList);
+
 
     })
   }
@@ -365,8 +371,7 @@ export class TrasladoComponent {
           this.limpiar();
         },
         error: (err) => {
-          console.log(err);
-          const mensaje =
+                   const mensaje =
             err?.error?.message ||
             err?.error?.detail ||
             err?.message ||
@@ -402,8 +407,33 @@ export class TrasladoComponent {
       ...this.miFormulario.value,
       activosIds: this.activosSeleccionados.map(a => a.id)
     };
-    // console.log(payload);
-    this.postTraslado(payload)
+    //    this.postTraslado(payload)
+  }
+
+  imprimir(data:any): void {
+    const dialogRef = this.dialog.open(FirmasModalComponent, {
+      width: '400px',
+      data: 'traslado'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+
+      if (!result) return;
+           this.trasladoData = {
+        ...data,
+        entregadoNombre: result.firmaEntregado.nombre + ' ' + result.firmaEntregado.apellido  ,
+        entregadoCargo: result.firmaEntregado.cargo ,
+
+        recibidoNombre: result.firmaRecibido.nombre + ' ' + result.firmaRecibido.apellido,
+        recibidoCargo: result.firmaRecibido.cargo,
+
+        apruebaNombre: result.firmaAprueba.nombre + ' ' + result.firmaAprueba.apellido,
+        apruebaCargo: result.firmaAprueba.cargo
+      };
+      setTimeout(() => {
+        this.printRef.print();
+      });
+    });
   }
 
 

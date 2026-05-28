@@ -12,13 +12,13 @@ import { MovimientoService } from 'src/app/services/movimiento.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { VerActivosComponent } from '../../modals/ver-activos/ver-activos.component';
 import { PermisosService } from 'src/app/services/permisos.service';
-import { PrintAsignacionComponent } from '../../print/print-asignacion/print-asignacion.component';
 import { FirmasModalComponent } from '../../modals/firmas-modal/firmas-modal.component';
+import { PrintMovimientoComponent } from '../../print/print-movimiento/print-movimiento.component';
 
 @Component({
   selector: 'app-general',
   standalone: true,
-  imports: [ClassImports, MaterialModule,PrintAsignacionComponent],
+  imports: [ClassImports, MaterialModule,PrintMovimientoComponent],
   templateUrl: './general.component.html',
   styleUrl: './general.component.scss'
 })
@@ -60,7 +60,8 @@ export class GeneralComponent {
   asignacionData!: any;
 
   processRequest!: boolean
-  @ViewChild('printAsignacion') printRef!: PrintAsignacionComponent;
+
+  @ViewChild('printAsignacion') printRef!: PrintMovimientoComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -86,6 +87,7 @@ export class GeneralComponent {
       tipoMovimiento: [''],
       noformulario: [''],
       recinto: [''],
+      creadopor: [''],
     });
 
     this.processRequest = JSON.parse(sessionStorage.getItem('processRequest') || 'false');
@@ -239,8 +241,6 @@ export class GeneralComponent {
     }
 
     this.activoService.getActivo(param).subscribe((resp: any) => {
-      console.log(resp);
-
       this.activosResultados = resp.data || resp;
       this.activoBuscando = false;
     });
@@ -354,14 +354,13 @@ export class GeneralComponent {
 
   imprimir(data:any): void {
     const dialogRef = this.dialog.open(FirmasModalComponent, {
-      width: '400px'
+      width: '400px',
+      data: 'general'
     });
 
     dialogRef.afterClosed().subscribe((result) => {
 
       if (!result) return;
-      console.log(result);
-
       this.asignacionData = {
         ...data,
         entregadoNombre: result.firmaEntregado.nombre + ' ' + result.firmaEntregado.apellido  ,
@@ -369,15 +368,10 @@ export class GeneralComponent {
 
         recibidoNombre: result.firmaRecibido.nombre + ' ' + result.firmaRecibido.apellido,
         recibidoCargo: result.firmaRecibido.cargo
-
       };
-
       setTimeout(() => {
-
         this.printRef.print();
-
       });
-
     });
   }
 }

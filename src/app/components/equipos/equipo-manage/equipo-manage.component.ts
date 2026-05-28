@@ -137,7 +137,7 @@ export class EquipoManageComponent implements OnInit {
     data.fechaCompra = this.formatDate(data.fechaCompra);
     data.fechaGarantiaFin = this.formatDate(data.fechaGarantiaFin);
 
-    console.log(this.equipoForm.value);
+
 
     this.equipoService.postEquipo(this.equipoForm.value).subscribe((resp: ResponseI) => {
       hideLoading();

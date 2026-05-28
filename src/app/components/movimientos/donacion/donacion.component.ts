@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
@@ -12,11 +12,14 @@ import { EquipoService } from 'src/app/services/equipo.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { VerActivosComponent } from '../../modals/ver-activos/ver-activos.component';
 import { PermisosService } from 'src/app/services/permisos.service';
+import { FirmasModalComponent } from '../../modals/firmas-modal/firmas-modal.component';
+import { PrintTrasladoComponent } from '../../print/print-traslado/print-traslado.component';
+import { PrintDonacionComponent } from '../../print/print-donacion/print-donacion.component';
 
 @Component({
   selector: 'app-donacion',
   standalone: true,
-  imports: [ClassImports, MaterialModule],
+  imports: [ClassImports, MaterialModule, PrintDonacionComponent],
   templateUrl: './donacion.component.html',
   styleUrl: './donacion.component.scss'
 })
@@ -51,6 +54,8 @@ export class DonacionComponent {
   filterForm!: FormGroup
   currentFilters: any = {};
   pagination!: PaginationI
+  donacionData!:any
+  @ViewChild('printDonacion') printRef!: PrintTrasladoComponent;
 
 
 
@@ -78,6 +83,7 @@ export class DonacionComponent {
       tipodonacion: [''],
       noformulario: [''],
       recinto: [''],
+      creadopor: [''],
     });
   }
 
@@ -110,7 +116,6 @@ export class DonacionComponent {
     }
     this.donacionService.getDonaciones(requestParams).subscribe((resp: ResponseI) => {
       this.donacionList = resp.data;
-      console.log(this.donacionList);
 
 
       this.pagination = resp.pagination;
@@ -210,7 +215,6 @@ export class DonacionComponent {
 
     this.activoBuscando = true;
     this.activoService.getActivo(param).subscribe((resp: any) => {
-      console.log(resp);
 
       this.activosResultados = resp.data || resp;
       this.activoBuscando = false;
@@ -258,7 +262,6 @@ export class DonacionComponent {
           this.limpiar();
         },
         error: (err) => {
-          console.log(err);
           const mensaje =
             err?.error?.message ||
             err?.error?.detail ||
@@ -323,6 +326,39 @@ export class DonacionComponent {
     };
 
     this.postDonacion(payload)
+  }
+
+
+  imprimir(data:any): void {
+    const dialogRef = this.dialog.open(FirmasModalComponent, {
+      width: '400px',
+      data: 'donacion'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+
+      if (!result) return;
+      this.donacionData = {
+        ...data,
+        entregadoNombre: result.firmaEntregado.nombre + ' ' + result.firmaEntregado.apellido  ,
+        entregadoCargo: result.firmaEntregado.cargo ,
+
+        recibidoNombre: result.firmaRecibido.nombre + ' ' + result.firmaRecibido.apellido,
+        recibidoCargo: result.firmaRecibido.cargo,
+
+        apruebaNombre: result.firmaAprueba.nombre + ' ' + result.firmaAprueba.apellido,
+        apruebaCargo: result.firmaAprueba.cargo,
+
+        autorizaNombre: result.firmaAutoriza.nombre + ' ' + result.firmaAutoriza.apellido,
+        autorizaCargo: result.firmaAutoriza.cargo,
+
+        solicitaNombre: result.firmaSolicita.nombre + ' ' + result.firmaSolicita.apellido,
+        solicitaCargo: result.firmaSolicita.cargo
+      };
+      setTimeout(() => {
+        this.printRef.print();
+      });
+    });
   }
 
 }

@@ -19,7 +19,7 @@ import { PermisosService } from 'src/app/services/permisos.service';
 })
 export class SoftwareComponent {
   displayedColumnsSoftware: string[] = ['nombre', 'fabricante', 'version', 'tipoSoftware', 'licencia', 'acciones'];
-  displayedColumnsLicencia: string[] = ['nombre', 'numeroLicencia','fechaIncio', 'costo', 'estado', 'acciones'];
+  displayedColumnsLicencia: string[] = ['nombre', 'numeroLicencia', 'fechaIncio', 'costo', 'estado', 'acciones'];
   SoftwareList: Array<SoftwareI> = [];
   licenciaList: Array<LicenciaI> = [];
   tipoSoftwareList: Array<TipoSoftwareI> = [];
@@ -39,7 +39,7 @@ export class SoftwareComponent {
     private softwareService: SoftwareService,
     private proveedorService: ProveedorService,
     private tiposService: TiposService,
-    public permisosService:PermisosService
+    public permisosService: PermisosService
 
 
   ) {
@@ -55,7 +55,7 @@ export class SoftwareComponent {
 
     //formulario de licencias
     this.licenciaForm = this.fb.group({
-      id:[0],
+      id: [0],
       nombre: ['', Validators.required],
       numeroLicencia: ['', Validators.required],
       costo: ['', Validators.required],
@@ -69,7 +69,7 @@ export class SoftwareComponent {
     });
   }
 
-    //cargar datos iniciales
+  //cargar datos iniciales
   ngOnInit(): void {
     this.getSoftwares();
     this.getTipoSoftware();
@@ -94,37 +94,35 @@ export class SoftwareComponent {
         break;
     }
   }
-// Obtener el software actual del formulario
+  // Obtener el software actual del formulario
   get currentSoftware(): SoftwareI {
     return this.softwareForm.value as SoftwareI;
   }
-// Obtener la licencia actual del formulario
+  // Obtener la licencia actual del formulario
   get currentLicencia(): LicenciaI {
     return this.licenciaForm.value as LicenciaI;
   }
 
-// Obtener la lista se software
+  // Obtener la lista se software
   getSoftwares() {
     this.SoftwareList = [];
     this.mostrarSpinner = true;
     this.softwareService.getSoftware().subscribe((resp: ResponseI) => {
-      console.log(resp);
       this.SoftwareList = resp.data;
       this.mostrarSpinner = false;
     })
   }
 
-// Obtener la lista de licencias
+  // Obtener la lista de licencias
   getLicencias() {
     this.mostrarSpinnerLicencia = true;
     this.licenciasService.getLicencias().subscribe((resp: ResponseI) => {
       this.licenciaList = resp.data;
-      console.log(this.licenciaList);
       this.mostrarSpinnerLicencia = false;
     })
   }
 
-// Obtener los tipos de software
+  // Obtener los tipos de software
   getTipoSoftware() {
     this.mostrarSpinner = true;
     this.tiposService.getTiposSoftware().subscribe((resp: ResponseI) => {
@@ -132,7 +130,7 @@ export class SoftwareComponent {
       this.mostrarSpinner = false;
     })
   }
-// Obtener los tipos de software
+  // Obtener los tipos de software
   getProveedor() {
     this.mostrarSpinner = true;
     this.proveedorService.getProveedor().subscribe((resp: ResponseI) => {
@@ -141,7 +139,7 @@ export class SoftwareComponent {
     })
   }
 
-// Obtener los tipos de Licencia
+  // Obtener los tipos de Licencia
   getTipoLicencia() {
     this.mostrarSpinnerLicencia = true;
     this.tiposService.getTiposLicencias().subscribe((resp: ResponseI) => {
@@ -150,21 +148,21 @@ export class SoftwareComponent {
     })
   }
 
-// Agregar nuevo software
+  // Agregar nuevo software
   postSoftware() {
     this.softwareService.postSoftware(this.currentSoftware).subscribe((resp: ResponseI) => {
       this.softwareForm.reset();
       this.getSoftwares();
     })
   }
-// Agregar nueva licencia
+  // Agregar nueva licencia
   postLicencia() {
     this.licenciasService.postLicencias(this.currentLicencia).subscribe((resp: ResponseI) => {
       this.licenciaForm.reset();
       this.getLicencias();
     })
   }
-// Rellenar el formulario con los datos del software seleccionado
+  // Rellenar el formulario con los datos del software seleccionado
   setvalueFormSowtware(software: SoftwareI) {
     this.softwareForm.setValue({
       id: software.id,
@@ -176,15 +174,15 @@ export class SoftwareComponent {
     });
   }
 
-// Rellenar el formulario con los datos de la licencia seleccionado
+  // Rellenar el formulario con los datos de la licencia seleccionado
   setvalueFormLicencia(licencia: LicenciaI) {
     this.licenciaForm.setValue({
       id: licencia.id,
       nombre: licencia.nombre,
       numeroLicencia: licencia.numeroLicencia,
       costo: licencia.costo,
-      fechaIncio: licencia.fechaIncio,
-      fechaVencimiento: licencia.fechaVencimiento,
+      fechaIncio: licencia.fechaIncio?.split('T')[0],
+      fechaVencimiento: licencia.fechaVencimiento?.split('T')[0],
       proveedorId: licencia.proveedor.id,
       tipoLicenciaId: licencia.tipoLicencia.id,
       responsableEmailTo: licencia.responsableEmailTo,
@@ -193,7 +191,7 @@ export class SoftwareComponent {
     });
   }
 
-// Actualizar software existente
+  // Actualizar software existente
   updateSoftware() {
     this.mostrarSpinner = true;
     this.softwareService.updateSoftware(this.currentSoftware, this.currentSoftware.id).subscribe((resp: ResponseI) => {
@@ -205,15 +203,26 @@ export class SoftwareComponent {
 
   // Actualizar licencia existente
   updateLicencia() {
+    const formValue = this.licenciaForm.value;
+  const payload = {
+    ...formValue,
+    fechaIncio: formValue.fechaIncio
+      ? `${formValue.fechaIncio}T00:00:00`
+      : null,
+
+    fechaVencimiento: formValue.fechaVencimiento
+      ? `${formValue.fechaVencimiento}T00:00:00`
+      : null
+  };
     this.mostrarSpinner = true;
-    this.licenciasService.updateLicencias(this.currentLicencia, this.currentLicencia.id).subscribe((resp: ResponseI) => {
+    this.licenciasService.updateLicencias(payload, this.currentLicencia.id).subscribe((resp: ResponseI) => {
       successMessageAlert('Licencia actualizada con exito');
       this.softwareForm.reset();
       this.getLicencias();
     });
   }
 
-// Eliminar software
+  // Eliminar software
   async deleteSoftware(sopftware: SoftwareI) {
     let remove: boolean = await alertRemoveSure("Estas seguro de eliminar este registro?")
     if (remove) {
@@ -225,7 +234,7 @@ export class SoftwareComponent {
     }
   }
 
-// Eliminar software
+  // Eliminar software
   async deleteLicencia(licencia: LicenciaI) {
     let remove: boolean = await alertRemoveSure("Estas seguro de eliminar este registro?")
     if (remove) {
@@ -238,7 +247,7 @@ export class SoftwareComponent {
   }
 
 
-// Guardar software (nuevo o actualizado)
+  // Guardar software (nuevo o actualizado)
   guardarSofteware() {
     if (this.softwareForm.invalid) {
       errorMessageAlert('Por favor complete todos los campos del formulario de software');
@@ -251,7 +260,7 @@ export class SoftwareComponent {
       this.postSoftware();
     }
   }
-// Guardar Licencia (nuevo o actualizado)
+  // Guardar Licencia (nuevo o actualizado)
   guardarLicencia() {
     if (this.licenciaForm.invalid) {
       errorMessageAlert('Por favor complete todos los campos del formulario de la Liecencia');
@@ -265,9 +274,14 @@ export class SoftwareComponent {
     }
   }
 
-  cancelarEdicion(){
+  cancelarEdicion() {
     this.softwareForm.reset();
     this.licenciaForm.reset();
+    this.softwareForm.patchValue({
+      tipoSoftwareId: 0,
+      licenciaId: 0
+    });
+
   }
 
 
@@ -280,9 +294,5 @@ export class SoftwareComponent {
   openDetailModal(licencia: any): void {
     this.licenciaSelecionada = licencia
     this.isDetailModalOpen = true
-
-    console.log(this.licenciaSelecionada);
-    console.log(this.isDetailModalOpen);
-
   }
 }

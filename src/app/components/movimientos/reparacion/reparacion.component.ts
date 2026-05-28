@@ -1,5 +1,5 @@
 import { ReparacionesService } from './../../../services/reparacion.service';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { alertRemoveSure, infoMessageAlert, successMessageAlert } from 'src/app/helpers/alerts';
@@ -13,11 +13,13 @@ import { UsuarioService } from 'src/app/services/usuario.service';
 import { VerActivosComponent } from '../../modals/ver-activos/ver-activos.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PermisosService } from 'src/app/services/permisos.service';
+import { FirmasModalComponent } from '../../modals/firmas-modal/firmas-modal.component';
+import { PrintReparacionComponent } from '../../print/print-reparacion/print-reparacion.component';
 
 @Component({
   selector: 'app-reparacion',
   standalone: true,
-  imports: [ClassImports, MaterialModule],
+  imports: [ClassImports, MaterialModule, PrintReparacionComponent],
   templateUrl: './reparacion.component.html',
   styleUrl: './reparacion.component.scss'
 })
@@ -48,6 +50,8 @@ export class ReparacionComponent {
 
   mostrarLista: boolean = true;
   mostrarBuscar: boolean = false;
+  reparacionData!: any;
+
 
   displayedColumns: string[] = ['noFormulario', 'tipoReparacion',
     'recinto', 'areaSuplidor', 'responsable', 'activos', 'estado', 'acciones'];
@@ -61,6 +65,7 @@ export class ReparacionComponent {
 
   reparacionSelecionado: any = null;
   isDetailModalOpen = false
+  @ViewChild('printReparacion') printRef!: PrintReparacionComponent;
 
 
   constructor(
@@ -87,6 +92,7 @@ export class ReparacionComponent {
       tiporeparacion: [''],
       noformulario: [''],
       recinto: [''],
+      creadopor: [''],
     });
   }
 
@@ -121,7 +127,6 @@ export class ReparacionComponent {
     }
     this.repacionService.getReparaciones(requestParams).subscribe((resp: ResponseI) => {
       this.reparacionList = resp.data;
-      console.log(resp);
 
       this.pagination = resp.pagination;
       this.mostrarCargando = false
@@ -298,7 +303,6 @@ export class ReparacionComponent {
           this.limpiar();
         },
         error: (err) => {
-          console.log(err);
           const mensaje =
             err?.error?.message ||
             err?.error?.detail ||
@@ -346,7 +350,7 @@ export class ReparacionComponent {
         },
 
         error: (err) => {
-          console.log(err);
+
           // si el backend manda message
           infoMessageAlert(
             err.error?.message || 'Ocurrió un error al procesar la reparación'
@@ -370,8 +374,37 @@ export class ReparacionComponent {
       ...this.miFormulario.value,
       activosIds: this.activosSeleccionados.map(a => a.id)
     };
-    // console.log(payload);
+    //
     this.postReparaciones(payload)
+  }
+
+
+  imprimir(data:any): void {
+    const dialogRef = this.dialog.open(FirmasModalComponent, {
+      width: '400px',
+      data: 'reparacion'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+
+      if (!result) return;
+
+      this.reparacionData = {
+        ...data,
+        entregadoNombre: result.firmaEntregado.nombre + ' ' + result.firmaEntregado.apellido  ,
+        entregadoCargo: result.firmaEntregado.cargo ,
+
+        recibidoNombre: result.firmaRecibido.nombre + ' ' + result.firmaRecibido.apellido,
+        recibidoCargo: result.firmaRecibido.cargo,
+
+        apruebaNombre: result.firmaAprueba.nombre + ' ' + result.firmaAprueba.apellido,
+        apruebaCargo: result.firmaAprueba.cargo
+      };
+
+      setTimeout(() => {
+        this.printRef.print();
+      });
+    });
   }
 
 

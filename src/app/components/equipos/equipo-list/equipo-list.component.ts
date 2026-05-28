@@ -70,8 +70,7 @@ export class EquipoListComponent implements OnInit{
     this.equipoService.getEquipos(requestParams).subscribe((resp:ResponseI) => {
       this.equiposList = resp.data;
       this.pagination = resp.pagination;
-      console.log(resp);
-      console.log(resp);
+
       this.mostrarCargando = false
     });
   }

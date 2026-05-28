@@ -116,7 +116,6 @@ export class UsuarioComponent {
       } else {
         successMessageAlert(resp.message);
         this.usuarioCtrl.reset(null);
-        this.filteredUsuarios = of([]);
         this.usuarioForm.reset();
         this.getUsuarios()
       }

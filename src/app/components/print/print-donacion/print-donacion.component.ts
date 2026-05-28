@@ -1,56 +1,25 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { GeneralI, MovimientoI, ResponseI } from 'src/app/interfaces/all.interfaces';
+import { Component, Input } from '@angular/core';
 import { ClassImports } from 'src/app/material/class.components';
 import { MaterialModule } from 'src/app/material/material.module';
-import { MovimientoService } from 'src/app/services/movimiento.service';
-import { ActivoI } from '../../../interfaces/all.interfaces';
-
-export interface AsignacionItem {
-  codigoInstitucional: string;
-  codigoBienesNacionales: string;
-  descripcion: string;
-  serial: string;
-  condicion: string;
-}
-
-// export interface PrintAsignacionData {
-//   numero: string;
-//   fecha: string;               // formato 'YYYY-MM-DD'
-//   recinto: string;
-//   unidadOrganizativa: string;
-//   tipoActivos: string;
-//   numeroFactura: string;
-//   responsable: string;
-//   cargoResponsable: string;
-//   tipoMovimiento: string;
-//   observaciones: string;
-//   items: AsignacionItem[];
-//   entregadoNombre: string;
-//   entregadoCargo: string;
-//   recibidoNombre: string;
-//   recibidoCargo: string;
-// }
+import { DonacionesService } from 'src/app/services/donacion.service';
 
 @Component({
-  selector: 'app-print-asignacion',
+  selector: 'app-print-donacion',
   standalone: true,
   imports: [ClassImports, MaterialModule],
-  templateUrl: './print-asignacion.component.html',
-  styleUrl: './print-asignacion.component.scss'
+  templateUrl: './print-donacion.component.html',
+  styleUrl: './print-donacion.component.scss'
 })
-export class PrintAsignacionComponent {
-
+export class PrintDonacionComponent {
   @Input() data!: any;
 
-  movimientoObtenido!: any
+  donacionObtenida!: any
   activos: Array<any> = [];
   fechaHoy!:string;
 
   constructor(
-    private movimientoService: MovimientoService
-  ) {
-
-  }
+    private donacionService: DonacionesService
+  ) {}
 
 
   // Filas vacías para completar la tabla hasta mínimo 7 filas
@@ -62,9 +31,7 @@ export class PrintAsignacionComponent {
   }
 
   obtenerFechaHoy(): string {
-
     const hoy = new Date();
-
     const dia = String(hoy.getDate()).padStart(2, '0');
     const mes = String(hoy.getMonth() + 1).padStart(2, '0');
     const anio = hoy.getFullYear();
@@ -84,23 +51,21 @@ export class PrintAsignacionComponent {
   }
   // Método público que llama el padre
   print(): void {
-    console.log(this.data);
 
-    this.movimientoService
-      .getMovimientosById(this.data.id)
+    this.donacionService
+      .getDonacionesById(this.data.id)
       .subscribe((resp: any) => {
 
-        this.movimientoObtenido = resp.data[0];
+        this.donacionObtenida = resp.data[0];
 
-        this.activos = this.movimientoObtenido.activos;
-        console.log(this.activos);
+        this.activos = this.donacionObtenida.activos;
         this.fechaHoy = this.obtenerFechaHoy();
 
         // Espera renderizado
         setTimeout(() => {
 
           const printContents =
-            document.getElementById('print-asignacion-doc')?.innerHTML;
+            document.getElementById('print-donacion-doc')?.innerHTML;
 
           if (!printContents) return;
 
@@ -148,4 +113,3 @@ export class PrintAsignacionComponent {
 
   }
 }
-

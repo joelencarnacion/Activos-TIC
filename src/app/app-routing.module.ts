@@ -53,11 +53,14 @@ const routes: Routes = [
     children: [
       {path:"", redirectTo:"/tablero", pathMatch:"full"},
       // {path:'login/:token',component: LoginComponent,  canActivate: [LoginGuard]},
-      {path:"tablero", component:DashboardComponent, canActivate: [ModulosGuard], data: { moduleName: 'Tablero' }},
+      {path:"tablero", component:DashboardComponent,
+      canActivate: [ModulosGuard], data: { moduleName: 'Tablero' }},
       {path:"error404", component:Error404Component},
-      {path:"asignacionEstudiantes", component:AsignacionEstudiantesComponent, canActivate: [ModulosGuard], data: { moduleName: 'Asignación' }},
+      {path:"asignacionEstudiantes", component:AsignacionEstudiantesComponent,
+       canActivate: [ModulosGuard], data: { moduleName: 'Asignación' }},
       // {path:"usuarios", component:UsuarioComponent},
-      {path:"activos", component:ActivoComponent, canActivate: [ModulosGuard], data: { moduleName: 'Activos' }},
+      {path:"activos", component:ActivoComponent
+      , canActivate: [ModulosGuard], data: { moduleName: 'Activos' }},
       {path:"adicion-add", component:AdicionAddComponent, canActivate: [ModulosGuard], data: { moduleName: 'Adición' }},
       {path:"editar-activos/:id", component:AdicionAddComponent, canActivate: [ModulosGuard], data: { moduleName: 'Activos' }},
       {path:"adicion", component:AdicionListComponent, canActivate: [ModulosGuard], data: { moduleName: 'Adición' }},

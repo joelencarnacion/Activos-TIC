@@ -69,7 +69,6 @@ export class VerActivosComponent {
         break;
 
       default:
-        console.log('Valor no reconocido');
         break;
     }
   }

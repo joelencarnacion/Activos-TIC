@@ -52,7 +52,6 @@ export class ProveedoresComponent {
     this.proveedoresList = [];
     this.mostrarSpinner = true;
     this.proveedorService.getProveedor().subscribe((resp: ResponseI) => {
-      console.log(resp);
       this.proveedoresList = resp.data;
       this.mostrarSpinner = false;
     })

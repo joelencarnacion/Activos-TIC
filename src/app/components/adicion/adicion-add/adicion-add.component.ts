@@ -112,7 +112,6 @@ usuarioBusqueda: string = '';
 
   seleccionarUsuario(usuario: any, index: number): void {
     // Setea el valor en el activo correcto.
-    console.log(usuario);
     const nombreCompleto = usuario.persona.nombre + usuario.persona.apellidos;
     this.getActivoFormGroup(index).get('responsableAdquisicion')?.setValue(nombreCompleto);
     this.usuriosList = [];
@@ -150,7 +149,6 @@ usuarioBusqueda: string = '';
   getActivosById(id: string) {
     this.adicionService.getAdicionById(id).subscribe((resp: any) => {
       this.adicionRecibida = resp.data[0];
-      console.log(this.adicionRecibida);
       resp.data[0].activos.forEach((activo: any) => {
 
         this.agregarActivo(true);  // ← único cambio aquí
@@ -170,6 +168,7 @@ usuarioBusqueda: string = '';
           condicion: activo.condicion,
           color: activo.color,
           descripcion: activo.descripcion,
+          objetalSiab: activo.objetalSiab,
 
           recinto: activo.recinto,
           ubicacion: activo.ubicacion,
@@ -263,6 +262,7 @@ usuarioBusqueda: string = '';
       // Información Presupuestaria y SIAB
       codGuiaPresupuestaria: [''],
       codSiab: [''],
+      objetalSiab: [''],
       noTransaccionSiab: [''],
       cuentaContableFacturacion: [''],
       cuentaContableRegistroContable: [''],
@@ -426,8 +426,6 @@ usuarioBusqueda: string = '';
   }
 
   updateActivo(activo:any){
-    console.log(activo.value);
-
     this.activoService.updateActivo(activo.value, activo.value.id).subscribe((resp:ResponseI)=>{
       successMessageAlert('Activo editado')
     })
@@ -437,8 +435,6 @@ usuarioBusqueda: string = '';
   guardarFormulario(): void {
     // Marcar todos los campos como touched para mostrar errores de validación
     this.markFormGroupTouched(this.formulario);
-    console.log(this.formulario.value);
-
 
     if (this.formulario.invalid) {
       // Expandir activos con errores

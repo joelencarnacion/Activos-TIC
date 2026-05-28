@@ -24,6 +24,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 const materialComponents: any = [
   MatButtonModule,
@@ -51,7 +52,8 @@ const materialComponents: any = [
   MatExpansionModule,
   MatDividerModule,
   MatTabsModule,
-  MatSlideToggleModule
+  MatSlideToggleModule,
+  MatTooltipModule
 
 ]
 @NgModule({

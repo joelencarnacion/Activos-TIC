@@ -29,9 +29,6 @@ export class VerRolesComponent {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.rolRecibido = data.data;
-    console.log(this.rolRecibido);
-
-
 
     this.rolForm = this.fb.group({
       idRol: new FormControl<number>(0, [Validators.required]),
@@ -89,8 +86,6 @@ export class VerRolesComponent {
     showLoading();
     this.usuarioService.getAuthPermission(this.rolRecibido.idRol)
     .subscribe((resp: any) => {
-      console.log(resp);
-
       this.puedeAutorizar =
       resp?.data?.[0]?.processRequest ?? false;
       hideLoading()
