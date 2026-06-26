@@ -302,9 +302,23 @@
               </ng-container>
 
               <ng-container>
+                <button mat-menu-item (click)="openComentarios(element)">
+                  <mat-icon class="btnDangerTable">chat</mat-icon>
+                  <span>Comentarios</span>
+                </button>
+              </ng-container>
+
+              <ng-container>
                 <button mat-menu-item (click)="imprimir(element)">
                   <mat-icon class="btnInfoTable">print</mat-icon>
                   <span>Imprimir</span>
+                </button>
+              </ng-container>
+
+              <ng-container>
+                <button mat-menu-item (click)="descargarPdf(element)">
+                  <mat-icon class="btnInfoTable">download</mat-icon>
+                  <span>Descargar</span>
                 </button>
               </ng-container>
 
@@ -321,6 +335,7 @@
                   <mat-icon class="btnEditTable">check</mat-icon>
                   <span>Aprobar</span>
                 </button>
+
                 <button mat-menu-item (click)="procesarSolicitud(element.id, false)">
                   <mat-icon class="btnDeleteTable">close</mat-icon>
                   <span>Rechazar</span>

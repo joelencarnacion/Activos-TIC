@@ -192,6 +192,12 @@
       color:#dc2626
     }
   }
+  .btn-duplicate {
+    &:hover {
+      background-color: rgba(59, 130, 246, 0.1);
+      color: #2563eb;
+    }
+  }
 
   /* ========================================
      CONTENIDO PRINCIPAL

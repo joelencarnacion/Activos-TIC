@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LoginService } from './login.service';
 import { Observable, catchError, throwError } from 'rxjs';
-import { alertServerDown, errorMessageAlert } from '../helpers/alerts';
+import { alertServerDown, errorMessageAlert, infoMessageAlert } from '../helpers/alerts';
 import { CategoriaI, ResponseI } from '../interfaces/all.interfaces';
 import { environment } from '../environments/environment';
 
@@ -45,15 +45,27 @@ export class AdicionService {
       .pipe(catchError((error) => { alertServerDown(); return throwError(error) }))
   }
 
+  getComentarioAdicion(id:string): Observable<ResponseI> {
+    const headers = this.getHeaders();
+    return this.http.get<ResponseI>(`${this.baseUrl}/Adiciones/${id}/comentarios`, {headers})
+      .pipe(catchError((error) => { alertServerDown(); return throwError(error) }))
+  }
+
   postAdicion(adicion: any): Observable<ResponseI> {
     const headers = this.getHeaders();
     return this.http.post<ResponseI>(`${this.baseUrl}/Adiciones`, adicion, {headers})
-      .pipe(catchError((error) => { alertServerDown(); return throwError(error) }))
+      .pipe(catchError((error) => { infoMessageAlert(error.error.message); return throwError(error) }))
+  }
+
+  postComentarioAdicion(adicion: any, id:string): Observable<ResponseI> {
+    const headers = this.getHeaders();
+    return this.http.post<ResponseI>(`${this.baseUrl}/Adiciones/${id}/comentarios`, adicion, {headers})
+      .pipe(catchError((error) => { infoMessageAlert(error.error.message); return throwError(error) }))
   }
   postProcesarAdicion(id: string,valor: any): Observable<ResponseI> {
     const headers = this.getHeaders();
     return this.http.post<ResponseI>(`${this.baseUrl}/Adiciones/${id}/procesar-solicitud`, valor, {headers})
-      .pipe(catchError((error) => { alertServerDown(); return throwError(error) }))
+      .pipe(catchError((error) => { infoMessageAlert(error.error.message); return throwError(error) }))
   }
 
   getAdicionOrigenes(): Observable<ResponseI> {

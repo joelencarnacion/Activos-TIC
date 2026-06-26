@@ -27,9 +27,8 @@
           </svg>
           Limpiar
         </button>
-        <button
-        type="button" class="btn btn-primary" (click)="guardarFormulario()"
-        *ngIf="!idAdicion &&  permisosService.puede('Adición', 'crear')">
+        <button type="button" class="btn btn-primary" (click)="guardarFormulario()"
+          *ngIf="!idAdicion &&  permisosService.puede('Adición', 'crear')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
             <polyline points="17 21 17 13 7 13 7 21"></polyline>
@@ -132,7 +131,8 @@
 
             <div class="form-group">
               <label class="form-label">Factura</label>
-              <input type="text" class="form-input" formControlName="numFactura" placeholder="Número de factura">
+              <input type="text" class="form-input" maxlength="13" formControlName="numFactura"
+                placeholder="Número de factura">
             </div>
             <div class="form-group">
               <label class="form-label">Orden de Compra</label>
@@ -178,6 +178,8 @@
             </svg>
             Agregar Activo
           </button>
+
+
         </div>
         <div class="card-content">
           <div class="activos-list" formArrayName="activos" *ngIf="activos.length > 0; else noActivos">
@@ -186,9 +188,9 @@
               <div class="activo-header" (click)="toggleActivo(i)">
                 <div class="activo-info">
                   <span class="activo-number">#{{ i + 1 }}</span>
-                  <span class="activo-marca" *ngIf="getActivoMarca(i)">{{ getActivoMarca(i) }}</span>
-                  <span class="activo-modelo" *ngIf="getActivoModelo(i)">{{ getActivoModelo(i) }}</span>
-                  <span class="activo-placeholder" *ngIf="!getActivoMarca(i) && !getActivoModelo(i)">Nuevo Activo</span>
+                  <span class="activo-marca" *ngIf="getNombre(i)">{{ getNombre(i) }}</span>
+                  <span class="activo-modelo" *ngIf="getDescripcion(i)">{{ getDescripcion(i) }}</span>
+                  <span class="activo-placeholder" *ngIf="!getNombre(i) && !getDescripcion(i)">Nuevo Activo</span>
                   <span class="activo-invalid" *ngIf="activo.invalid && activo.touched">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <circle cx="12" cy="12" r="10"></circle>
@@ -201,6 +203,13 @@
                 <div class="activo-actions">
                   <span class="activo-costo" *ngIf="getActivoCosto(i)">{{ getActivoCosto(i) |
                     currency:'DOP':'symbol':'1.2-2':'en-US' }}</span>
+                  <button type="button" class="btn-icon btn-duplicate" *ngIf="!idAdicion"
+                    (click)="duplicarActivo(i); $event.stopPropagation()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                      <rect x="4" y="4" width="12" height="12" rx="2"></rect>
+                    </svg>
+                  </button>
                   <button type="button" class="btn-icon btn-delete"
                     (click)="eliminarActivo(i); $event.stopPropagation()">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -229,6 +238,21 @@
                   </div>
                   <div class="section-content" *ngIf="activosUI[i]?.seccionBasica">
                     <div class="form-grid">
+
+
+
+                      <div class="form-group">
+                        <label class="form-label">
+                          Nombre
+                          <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-input" formControlName="nombre"
+                          [class.input-error]="hasActivoError(i, 'nombre')" placeholder="Nombre del activo">
+                        <span class="error-message" *ngIf="hasActivoError(i, 'nombre')">
+                          Este campo es requerido
+                        </span>
+                      </div>
+
                       <div class="form-group">
                         <label class="form-label">
                           Fecha Adquisición
@@ -291,30 +315,60 @@
                         </span>
                       </div> -->
                       <div class="form-group">
-                        <label class="form-label">Código Institucional</label>
-                        <input type="text" class="form-input" formControlName="codInstitucional"
-                          placeholder="Código único">
-                      </div>
-                      <div class="form-group">
-                        <label class="form-label">Código Bienes Nacionales</label>
-                        <input type="text" class="form-input" formControlName="codBienesNacionales"
-                          placeholder="Código único">
-                      </div>
-                      <div class="form-group">
-                        <label class="form-label">
-                          Marca
+                        <label class="form-label">Código Institucional
                           <span class="required">*</span>
                         </label>
-                        <input type="text" class="form-input" formControlName="marca" placeholder="Marca del activo"
-                          [class.input-error]="hasActivoError(i, 'marca')">
-                        <span class="error-message" *ngIf="hasActivoError(i, 'marca')">
-                          Este campo es requerido
+                        <input type="text" maxlength="12" class="form-input" formControlName="codInstitucional"
+                          placeholder="Código único" [class.input-error]="hasActivoError(i, 'codInstitucional')">
+                        <span class="error-message" *ngIf="esCodigoEntre8y12(i, 'codInstitucional')">
+                          El código debe contener entre 8 y 12 dígitos.
                         </span>
                       </div>
+
+
+                      <div class="form-group">
+                        <label class="form-label">Código Bienes Nacionales
+                          <span class="required">*</span>
+                        </label>
+                        <input type="text" maxlength="7" class="form-input" formControlName="codBienesNacionales"
+                          placeholder="Código único" [class.input-error]="hasActivoError(i, 'codBienesNacionales')">
+                        <span class="error-message" *ngIf="esCodigo7Digitos(i, 'codBienesNacionales')">
+                          El código debe contener exactamente 7 dígitos.
+
+                        </span>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">Marca</label>
+                        <select class="form-select" formControlName="marca">
+                          <option value="">Seleccionar...</option>
+                          <option *ngFor="let marca of marcaList" [value]="marca.nombre">
+                            {{ marca.nombre }}
+                          </option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">Modelo</label>
+                        <select class="form-select" formControlName="modelo">
+                          <option value="">Seleccionar...</option>
+                          <option *ngFor="let modelo of modelosFiltrados[i]" [value]="modelo.nombre">
+                            {{ modelo.nombre }}
+                          </option>
+                        </select>
+                      </div>
+
+                      <!-- <div class="form-group">
+                        <label class="form-label">
+                          Marca
+                        </label>
+                        <input type="text" class="form-input" formControlName="marca" placeholder="Marca del activo">
+                      </div>
+
                       <div class="form-group">
                         <label class="form-label">Modelo</label>
                         <input type="text" class="form-input" formControlName="modelo" placeholder="Modelo del activo">
-                      </div>
+                      </div> -->
                       <div class="form-group">
                         <label class="form-label">Número de Serie</label>
                         <input type="text" class="form-input" formControlName="serial" placeholder="Serial number">
@@ -330,7 +384,7 @@
                           <span class="required">*</span>
                         </label>
                         <select class="form-select" formControlName="condicion"
-                        [class.input-error]="hasActivoError(i, 'condicion')">
+                          [class.input-error]="hasActivoError(i, 'condicion')">
                           <option value="">Seleccionar...</option>
                           <option value="Bueno">Bueno</option>
                           <option value="Regular">Regular</option>
@@ -439,7 +493,8 @@
                       </div>
                       <div class="form-group">
                         <label class="form-label">Número de Factura</label>
-                        <input type="text" class="form-input" formControlName="noFactura" placeholder="Factura">
+                        <input type="text" class="form-input" maxlength="13" formControlName="noFactura"
+                          placeholder="Factura">
                       </div>
                       <div class="form-group">
                         <label class="form-label">Orden de Compra</label>
@@ -495,8 +550,7 @@
 
                       <div class="form-group">
                         <label class="form-label">Objetal SIAB</label>
-                        <input type="text" class="form-input" formControlName="objetalSiab"
-                        placeholder="Objetal SIAB">
+                        <input type="text" class="form-input" formControlName="objetalSiab" placeholder="Objetal SIAB">
                       </div>
                       <div class="form-group">
                         <label class="form-label">Número transacciòn SIAB</label>
@@ -530,7 +584,7 @@
 
                 <div style="display: flex; justify-content: end;">
                   <button type="button" class="btn btn-primary" (click)="updateActivo(activo)"
-                  *ngIf="idAdicion &&  permisosService.puede('Adición', 'editar')">
+                    *ngIf="idAdicion &&  permisosService.puede('Adición', 'editar')">
                     Editar Activo
                   </button>
                 </div>

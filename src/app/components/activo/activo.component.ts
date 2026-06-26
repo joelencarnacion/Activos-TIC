@@ -19,7 +19,7 @@ import { PermisosService } from 'src/app/services/permisos.service';
   styleUrl: './activo.component.scss'
 })
 export class ActivoComponent {
-  displayedColumns: string[] = ['desc','codInstitucional',   'recinto','codBienesNacionales' ,'asignadoA', 'activoEstado','acciones'];
+  displayedColumns: string[] = ['nombre','codInstitucional',   'recinto','codBienesNacionales' ,'asignadoA', 'activoEstado','acciones'];
 
   searchExpanded = false;
   ActivosList:Array<ActivoI> = [];
@@ -49,6 +49,7 @@ export class ActivoComponent {
       codbienesnacionales: [''],
       codinstitucional: [''],
       descripcion: [''],
+      nombre: [''],
       desde: [''],
       hasta: [''],
     });

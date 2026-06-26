@@ -110,8 +110,10 @@
       <thead>
         <tr>
           <th style="width:30px">No.</th>
-          <th>Código Institucional</th>
-          <th>Código de Bienes Nacionales</th>
+          <th>Cód. Inst</th>
+          <th>Cód. BN</th>
+          <th>Descripción General</th>
+
           <th>Descripciones Específicas<br>(Marca, modelo, color)</th>
           <th>Serial</th>
           <th>No. factura</th>
@@ -125,6 +127,7 @@
           <td>{{ i + 1 }}</td>
           <td>{{ item.codInstitucional || ''}}</td>
           <td>{{ item.codBienesNacionales || ''}}</td>
+          <td>{{ item.nombre +' | ' +  item.descripcion}}</td>
           <td class="desc">
             Marca:{{ item.marca }}, modelo:{{ item.modelo }}, color: {{item.color}}</td>
           <td>{{ item.serial || ''}}</td>
@@ -134,6 +137,7 @@
         </tr>
         <tr *ngFor="let e of emptyRows; let i = index">
           <td>{{ (data.items?.length ?? 0) + i + 1 }}</td>
+          <td></td>
           <td></td>
           <td></td>
           <td class="desc"></td>

@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import html2pdf from 'html2pdf.js';
 import { ClassImports } from 'src/app/material/class.components';
 import { MaterialModule } from 'src/app/material/material.module';
 import { AdicionService } from 'src/app/services/adicion.service';
@@ -110,5 +111,37 @@ export class PrintAdicionComponent {
 
       });
 
+  }
+
+  downloadPdf(): void {
+    this.adicionService
+      .getAdicionById(this.data.id)
+      .subscribe((resp: any) => {
+
+        this.adicionObtenida = resp.data[0];
+        this.activos = this.adicionObtenida.activos;
+
+        this.fechaHoy = this.obtenerFechaHoy();
+
+        setTimeout(() => {
+          const element = document.getElementById('print-adicion-doc');
+          if (!element) return;
+          html2pdf()
+            .set({
+              filename: `Adición-${this.adicionObtenida.noFormulario}.pdf`,
+              margin: 10,
+              image: { type: 'jpeg', quality: 1 },
+              html2canvas: { scale: 2 },
+              jsPDF: {
+                unit: 'mm',
+                format: 'a4',
+                orientation: 'portrait'
+              }
+            })
+            .from(element)
+            .save();
+
+        }, 200);
+      });
   }
 }

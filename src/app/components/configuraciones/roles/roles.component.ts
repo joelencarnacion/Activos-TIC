@@ -89,6 +89,8 @@ export class RolesComponent {
     this.mostrarCargando = true
     this.rolService.getRoles().subscribe((resp: ResponseI) => {
       this.rolesList = resp.data;
+      console.log(this.rolesList);
+
       this.mostrarCargando = false
     })
   }
@@ -156,6 +158,8 @@ export class RolesComponent {
 
   postRol() {
     this.rolService.postRoles(this.rolForm.value).subscribe((resp: ResponseI) => {
+      console.log(resp);
+
       successMessageAlert('Registro agregado');
       this.limpiarTodo()
       this.getRoles();

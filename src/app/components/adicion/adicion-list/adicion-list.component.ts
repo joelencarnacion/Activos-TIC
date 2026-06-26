@@ -12,6 +12,7 @@ import { PermisosService } from 'src/app/services/permisos.service';
 import { PrintAdicionComponent } from '../../print/print-adicion/print-adicion.component';
 import { FirmasModalComponent } from '../../modals/firmas-modal/firmas-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ComentariosComponent } from '../../modals/comentarios/comentarios.component';
 
 @Component({
   selector: 'app-adicion-list',
@@ -188,6 +189,36 @@ export class AdicionListComponent {
       };
       setTimeout(() => {
         this.printRef.print();
+      });
+    });
+  }
+
+  openComentarios(data:any): void {
+    const dialogRef = this.dialog.open(ComentariosComponent, {
+      width: '400px',
+      data: data
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
+    });
+  }
+
+  descargarPdf(data:any): void {
+    const dialogRef = this.dialog.open(FirmasModalComponent, {
+      width: '400px',
+      data: 'adicion'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+
+      if (!result) return;
+      this.adicionData = {
+        ...data,
+        entregadoNombre: result.firmaEntregado.nombre + ' ' + result.firmaEntregado.apellido  ,
+        entregadoCargo: result.firmaEntregado.cargo ,
+      };
+      setTimeout(() => {
+        this.printRef.downloadPdf();
       });
     });
   }

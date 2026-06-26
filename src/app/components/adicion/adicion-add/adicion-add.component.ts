@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { alertRemoveSure, infoMessageAlert, successMessageAlert } from 'src/app/helpers/alerts';
-import { GeneralI, RecintoI, ResponseI } from 'src/app/interfaces/all.interfaces';
+import { alertRemoveSure, hideLoading, infoMessageAlert, showLoading, successMessageAlert } from 'src/app/helpers/alerts';
+import { GeneralI, MarcaI, ModeloI, RecintoI, ResponseI } from 'src/app/interfaces/all.interfaces';
 import { ClassImports } from 'src/app/material/class.components';
 import { MaterialModule } from 'src/app/material/material.module';
 import { ActivoService } from 'src/app/services/activo.service';
 import { AdicionService } from 'src/app/services/adicion.service';
 import { EquipoService } from 'src/app/services/equipo.service';
+import { MarcaService } from 'src/app/services/marca.service';
+import { ModeloService } from 'src/app/services/modelo.service';
 import { PermisosService } from 'src/app/services/permisos.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
 
@@ -38,15 +40,16 @@ export class AdicionAddComponent {
   idAdicion!: string;
   adicionRecibida!: any
 
-areaList: Array<any> = [];
-areaBuscando: boolean = false;
-areaBusqueda: string = '';
+  areaList: Array<any> = [];
+  areaBuscando: boolean = false;
+  areaBusqueda: string = '';
 
-usuriosList: Array<any> = [];
-usuarioBuscando: boolean = false;
-usuarioBusqueda: string = '';
-
-
+  usuriosList: Array<any> = [];
+  usuarioBuscando: boolean = false;
+  usuarioBusqueda: string = '';
+  marcaList: Array<MarcaI> = [];
+  modeloList: Array<ModeloI> = [];
+  modelosFiltrados: any[][] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -55,8 +58,9 @@ usuarioBusqueda: string = '';
     private equipoService: EquipoService,
     private usuarioService: UsuarioService,
     private route: ActivatedRoute,
-    public permisosService: PermisosService
-
+    public permisosService: PermisosService,
+    private marcaService: MarcaService,
+    private modeloService: ModeloService,
   ) {
 
 
@@ -70,12 +74,11 @@ usuarioBusqueda: string = '';
     this.getAdicionOrigenes();
     this.getActivoTipos();
     this.getrecintos();
+    this.getAllModelos();
+    this.getAllMarcas();
     this.route.paramMap.subscribe(params => {
       this.idAdicion = params.get('id') || '';
 
-      if (this.idAdicion) {
-        this.getActivosById(this.idAdicion);
-      }
     });
   }
 
@@ -94,6 +97,32 @@ usuarioBusqueda: string = '';
       observaciones: [''],
       activos: this.fb.array([])
     });
+  }
+
+  getAllModelos() {
+    showLoading();
+    this.modeloService.getModelos().subscribe((resp: any) => {
+      this.modeloList = resp.data;
+      if (this.idAdicion) {
+        this.getActivosById(this.idAdicion);
+      }
+      console.log(this.modeloList);
+      hideLoading();
+    })
+  }
+
+  getAllMarcas() {
+    this.marcaService.getMarcas().subscribe((resp: any) => {
+      this.marcaList = resp.data;
+
+      // if (this.adicionRecibida?.activos?.length) {
+      //   this.adicionRecibida.activos.forEach((activo: any, index: number) => {
+      //     this.modelosFiltrados[index] = this.modeloList.filter(
+      //       m => m.marca === activo.marca
+      //     );
+      //   });
+      // }
+    })
   }
 
 
@@ -151,17 +180,26 @@ usuarioBusqueda: string = '';
       this.adicionRecibida = resp.data[0];
       resp.data[0].activos.forEach((activo: any) => {
 
-        this.agregarActivo(true);  // ← único cambio aquí
+        this.agregarActivo(true);
 
         const index = this.activos.length - 1;
 
+
+        this.modelosFiltrados[index] = this.modeloList.filter(
+          m => m.marca?.nombre === activo.marca
+        );
+
+        console.log('modeloList:', this.modeloList);
+        console.log('activo.marca:', activo.marca);
+        console.log('activo.modelo:', activo.modelo);
         this.activos.at(index).patchValue({
-          id:activo.id,
+          id: activo.id,
           fechaAdquisicion: activo.fechaAdquisicion,
           subTipoActivoId: activo.subTipoActivo?.id,
           tipoActivoId: activo.subTipoActivo?.tipoActivo?.id,
           codInstitucional: activo.codInstitucional,
           codBienesNacionales: activo.codBienesNacionales,
+          nombre: activo.nombre,
           marca: activo.marca,
           modelo: activo.modelo,
           serial: activo.serial,
@@ -191,6 +229,7 @@ usuarioBusqueda: string = '';
         });
 
       });
+
     })
   }
   // Getter para acceder al FormArray de activos
@@ -235,9 +274,11 @@ usuarioBusqueda: string = '';
       fechaAdquisicion: ['', Validators.required],
       subTipoActivoId: ['', Validators.required],
       tipoActivoId: ['', Validators.required],
-      codInstitucional: [''],
-      codBienesNacionales: [''],
-      marca: ['', Validators.required],
+      codInstitucional: ['', [Validators.required, 
+        Validators.pattern(/^[a-zA-Z0-9]{8,12}$/)]],
+      codBienesNacionales: ['', [Validators.required, Validators.pattern(/^\d{7}$/)]],
+      nombre: ['', Validators.required],
+      marca: [''],
       modelo: [''],
       serial: [''],
       color: [''],
@@ -256,7 +297,7 @@ usuarioBusqueda: string = '';
       ordenDeCompra: [''],
       proveedor: [''],
       fechaPago: [null],
-      fechaFactura:[null],
+      fechaFactura: [null],
       // fechaVencimientoGarantia: [''],
 
       // Información Presupuestaria y SIAB
@@ -271,19 +312,19 @@ usuarioBusqueda: string = '';
       noLibramiento: ['']
 
 
-          // configuracionGeneral: [''],
-          // tamanio: [''],
+      // configuracionGeneral: [''],
+      // tamanio: [''],
 
 
-          // cuentaContableFacturacion: [''],
-          // objetalGuiaPresupuestaria: [''],
-          // descripcionGuiaPresupuestaria: [''],
-          // objetalSiab: [''],
-          // descripcionSiab: [''],
-          // objetalRegistradoSiab: [''],
-          // codRegistradoSiab: [''],
-          // objetalRegistroContable: [''],
-          // descripcionCuentaContable: [''],
+      // cuentaContableFacturacion: [''],
+      // objetalGuiaPresupuestaria: [''],
+      // descripcionGuiaPresupuestaria: [''],
+      // objetalSiab: [''],
+      // descripcionSiab: [''],
+      // objetalRegistradoSiab: [''],
+      // codRegistradoSiab: [''],
+      // objetalRegistroContable: [''],
+      // descripcionCuentaContable: [''],
 
     });
 
@@ -314,6 +355,14 @@ usuarioBusqueda: string = '';
       }
     });
 
+    nuevoActivo.get('marca')?.valueChanges.subscribe((marcaSeleccionada) => {
+      console.log('Marca:', marcaSeleccionada);
+      this.modelosFiltrados[index] = this.modeloList.filter(
+        m => m.marca?.nombre === marcaSeleccionada
+      );
+
+      nuevoActivo.get('modelo')?.setValue('');
+    });
     this.activosUI.push({
       expanded: true,
       seccionBasica: true,
@@ -323,7 +372,82 @@ usuarioBusqueda: string = '';
     });
   }
 
-  // Eliminar activo
+  duplicarActivo(index: number): void {
+    // Colapsar todos
+    this.activosUI.forEach(ui => ui.expanded = false);
+
+    const activoOriginal = this.activos.at(index) as FormGroup;
+
+    // Crear nuevo form group
+    const nuevoActivo = this.crearActivoFormGroup();
+
+    // Copiar valores
+    nuevoActivo.patchValue({
+      ...activoOriginal.getRawValue()
+    });
+
+    // Limpiar campos que no deben duplicarse
+    nuevoActivo.patchValue({
+      id: null,
+      codInstitucional: '',
+      codBienesNacionales: '',
+      serial: '',
+      ubicacion: '',
+    });
+
+    const nuevoIndex = this.activos.length;
+
+    this.activos.push(nuevoActivo);
+    const marcaSeleccionada = nuevoActivo.get('marca')?.value;
+
+    this.modelosFiltrados[nuevoIndex] = this.modeloList.filter(
+      m => m.marca?.nombre === marcaSeleccionada
+    );
+
+    // Copiar lista de subtipos
+    this.activosSubtipos[nuevoIndex] = [
+      ...(this.activosSubtipos[index] || [])
+    ];
+
+    // Registrar eventos
+    nuevoActivo.get('tipoActivoId')?.valueChanges.subscribe((idTipo) => {
+      if (idTipo) {
+        this.getActivosSubtipos(idTipo, nuevoIndex);
+      } else {
+        this.activosSubtipos[nuevoIndex] = [];
+      }
+    });
+
+    this.activosUI.push({
+      expanded: true,
+      seccionBasica: true,
+      seccionUbicacion: false,
+      seccionFacturacion: false,
+      seccionPresupuesto: false
+    });
+  }
+
+  esCodigo7Digitos(index: number, controlName: string): boolean {
+    const control = this.activos.at(index).get(controlName);
+
+    if (!control) return false;
+
+    const valor = control.value?.toString() || '';
+
+    return control.touched && !/^\d{7}$/.test(valor);
+  }
+
+  esCodigoEntre8y12(index: number, controlName: string): boolean {
+    const control = this.activos.at(index).get(controlName);
+
+    if (!control) return false;
+
+    const valor = control.value?.toString() || '';
+
+    return control.touched && !/^[a-zA-Z0-9]{8,12}$/.test(valor);
+  }
+
+
   eliminarActivo(index: number): void {
     if (confirm('¿Está seguro de eliminar este activo?')) {
       this.activos.removeAt(index);
@@ -347,13 +471,13 @@ usuarioBusqueda: string = '';
   }
 
   // Obtener marca de un activo para mostrar en el header
-  getActivoMarca(index: number): string {
-    return this.getActivoFormGroup(index).get('marca')?.value || '';
+  getNombre(index: number): string {
+    return this.getActivoFormGroup(index).get('nombre')?.value || '';
   }
 
   // Obtener modelo de un activo para mostrar en el header
-  getActivoModelo(index: number): string {
-    return this.getActivoFormGroup(index).get('modelo')?.value || '';
+  getDescripcion(index: number): string {
+    return this.getActivoFormGroup(index).get('descripcion')?.value || '';
   }
 
   // Obtener costo de un activo para mostrar en el header
@@ -401,8 +525,6 @@ usuarioBusqueda: string = '';
     // }
   }
 
-
-
   // Marcar todos los campos como touched para mostrar errores
   private markFormGroupTouched(formGroup: FormGroup | FormArray): void {
     Object.keys(formGroup.controls).forEach(key => {
@@ -417,16 +539,18 @@ usuarioBusqueda: string = '';
 
 
   postAdicion(datos: any) {
+    showLoading();
     this.adicionService.postAdicion(datos).subscribe((resp: any) => {
       successMessageAlert(resp.message);
       this.formulario.reset();
       this.activos.clear();
       this.activosUI = [];
+      hideLoading();
     })
   }
 
-  updateActivo(activo:any){
-    this.activoService.updateActivo(activo.value, activo.value.id).subscribe((resp:ResponseI)=>{
+  updateActivo(activo: any) {
+    this.activoService.updateActivo(activo.value, activo.value.id).subscribe((resp: ResponseI) => {
       successMessageAlert('Activo editado')
     })
   }
@@ -435,7 +559,6 @@ usuarioBusqueda: string = '';
   guardarFormulario(): void {
     // Marcar todos los campos como touched para mostrar errores de validación
     this.markFormGroupTouched(this.formulario);
-
     if (this.formulario.invalid) {
       // Expandir activos con errores
       this.activos.controls.forEach((activo, index) => {
@@ -445,7 +568,6 @@ usuarioBusqueda: string = '';
           this.activosUI[index].seccionFacturacion = true;
         }
       });
-
       // alert('Por favor, complete todos los campos requeridos.');
       infoMessageAlert('Por favor, complete todos los campos requeridos');
       return;

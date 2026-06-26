@@ -335,6 +335,7 @@ export interface ActivoI {
   tipoActivo: string;
   estado: string;
   codigoPatrimonial: string;
+  nombre:string;
   marca: string;
   modelo: string;
   numeroSerie: string;
@@ -475,6 +476,13 @@ export interface RolesI {
   nombre: string;
   idSistema: number;
   modulos: ModulosI[];
+}
+export interface ComentarioI {
+  id: number;
+  comentario: string;
+  visto: number;
+  creadoPor: string;
+  fechaCreacion: string;
 }
 
 
