@@ -2,9 +2,12 @@
 // Header
 // @=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@=@
 
-.header {
-  // background-color: $body-color !important;
-  background-color: transparent !important;
+.headerMain {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: white !important;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .search-section {

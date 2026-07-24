@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LoginService } from './login.service';
 import { Observable, catchError, throwError } from 'rxjs';
-import { alertServerDown, errorMessageAlert } from '../helpers/alerts';
+import { alertServerDown, errorMessageAlert, infoMessageAlert } from '../helpers/alerts';
 import { CategoriaI, ResponseI, TrasladoI } from '../interfaces/all.interfaces';
 import { environment } from '../environments/environment';
 
@@ -58,6 +58,14 @@ export class TrasladosService {
   postProcesarTraslado(id: string, valor: any): Observable<ResponseI> {
     const headers = this.getHeaders();
     return this.http.post<ResponseI>(`${this.baseUrl}/Traslados/${id}/procesar-solicitud`, valor, {headers})
+    .pipe(catchError((error) => { infoMessageAlert(error.error.message); return throwError(error) }))
+
+  }
+
+  postProcesarFormulario(id: string): Observable<ResponseI> {
+    const headers = this.getHeaders();
+    return this.http.post<ResponseI>(`${this.baseUrl}/Traslados/${id}/procesar-traslado`, {}, {headers})
+    .pipe(catchError((error) => { infoMessageAlert(error.error.message); return throwError(error) }))
   }
 
 }

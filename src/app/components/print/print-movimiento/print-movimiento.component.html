@@ -67,8 +67,8 @@
 
       </div> -->
       <div class="f-info-cell">
-        <div class="f-lbl">Número de Factura</div>
-        <div class="f-val">{{ movimientoObtenido.numeroFactura }}</div>
+        <div class="f-lbl">Tipo de Movimiento</div>
+        <div class="f-val">{{ movimientoObtenido.tipoMovimiento.nombre }}</div>
       </div>
     </div>
 
@@ -83,12 +83,12 @@
       </div>
     </div> -->
 
-    <div class="f-info-grid">
+    <!-- <div class="f-info-grid">
       <div class="f-info-cell span4 bg-alt">
         <div class="f-lbl">Tipo de Movimiento</div>
         <div class="f-val">{{ movimientoObtenido.tipoMovimiento.nombre }}</div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Items table -->
     <div class="f-section-head">Detalle de Activos Fijos</div>
@@ -102,9 +102,8 @@
 
           <th>Descripciones Específicas<br>(Marca, modelo, color)</th>
           <th>Serial</th>
-          <th>No. factura</th>
           <th>Condición</th>
-          <th>Costo</th>
+          <th>Ubicación</th>
           <!-- <th>Condición</th> -->
         </tr>
       </thead>
@@ -117,23 +116,15 @@
           <td class="desc">
             Marca:{{ item.marca }}, modelo:{{ item.serial }}, color: {{item.color}}</td>
             <td>{{ item.serial || ''}}</td>
-          <td>{{ item.noFactura ||  ''}}</td>
           <td>{{ item.condicion || ''}}</td>
-          <td>{{ item.costo | number:'1.2-2' }}</td>
+          <td>{{ item.ubicacion}}</td>
         </tr>
-        <tr *ngFor="let e of emptyRows; let i = index">
-          <td>{{ (data.items?.length ?? 0) + i + 1 }}</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td class="desc"></td><td></td><td></td><td></td>
-        </tr>
+
       </tbody>
     </table>
 
     <!-- Observations -->
-    <div class="f-obs-head">Observaciones</div>
+    <div class="f-obs-head" style="margin-top: 15px;">Observaciones</div>
     <div class="f-obs-body">{{ movimientoObtenido.observaciones }}</div>
 
     <!-- Signatures -->

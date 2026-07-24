@@ -44,12 +44,26 @@ export class AdicionAddComponent {
   areaBuscando: boolean = false;
   areaBusqueda: string = '';
 
+  areaActivoList: Array<any> = [];
+  areaActivoBuscando: boolean = false;
+  areaActivoBusqueda: string = '';
+
   usuriosList: Array<any> = [];
   usuarioBuscando: boolean = false;
   usuarioBusqueda: string = '';
+
+  asignadoList: Array<any> = [];
+  asignadoBuscando: boolean = false;
+  asignadoBusqueda: string = '';
+
+  objetalList: Array<any> = [];
+  objetalBuscando: boolean = false;
+  objetalBusqueda: string = '';
+
   marcaList: Array<MarcaI> = [];
   modeloList: Array<ModeloI> = [];
   modelosFiltrados: any[][] = [];
+  puedeEditar : boolean = false
 
   constructor(
     private fb: FormBuilder,
@@ -61,11 +75,7 @@ export class AdicionAddComponent {
     public permisosService: PermisosService,
     private marcaService: MarcaService,
     private modeloService: ModeloService,
-  ) {
-
-
-  }
-
+  ) {}
 
 
   ngOnInit(): void {
@@ -78,11 +88,8 @@ export class AdicionAddComponent {
     this.getAllMarcas();
     this.route.paramMap.subscribe(params => {
       this.idAdicion = params.get('id') || '';
-
     });
   }
-
-
 
   private initForm(): void {
     this.formulario = this.fb.group({
@@ -95,6 +102,7 @@ export class AdicionAddComponent {
       ordenDeCompra: [''],
       proveedor: [''],
       observaciones: [''],
+      noFormularioFisico: [''],
       activos: this.fb.array([])
     });
   }
@@ -106,7 +114,6 @@ export class AdicionAddComponent {
       if (this.idAdicion) {
         this.getActivosById(this.idAdicion);
       }
-      console.log(this.modeloList);
       hideLoading();
     })
   }
@@ -125,10 +132,97 @@ export class AdicionAddComponent {
     })
   }
 
+  buscarObjetal(termino: string, index: number): void {
+    if (!termino || termino.trim().length === 0) {
+      this.getActivoFormGroup(index).get('objetalSiab')?.setValue('');
+      this.getActivoFormGroup(index).get('cuentaContableRegistroContable')?.setValue('');
+      this.getActivoFormGroup(index).get('descripcionSiab')?.setValue('');
+      this.asignadoList = [];
+      return;
+    }
 
-  buscarUsuario(termino: string): void {
+    if ( termino.length < 2) {
+      this.objetalList = [];
+      return;
+    }
+    this.objetalBuscando = true;
+    this.adicionService.getCuentaContable(termino).subscribe((resp: any) => {
+      this.objetalList = resp.data || resp;
+      this.objetalBuscando = false;
+    });
+  }
+
+  seleccionarObjetal(objetal: any, index: number): void {
+    // Setea el valor en el activo correcto.
+    const objetalc = objetal.codigoObjetal;
+    const Cuentacodigo = objetal.codigoCuentaContable;
+    const descripcion = objetal.descripcion;
+    this.getActivoFormGroup(index).get('objetalSiab')?.setValue(objetalc);
+    this.getActivoFormGroup(index).get('cuentaContableRegistroContable')?.setValue(Cuentacodigo);
+    this.getActivoFormGroup(index).get('descripcionSiab')?.setValue(descripcion);
+    this.objetalList = [];
+  }
+
+
+  buscarAsignado(termino: string, index: number): void {
+    if (!termino || termino.trim().length === 0) {
+      this.getActivoFormGroup(index).get('asignadoA')?.setValue('');
+      this.getActivoFormGroup(index).get('asignadoAUsuario')?.setValue('');
+      this.asignadoList = [];
+      return;
+    }
+
+    if (termino.length < 2) {
+      this.asignadoList = [];
+      return;
+    }
+
+    this.asignadoBuscando = true;
+    this.usuarioService.buscarUsuarios(termino).subscribe((resp: any) => {
+      this.asignadoList = resp.data || resp;
+      this.asignadoBuscando = false;
+    });
+  }
+
+  seleccionarAsignado(usuario: any, index: number): void {
+    const username = usuario.persona.nombre + " " + usuario.persona.apellidos;
+    this.getActivoFormGroup(index).get('asignadoA')?.setValue(username);
+    this.getActivoFormGroup(index).get('asignadoAUsuario')?.setValue(usuario.usuario);
+    this.asignadoList = [];
+  }
+
+  // buscarAsignado(termino: string): void {
+  //   this.asignadoBusqueda = termino;
+  //   if (!termino || termino.length < 2) {
+  //     this.usuriosList = [];
+  //     return;
+  //   }
+  //   this.asignadoBuscando = true;
+  //   this.usuarioService.buscarUsuarios(termino).subscribe((resp: any) => {
+  //     this.asignadoList = resp.data || resp;
+  //     this.asignadoBuscando = false;
+  //   });
+  // }
+
+  // seleccionarAsignado(usuario: any, index: number): void {
+
+  //   // Setea el valor en el activo correcto.
+  //   const username = usuario.persona.nombre+ " "+ usuario.persona.apellidos;
+  //   this.getActivoFormGroup(index).get('asignadoA')?.setValue(username);
+  //   this.getActivoFormGroup(index).get('asignadoAUsuario')?.setValue(usuario.usuario);
+  //   this.asignadoList = [];
+  //   this.asignadoBusqueda = usuario.persona.nombre; // para que se vea en el input
+  // }
+
+  buscarUsuario(termino: string,  index: number): void {
+    if (!termino || termino.trim().length === 0) {
+      this.getActivoFormGroup(index).get('responsableAdquisicion')?.setValue('');
+      this.asignadoList = [];
+      return;
+    }
+
     this.usuarioBusqueda = termino;
-    if (!termino || termino.length < 2) {
+    if (termino.length < 2) {
       this.usuriosList = [];
       return;
     }
@@ -141,12 +235,10 @@ export class AdicionAddComponent {
 
   seleccionarUsuario(usuario: any, index: number): void {
     // Setea el valor en el activo correcto.
-    const nombreCompleto = usuario.persona.nombre + usuario.persona.apellidos;
+    const nombreCompleto = usuario.persona.nombre+ " "+ usuario.persona.apellidos;
     this.getActivoFormGroup(index).get('responsableAdquisicion')?.setValue(nombreCompleto);
     this.usuriosList = [];
-    this.usuarioBusqueda = usuario.persona.nombre; // para que se vea en el input
   }
-
 
   getInputPosition(input: HTMLElement): { top: string; left: string; width: string } {
     const rect = input.getBoundingClientRect();
@@ -156,6 +248,31 @@ export class AdicionAddComponent {
       width: rect.width + 'px'
     };
   }
+
+
+  buscarAreasActivo(termino: string,  index: number): void {
+    if (!termino || termino.trim().length === 0) {
+      this.getActivoFormGroup(index).get('area')?.setValue('');
+      this.areaActivoList = [];
+      return;
+    }
+
+    if (termino.length < 2) {
+      this.areaActivoList = [];
+      return;
+    }
+    this.areaActivoBuscando = true;
+    this.equipoService.getAreas(termino).subscribe((resp: any) => {
+      this.areaActivoList = resp.data || resp;
+      this.areaActivoBuscando = false;
+    });
+  }
+
+  seleccionarAreaActivo(area: any, index: number): void {
+    this.getActivoFormGroup(index).get('area')?.setValue(area.nombre);
+    this.areaActivoList = [];
+  }
+
   buscarAreas(termino: string): void {
     this.areaBusqueda = termino;
     if (!termino || termino.length < 2) {
@@ -177,21 +294,23 @@ export class AdicionAddComponent {
 
   getActivosById(id: string) {
     this.adicionService.getAdicionById(id).subscribe((resp: any) => {
-      this.adicionRecibida = resp.data[0];
+    this.adicionRecibida = resp.data[0];
+
+    const processRequest = JSON.parse(sessionStorage.getItem('processRequest') || 'false');
+
+    this.puedeEditar = processRequest || (!processRequest && this.adicionRecibida.estado === 'Pendiente');
+
       resp.data[0].activos.forEach((activo: any) => {
-
         this.agregarActivo(true);
-
         const index = this.activos.length - 1;
+
 
 
         this.modelosFiltrados[index] = this.modeloList.filter(
           m => m.marca?.nombre === activo.marca
         );
 
-        console.log('modeloList:', this.modeloList);
-        console.log('activo.marca:', activo.marca);
-        console.log('activo.modelo:', activo.modelo);
+
         this.activos.at(index).patchValue({
           id: activo.id,
           fechaAdquisicion: activo.fechaAdquisicion,
@@ -212,6 +331,8 @@ export class AdicionAddComponent {
           ubicacion: activo.ubicacion,
           responsableAdquisicion: activo.responsableAdquisicion,
           asignadoA: activo.asignadoA,
+          asignadoAUsuario:activo.asignadoAUsuario,
+          area:activo.area,
 
           proveedor: activo.proveedor,
           fechaPago: activo.fechaPago,
@@ -225,7 +346,8 @@ export class AdicionAddComponent {
           codSiab: activo.codSiab,
           noTransaccionSiab: activo.noTransaccionSiab,
           cuentaContableRegistroContable: activo.cuentaContableRegistroContable,
-          noLibramiento: activo.noLibramiento
+          noLibramiento: activo.noLibramiento,
+          descripcionSiab: activo.descripcionSiab
         });
 
       });
@@ -274,7 +396,7 @@ export class AdicionAddComponent {
       fechaAdquisicion: ['', Validators.required],
       subTipoActivoId: ['', Validators.required],
       tipoActivoId: ['', Validators.required],
-      codInstitucional: ['', [Validators.required, 
+      codInstitucional: ['', [Validators.required,
         Validators.pattern(/^[a-zA-Z0-9]{8,12}$/)]],
       codBienesNacionales: ['', [Validators.required, Validators.pattern(/^\d{7}$/)]],
       nombre: ['', Validators.required],
@@ -288,8 +410,10 @@ export class AdicionAddComponent {
       // Ubicación y Asignación
       recinto: [''],
       ubicacion: [''],
-      responsableAdquisicion: [''],
+      responsableAdquisicion: ['',Validators.required],
       asignadoA: [''],
+      asignadoAUsuario: [''],
+      area: [''],
 
       // Información de Facturación
       costo: [null, [Validators.required, Validators.min(0)]],
@@ -307,9 +431,10 @@ export class AdicionAddComponent {
       noTransaccionSiab: [''],
       cuentaContableFacturacion: [''],
       cuentaContableRegistroContable: [''],
+      descripcionSiab: [''],
+      noLibramiento: ['']
       // vidaUtil: [null, Validators.min(0)],
       // valorResidual: [null, Validators.min(0)],
-      noLibramiento: ['']
 
 
       // configuracionGeneral: [''],
@@ -320,7 +445,6 @@ export class AdicionAddComponent {
       // objetalGuiaPresupuestaria: [''],
       // descripcionGuiaPresupuestaria: [''],
       // objetalSiab: [''],
-      // descripcionSiab: [''],
       // objetalRegistradoSiab: [''],
       // codRegistradoSiab: [''],
       // objetalRegistroContable: [''],
@@ -356,7 +480,6 @@ export class AdicionAddComponent {
     });
 
     nuevoActivo.get('marca')?.valueChanges.subscribe((marcaSeleccionada) => {
-      console.log('Marca:', marcaSeleccionada);
       this.modelosFiltrados[index] = this.modeloList.filter(
         m => m.marca?.nombre === marcaSeleccionada
       );
@@ -393,6 +516,7 @@ export class AdicionAddComponent {
       codBienesNacionales: '',
       serial: '',
       ubicacion: '',
+      noTransaccionSiab: '',
     });
 
     const nuevoIndex = this.activos.length;

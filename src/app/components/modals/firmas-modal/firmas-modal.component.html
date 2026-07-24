@@ -4,61 +4,207 @@
 
   <form [formGroup]="form">
 
-    <ng-container  *ngIf="tipo != 'adicion'">
-    <div class="form-group" style="position: relative;">
-      <label class="form-label">
-        {{ tipo === 'donacion' ? 'Aprueba' : 'Entraga' }}
-      </label>
-      <input type="text" class="form-input" [placeholder]="tipo === 'donacion' ? 'Buscar quien aprueba...': 'Buscar quien entrega...'" #entregadoInput
-        [value]="entregadoBusqueda || form.get('entregadoNombre')?.value"
-        (input)="buscarEntregado(entregadoInput.value)" />
-
-      <ul *ngIf="entregadoList.length > 0" [style.top]="getInputPosition(entregadoInput).top"
-        [style.left]="getInputPosition(entregadoInput).left" [style.width]="getInputPosition(entregadoInput).width"
-        style="position: fixed; z-index: 9999; background: white;
-         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
-         margin: 0; padding: 0; list-style: none;
-         max-height: 200px; overflow-y: auto;">
-        <li *ngFor="let usuario of entregadoList" (click)="seleccionarEntregado(usuario)"
-          style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
-          onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
-          onmouseout="this.style.background='white'; this.style.color='#333';">
-          {{ usuario.persona.nombre +" "+ usuario.persona.apellidos }}
-        </li>
-      </ul>
-    </div>
-
-    <div class="form-group" style="position: relative;">
-      <label class="form-label">
-        {{ tipo === 'donacion' ? 'Aprueba 2' : 'Recibe' }}
-      </label>
-      <input type="text" class="form-input"  [placeholder]="tipo === 'donacion' ? 'Buscar quien aprueba 2...': 'Buscar quien recibe...'" #recibidoInput
-        [value]="recibidoBusqueda || form.get('recibidoNombre')?.value" (input)="buscarRecibido(recibidoInput.value)" />
-
-      <ul *ngIf="recibidoList.length > 0" [style.top]="getInputPosition(recibidoInput).top"
-        [style.left]="getInputPosition(recibidoInput).left" [style.width]="getInputPosition(recibidoInput).width" style="position: fixed; z-index: 9999; background: white;
-         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
-         margin: 0; padding: 0; list-style: none;
-         max-height: 200px; overflow-y: auto;">
-        <li *ngFor="let usuario of recibidoList" (click)="seleccionarRecibido(usuario)"
-          style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
-          onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
-          onmouseout="this.style.background='white'; this.style.color='#333';">
-          {{ usuario.persona.nombre +" "+ usuario.persona.apellidos }}
-        </li>
-      </ul>
-    </div>
-
-    <ng-container *ngIf="tipo == 'reparacion' || tipo == 'traslado' || tipo == 'donacion'">
+    <ng-container *ngIf="tipo != 'adicion' && tipo != 'levantamiento'" >
       <div class="form-group" style="position: relative;">
-        <label class="form-label">Autoriza</label>
-        <input type="text" class="form-input" placeholder="Buscar quien autoriza..."
-         #apruebaInput
+        <label class="form-label">
+          {{ tipo === 'donacion' ? 'Aprueba' : 'Entraga' }}
+        </label>
+        <input type="text" class="form-input"
+          [placeholder]="tipo === 'donacion' ? 'Buscar quien aprueba...': 'Buscar quien entrega...'" #entregadoInput
+          [value]="entregadoBusqueda || form.get('entregadoNombre')?.value"
+          (input)="buscarEntregado(entregadoInput.value)" />
+
+        <ul *ngIf="entregadoList.length > 0" [style.top]="getInputPosition(entregadoInput).top"
+          [style.left]="getInputPosition(entregadoInput).left" [style.width]="getInputPosition(entregadoInput).width"
+          style="position: fixed; z-index: 9999; background: white;
+         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
+         margin: 0; padding: 0; list-style: none;
+         max-height: 200px; overflow-y: auto;">
+          <li *ngFor="let usuario of entregadoList" (click)="seleccionarEntregado(usuario)"
+            style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
+            onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+            onmouseout="this.style.background='white'; this.style.color='#333';">
+            {{ usuario.persona.nombre +" "+ usuario.persona.apellidos }}
+          </li>
+        </ul>
+      </div>
+
+      <div class="form-group" style="position: relative;">
+        <label class="form-label">
+          {{ tipo === 'donacion' ? 'Aprueba 2' : 'Recibe' }}
+        </label>
+        <input type="text" class="form-input"
+          [placeholder]="tipo === 'donacion' ? 'Buscar quien aprueba 2...': 'Buscar quien recibe...'" #recibidoInput
+          [value]="recibidoBusqueda || form.get('recibidoNombre')?.value"
+          (input)="buscarRecibido(recibidoInput.value)" />
+
+        <ul *ngIf="recibidoList.length > 0" [style.top]="getInputPosition(recibidoInput).top"
+          [style.left]="getInputPosition(recibidoInput).left" [style.width]="getInputPosition(recibidoInput).width"
+          style="position: fixed; z-index: 9999; background: white;
+         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
+         margin: 0; padding: 0; list-style: none;
+         max-height: 200px; overflow-y: auto;">
+          <li *ngFor="let usuario of recibidoList" (click)="seleccionarRecibido(usuario)"
+            style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
+            onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+            onmouseout="this.style.background='white'; this.style.color='#333';">
+            {{ usuario.persona.nombre +" "+ usuario.persona.apellidos }}
+          </li>
+        </ul>
+      </div>
+
+      <ng-container *ngIf="tipo == 'reparacion' || tipo == 'traslado' || tipo == 'donacion'">
+        <div class="form-group" style="position: relative;">
+          <label class="form-label">Autoriza</label>
+          <input type="text" class="form-input" placeholder="Buscar quien autoriza..." #apruebaInput
+            [value]="apruebaBusqueda || form.get('apruebaNombre')?.value" (input)="buscarAprueba(apruebaInput.value)" />
+
+          <ul *ngIf="apruebaList.length > 0" [style.top]="getInputPosition(apruebaInput).top"
+            [style.left]="getInputPosition(apruebaInput).left" [style.width]="getInputPosition(apruebaInput).width"
+            style="position: fixed; z-index: 9999; background: white;
+         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
+         margin: 0; padding: 0; list-style: none;
+         max-height: 200px; overflow-y: auto;">
+            <li *ngFor="let usuario of apruebaList" (click)="seleccionarAprueba(usuario)"
+              style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
+              onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+              onmouseout="this.style.background='white'; this.style.color='#333';">
+              {{ usuario.persona.nombre +" "+ usuario.persona.apellidos }}
+            </li>
+          </ul>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="tipo == 'donacion'">
+        <div class="form-group" style="position: relative;">
+          <label class="form-label">Autoriza 2</label>
+          <input type="text" class="form-input" placeholder="Buscar quien Autoriza 2..." #autorizaInput
+            [value]="autorizaBusqueda || form.get('autorizaNombre')?.value"
+            (input)="buscarAutoriza(autorizaInput.value)" />
+
+          <ul *ngIf="autorizaList.length > 0" [style.top]="getInputPosition(autorizaInput).top"
+            [style.left]="getInputPosition(autorizaInput).left" [style.width]="getInputPosition(autorizaInput).width"
+            style="position: fixed; z-index: 9999; background: white;
+         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
+         margin: 0; padding: 0; list-style: none;
+         max-height: 200px; overflow-y: auto;">
+            <li *ngFor="let usuario of autorizaList" (click)="seleccionarAutoriza(usuario)"
+              style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
+              onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+              onmouseout="this.style.background='white'; this.style.color='#333';">
+              {{ usuario.persona.nombre +" "+ usuario.persona.apellidos }}
+            </li>
+          </ul>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="tipo == 'donacion'">
+        <div class="form-group" style="position: relative;">
+          <label class="form-label">Solicita</label>
+          <input type="text" class="form-input" placeholder="Buscar quien solicita..." #solicitaInput
+            [value]="solicitaBusqueda || form.get('solicitaNombre')?.value"
+            (input)="buscarSolicita(solicitaInput.value)" />
+
+          <ul *ngIf="solicitaList.length > 0" [style.top]="getInputPosition(solicitaInput).top"
+            [style.left]="getInputPosition(solicitaInput).left" [style.width]="getInputPosition(solicitaInput).width"
+            style="position: fixed; z-index: 9999; background: white;
+         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
+         margin: 0; padding: 0; list-style: none;
+         max-height: 200px; overflow-y: auto;">
+            <li *ngFor="let usuario of solicitaList" (click)="seleccionarSolicita(usuario)"
+              style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
+              onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+              onmouseout="this.style.background='white'; this.style.color='#333';">
+              {{ usuario.persona.nombre +" "+ usuario.persona.apellidos }}
+            </li>
+          </ul>
+        </div>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngIf="tipo == 'adicion'">
+      <div class="form-group" style="position: relative;">
+        <label class="form-label">
+          Firma de la adición
+        </label>
+        <input type="text" class="form-input" placeholder="Buscar persona a firmar..." #entregadoInput
+          [value]="entregadoBusqueda || form.get('entregadoNombre')?.value"
+          (input)="buscarEntregado(entregadoInput.value)" />
+
+        <ul *ngIf="entregadoList.length > 0" [style.top]="getInputPosition(entregadoInput).top"
+          [style.left]="getInputPosition(entregadoInput).left" [style.width]="getInputPosition(entregadoInput).width"
+          style="position: fixed; z-index: 9999; background: white;
+         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
+         margin: 0; padding: 0; list-style: none;
+         max-height: 200px; overflow-y: auto;">
+          <li *ngFor="let usuario of entregadoList" (click)="seleccionarEntregado(usuario)"
+            style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
+            onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+            onmouseout="this.style.background='white'; this.style.color='#333';">
+            {{ usuario.persona.nombre +" "+ usuario.persona.apellidos }}
+          </li>
+        </ul>
+      </div>
+    </ng-container>
+
+    
+    <ng-container *ngIf="tipo == 'levantamiento'">
+      <div class="form-group" style="position: relative;  margin-bottom: 10px;">
+        <label class="form-label">
+          Responsable del área
+        </label>
+        <input type="text" class="form-input" placeholder="Buscar responsable del área..." #recibidoInput
+          [value]="recibidoBusqueda || form.get('recibidoNombre')?.value"
+          (input)="buscarRecibido(recibidoInput.value)" />
+
+        <ul *ngIf="recibidoList.length > 0" [style.top]="getInputPosition(recibidoInput).top"
+          [style.left]="getInputPosition(recibidoInput).left" [style.width]="getInputPosition(recibidoInput).width"
+          style="position: fixed; z-index: 9999; background: white;
+         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
+         margin: 0; padding: 0; list-style: none;
+         max-height: 200px; overflow-y: auto;">
+          <li *ngFor="let usuario of recibidoList" (click)="seleccionarRecibido(usuario)"
+            style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
+            onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+            onmouseout="this.style.background='white'; this.style.color='#333';">
+            {{ usuario.persona.nombre +" "+ usuario.persona.apellidos }}
+          </li>
+        </ul>
+      </div>
+
+      <div class="form-group" style="position: relative; margin-bottom: 10px;">
+        <label class="form-label">
+         Técnico del levantamiento
+        </label>
+        <input type="text" class="form-input" placeholder="Buscar el técnico..." #entregadoInput
+          [value]="entregadoBusqueda || form.get('entregadoNombre')?.value"
+          (input)="buscarEntregado(entregadoInput.value)" />
+
+        <ul *ngIf="entregadoList.length > 0" [style.top]="getInputPosition(entregadoInput).top"
+          [style.left]="getInputPosition(entregadoInput).left" [style.width]="getInputPosition(entregadoInput).width"
+          style="position: fixed; z-index: 9999; background: white;
+         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
+         margin: 0; padding: 0; list-style: none;
+         max-height: 200px; overflow-y: auto;">
+          <li *ngFor="let usuario of entregadoList" (click)="seleccionarEntregado(usuario)"
+            style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
+            onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+            onmouseout="this.style.background='white'; this.style.color='#333';">
+            {{ usuario.persona.nombre +" "+ usuario.persona.apellidos }}
+          </li>
+        </ul>
+      </div>
+
+      <div class="form-group" style="position: relative;">
+        <label class="form-label">
+         Encargado de Activo Fijo
+        </label>
+        <input type="text" class="form-input" placeholder="Buscar encargado de activo fijo..." #apruebaInput
           [value]="apruebaBusqueda || form.get('apruebaNombre')?.value"
           (input)="buscarAprueba(apruebaInput.value)" />
 
         <ul *ngIf="apruebaList.length > 0" [style.top]="getInputPosition(apruebaInput).top"
-          [style.left]="getInputPosition(apruebaInput).left" [style.width]="getInputPosition(apruebaInput).width" style="position: fixed; z-index: 9999; background: white;
+          [style.left]="getInputPosition(apruebaInput).left" [style.width]="getInputPosition(apruebaInput).width"
+          style="position: fixed; z-index: 9999; background: white;
          box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
          margin: 0; padding: 0; list-style: none;
          max-height: 200px; overflow-y: auto;">
@@ -71,81 +217,6 @@
         </ul>
       </div>
     </ng-container>
-
-    <ng-container *ngIf="tipo == 'donacion'">
-      <div class="form-group" style="position: relative;">
-        <label class="form-label">Autoriza 2</label>
-        <input type="text" class="form-input" placeholder="Buscar quien Autoriza 2..."
-         #autorizaInput
-          [value]="autorizaBusqueda || form.get('autorizaNombre')?.value"
-          (input)="buscarAutoriza(autorizaInput.value)" />
-
-        <ul *ngIf="autorizaList.length > 0" [style.top]="getInputPosition(autorizaInput).top"
-          [style.left]="getInputPosition(autorizaInput).left"
-          [style.width]="getInputPosition(autorizaInput).width"
-           style="position: fixed; z-index: 9999; background: white;
-         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
-         margin: 0; padding: 0; list-style: none;
-         max-height: 200px; overflow-y: auto;">
-          <li *ngFor="let usuario of autorizaList" (click)="seleccionarAutoriza(usuario)"
-            style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
-            onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
-            onmouseout="this.style.background='white'; this.style.color='#333';">
-            {{ usuario.persona.nombre +" "+ usuario.persona.apellidos }}
-          </li>
-        </ul>
-      </div>
-    </ng-container>
-
-    <ng-container *ngIf="tipo == 'donacion'">
-      <div class="form-group" style="position: relative;">
-        <label class="form-label">Solicita</label>
-        <input type="text" class="form-input" placeholder="Buscar quien solicita..."
-         #solicitaInput
-          [value]="solicitaBusqueda || form.get('solicitaNombre')?.value"
-          (input)="buscarSolicita(solicitaInput.value)" />
-
-        <ul *ngIf="solicitaList.length > 0" [style.top]="getInputPosition(solicitaInput).top"
-          [style.left]="getInputPosition(solicitaInput).left"
-          [style.width]="getInputPosition(solicitaInput).width"
-           style="position: fixed; z-index: 9999; background: white;
-         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
-         margin: 0; padding: 0; list-style: none;
-         max-height: 200px; overflow-y: auto;">
-          <li *ngFor="let usuario of solicitaList" (click)="seleccionarSolicita(usuario)"
-            style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
-            onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
-            onmouseout="this.style.background='white'; this.style.color='#333';">
-            {{ usuario.persona.nombre +" "+ usuario.persona.apellidos }}
-          </li>
-        </ul>
-      </div>
-    </ng-container>
-  </ng-container>
-<ng-container *ngIf="tipo == 'adicion'">
-    <div class="form-group" style="position: relative;">
-      <label class="form-label">
-       Firma de la adición
-      </label>
-      <input type="text" class="form-input" placeholder="Buscar persona a firmar..." #entregadoInput
-        [value]="entregadoBusqueda || form.get('entregadoNombre')?.value"
-        (input)="buscarEntregado(entregadoInput.value)" />
-
-      <ul *ngIf="entregadoList.length > 0" [style.top]="getInputPosition(entregadoInput).top"
-        [style.left]="getInputPosition(entregadoInput).left" [style.width]="getInputPosition(entregadoInput).width"
-        style="position: fixed; z-index: 9999; background: white;
-         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
-         margin: 0; padding: 0; list-style: none;
-         max-height: 200px; overflow-y: auto;">
-        <li *ngFor="let usuario of entregadoList" (click)="seleccionarEntregado(usuario)"
-          style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
-          onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
-          onmouseout="this.style.background='white'; this.style.color='#333';">
-          {{ usuario.persona.nombre +" "+ usuario.persona.apellidos }}
-        </li>
-      </ul>
-    </div>
-  </ng-container>
   </form>
 
 </mat-dialog-content>

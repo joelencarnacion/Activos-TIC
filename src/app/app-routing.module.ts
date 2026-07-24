@@ -30,6 +30,8 @@ import { Error404Component } from './components/error404/error404.component';
 import { LoginGuard } from './guards/login.guard';
 import { FullGuard } from './guards/full.guard';
 import { ModulosGuard } from './guards/modulos.guard';
+import { AddLevantamientoComponent } from './components/levantamiento/add-levantamiento/add-levantamiento.component';
+import { ListLevantamientoComponent } from './components/levantamiento/list-levantamiento/list-levantamiento.component';
 
 const routes: Routes = [
   // {
@@ -52,6 +54,8 @@ const routes: Routes = [
     canActivate:[LoginGuard],
     children: [
       {path:"", redirectTo:"/tablero", pathMatch:"full"},
+      {path:"levantamiento/:id", component:AddLevantamientoComponent},
+      {path:"lista-levantamiento", component:ListLevantamientoComponent},
       // {path:'login/:token',component: LoginComponent,  canActivate: [LoginGuard]},
       {path:"tablero", component:DashboardComponent,
       canActivate: [ModulosGuard], data: { moduleName: 'Tablero' }},

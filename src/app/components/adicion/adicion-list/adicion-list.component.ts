@@ -36,6 +36,7 @@ export class AdicionListComponent {
   isDetailModalOpen = false
   mostrarBuscar: boolean = false;
   adicionData!: any;
+  processRequest:boolean = false
   @ViewChild('printAdicion') printRef!: PrintAdicionComponent;
 
 
@@ -54,11 +55,15 @@ export class AdicionListComponent {
       recinto: [''],
       numfactura: [''],
       ordendecompra: [''],
+      noformulariofisico: [''],
       noformulario: [''],
       creadopor: [''],
       desde: [''],
       hasta: [''],
     });
+
+    this.processRequest = JSON.parse(sessionStorage.getItem('processRequest') || 'false');
+
    }
   ngOnInit(): void {
     this.getAdiciones();

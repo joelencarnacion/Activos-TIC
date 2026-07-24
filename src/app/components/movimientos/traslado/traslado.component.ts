@@ -381,12 +381,38 @@ export class TrasladoComponent {
       });
   }
 
+  formatearFecha(fecha: string | Date): string {
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    const dia = String(date.getDate()).padStart(2, '0');
+    const mes = String(date.getMonth() + 1).padStart(2, '0');
+    const anio = date.getFullYear();
+
+    let horas = date.getHours();
+    const minutos = String(date.getMinutes()).padStart(2, '0');
+
+    const ampm = horas >= 12 ? 'PM' : 'AM';
+    horas = horas % 12 || 12;
+
+    return `${dia}/${mes}/${anio} ${horas}:${minutos} ${ampm}`;
+  }
+
   async procesarTraslado(id: string,valor:boolean){
     let remove: boolean = await alertRemoveSure("Estas seguro que deseas realizar esta acción?")
     if (remove) {
       const valorSoli =
       {isApproved:valor}
    this.trasladoService.postProcesarTraslado(id, valorSoli).subscribe((resp:ResponseI)=>{
+     successMessageAlert(resp.message);
+     this.getTraslados();
+   })
+    }
+  }
+  async procesarFormulario(id: string,){
+    let remove: boolean = await alertRemoveSure("Estas seguro que deseas realizar esta acción?")
+    if (remove) {
+
+   this.trasladoService.postProcesarFormulario(id).subscribe((resp:ResponseI)=>{
      successMessageAlert(resp.message);
      this.getTraslados();
    })
@@ -407,7 +433,7 @@ export class TrasladoComponent {
       ...this.miFormulario.value,
       activosIds: this.activosSeleccionados.map(a => a.id)
     };
-    //    this.postTraslado(payload)
+       this.postTraslado(payload)
   }
 
   imprimir(data:any): void {

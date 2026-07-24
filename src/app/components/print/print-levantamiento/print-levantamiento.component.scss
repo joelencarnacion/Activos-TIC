@@ -1,0 +1,204 @@
+// Estilos optimizados para Hoja A4 y Documentos Imprimibles
+.print-container {
+  width: 100%;
+  max-width: 800px; // Dimensión estándar para A4
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  color: #1a1a1a;
+  font-family: 'Source Sans 3', Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  box-sizing: border-box;
+
+  /* Header */
+  .doc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid #0f172a;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+
+    .doc-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 4px 0;
+      text-transform: uppercase;
+    }
+
+    .doc-subtitle {
+      font-size: 12px;
+      color: #64748b;
+      margin: 0;
+    }
+
+    .header-right {
+      text-align: right;
+
+      .meta-box {
+        margin-bottom: 4px;
+        .meta-label {
+          font-weight: 600;
+          color: #475569;
+          margin-right: 5px;
+        }
+        .meta-value {
+          font-weight: 700;
+          color: #0f172a;
+        }
+      }
+    }
+  }
+
+  /* Sección Info General */
+  .info-section {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 20px;
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+
+      .info-item {
+        .label {
+          font-weight: 600;
+          color: #475569;
+          margin-right: 6px;
+        }
+        .value {
+          color: #0f172a;
+        }
+        .badge-estado {
+          font-weight: 700;
+          text-transform: uppercase;
+          color: #0284c7;
+        }
+      }
+    }
+  }
+
+  /* Tablas */
+  .table-section {
+    margin-bottom: 25px;
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 8px 0;
+      border-left: 3px solid #0284c7;
+      padding-left: 8px;
+      text-transform: uppercase;
+    }
+
+    .doc-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+
+      th {
+        background-color: #f1f5f9;
+        color: #334155;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 8px 6px;
+        border: 1px solid #cbd5e1;
+        text-align: left;
+      }
+
+      td {
+        padding: 6px;
+        border: 1px solid #cbd5e1;
+        color: #334155;
+        vertical-align: middle;
+      }
+
+      .code-cell {
+        font-family: monospace;
+        font-weight: 600;
+      }
+
+      .text-center { text-align: center; }
+
+      .empty-msg {
+        padding: 15px;
+        color: #94a3b8;
+        font-style: italic;
+      }
+
+      .novedad-tag {
+        background-color: #e0f2fe;
+        color: #0369a1;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 600;
+      }
+
+      .tag-hallazgo {
+        background-color: #fef3c7;
+        color: #b45309;
+        font-size: 9px;
+        font-weight: 700;
+        padding: 1px 4px;
+        border-radius: 3px;
+        margin-left: 5px;
+      }
+    }
+  }
+
+  /* Firmas */
+  .signatures-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+    page-break-inside: avoid; // Evita que las firmas se rompan entre páginas al imprimir
+
+    .signature-box {
+      width: 30%;
+      text-align: center;
+
+      .signature-line {
+        border-bottom: 1px solid #334155;
+        margin-bottom: 6px;
+        height: 40px;
+      }
+
+      .signature-title {
+        font-weight: 700;
+        font-size: 11px;
+        color: #0f172a;
+        margin: 0;
+      }
+
+      .signature-sub {
+        font-size: 10px;
+        color: #64748b;
+        margin: 0;
+      }
+    }
+  }
+}
+
+
+/* Reglas especiales para cuando el navegador imprime directamente */
+@media print {
+  body {
+    background: none;
+  }
+
+  .print-container {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  /* Oculta elementos si fuera necesario */
+  .no-print {
+    display: none !important;
+  }
+}

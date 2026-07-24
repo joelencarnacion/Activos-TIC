@@ -114,7 +114,6 @@ export class ComentariosComponent implements OnInit {
     public dialogRef: MatDialogRef<ComentariosComponent>,
     @Inject(MAT_DIALOG_DATA) public data:any
   ){
-    console.log(data); 
     this.objRecibido = data
   }
   ngOnInit(): void {

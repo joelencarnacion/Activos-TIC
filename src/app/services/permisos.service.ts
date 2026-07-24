@@ -27,6 +27,7 @@ export class PermisosService {
     Adición: { route: 'adicion', icon: 'plus-square' },
     Activos: { route: 'activos', icon: 'monitor' },
     Configuraciones: { route: 'configuracion', icon: 'settings' },
+    Levantamientos: { route: 'lista-levantamiento', icon: 'check-square' },
     Asignación: { route: 'asignacionEstudiantes', icon: 'package' },
     Movimientos: { route: 'movimiento', icon: 'git-pull-request' },
   };

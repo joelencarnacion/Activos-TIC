@@ -149,7 +149,13 @@
           </div>
         </div>
 
-        <div class="form-gridFilter">
+        <div class="form-gridFilter4">
+          <div class="form-group">
+            <label class="form-label">No. Formulario Físico</label>
+            <input type="text" formControlName="noformulariofisico" class="form-input"
+             placeholder="Número del formulario físico">
+          </div>
+
           <div class="form-group">
             <label class="form-label">
               Recinto
@@ -329,8 +335,7 @@
                 </button>
               </ng-container>
 
-              <ng-container *ngIf="element.estado == 'Pendiente'">
-
+              <ng-container *ngIf="element.estado == 'Pendiente' && processRequest">
                 <button mat-menu-item (click)="procesarSolicitud(element.id, true)">
                   <mat-icon class="btnEditTable">check</mat-icon>
                   <span>Aprobar</span>
@@ -400,15 +405,20 @@
 
             <div class="trip-info">
               <div class="info-item">
-                <span class="info-label">Número formulario:</span>
+                <span class="info-label">No. formulario:</span>
                 <span>{{ adicionSelecionado.noFormulario }}</span>
               </div>
+
               <div class="info-item">
-                <span class="info-label">Número factura:</span>
+                <span class="info-label">No. formulario físico:</span>
+                <span>{{ adicionSelecionado.noFormularioFisico || ''}}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">No. factura:</span>
                 <span> {{ adicionSelecionado.numFactura}}</span>
               </div>
               <div class="info-item">
-                <span class="info-label">Número de orden:</span>
+                <span class="info-label">No. de orden:</span>
                 <span>{{ adicionSelecionado.ordenDeCompra || ''}}</span>
               </div>
 
@@ -475,5 +485,7 @@
   </mat-card-content>
 </mat-card>
 
-<app-print-adicion style="display: none;" #printAdicion [data]="adicionData">
+<app-print-adicion
+style="display: none;" #printAdicion
+[data]="adicionData">
 </app-print-adicion>

@@ -40,6 +40,11 @@ export class FirmasModalComponent {
   firmaAutoriza:any;
   firmaSolicita:any;
 
+  firmaResponsableArea:any;
+  firmaTecnico:any;
+  firmaActivoFijo:any;
+
+
   tipo:string = '';
 
   form = this.fb.group({
@@ -207,7 +212,7 @@ export class FirmasModalComponent {
       firmaRecibido: this.firmaRecibido,
       firmaAprueba: this.firmaAprueba,
       firmaAutoriza: this.firmaAutoriza,
-      firmaSolicita: this.firmaSolicita
+      firmaSolicita: this.firmaSolicita,
     });
 
   }

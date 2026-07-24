@@ -69,27 +69,17 @@
 
         </button>
 
-        <!-- Vista lista -->
-        <div *ngIf="mostrarLista">
-          <!-- tu tabla de movimientos aquí -->
-        </div>
-
-        <!-- Vista formulario -->
-        <div *ngIf="!mostrarLista">
-          <!-- tu formulario aquí -->
-        </div>
-
       </div>
     </div>
   </header>
 
   <ng-container *ngIf="mostrarBuscar">
     <form [formGroup]="filterForm">
-      <div class="form-gridFilter3">
-        <div class="form-group">
+      <div class="form-gridFilter">
+        <!-- <div class="form-group">
           <label class="form-label">No. factura</label>
           <input type="text" formControlName="numfactura" class="form-input" placeholder="Número de factura">
-        </div>
+        </div> -->
         <div class="form-group">
           <label class="form-label">No. formulario</label>
           <input type="text" formControlName="noformulario" class="form-input" placeholder="Número de formulario">
@@ -162,6 +152,16 @@
           </span>
         </div>
 
+        <div class="form-group"  *ngIf="subtipoMovimientoList.length > 0">
+          <label class="form-label">
+            Subtipo Movimiento
+          </label>
+          <select class="form-select" formControlName="subtipoMovimientoId">
+            <option value="">Seleccionar...</option>
+            <option *ngFor="let item of subtipoMovimientoList" [value]="item.id">{{item.nombre}}</option>
+          </select>
+        </div>
+
         <div class="form-group">
           <label class="form-label">
             Recinto
@@ -198,10 +198,10 @@
           </ul>
         </div>
 
-        <div class="form-group">
+        <!-- <div class="form-group">
           <label class="form-label">No. Factura</label>
           <input type="text" class="form-input" formControlName="numeroFactura" placeholder="Número de factura">
-        </div>
+        </div> -->
 
         <div class="form-group" style="position: relative;">
           <label class="form-label">Responsable</label>
@@ -250,7 +250,7 @@
           <li *ngFor="let activo of activosResultados" (click)="agregarActivo(activo)"
             style="padding:10px 14px; cursor:pointer; font-size:14px; border-bottom:1px solid #f5f5f5;"
             onmouseover="this.style.background='#f0f7ff'" onmouseout="this.style.background='white'">
-            <strong>{{ activo.marca || ''}} {{ activo.modelo || ''}}</strong>
+            <strong>{{ activo.nombre || ''}}</strong>
             <span style="color:#888; font-size:12px; margin-left:8px;">{{ activo.codInstitucional }}</span>
           </li>
         </ul>
@@ -263,9 +263,8 @@
                 padding:10px 14px; border:1px solid #e5e7eb; border-radius:8px;
                 margin-top:6px; background:#fafafa;">
           <div>
-            <span style="font-weight:500;">{{ activo.marca || '' }} {{ activo.modelo || ''}}</span>
+            <span style="font-weight:500;">{{ activo.nombre || '' }}</span>
             <span style="color:#888; font-size:12px; margin-left:8px;">{{ activo.codInstitucional || ''}}</span>
-            <span style="color:#888; font-size:12px; margin-left:8px;">{{ activo.serial || ''}}</span>
           </div>
           <button type="button" (click)="removerActivo(i)"
             style="background:none; border:none; cursor:pointer; color:#ef4444; font-size:18px;">
@@ -460,14 +459,19 @@
               <span class="info-label">Número formulario:</span>
               <span>{{ MovimientoSelecionado.noFormulario }}</span>
             </div>
-            <div class="info-item">
+            <!-- <div class="info-item">
               <span class="info-label">Número factura:</span>
               <span> {{ MovimientoSelecionado.numeroFactura}}</span>
-            </div>
+            </div> -->
 
             <div class="info-item">
               <span class="info-label">Responsable:</span>
               <span>{{ MovimientoSelecionado.responsable }}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Fecha Creaciòn:</span>
+              <span>{{ formatearFecha(MovimientoSelecionado.fechaCreacion) }}</span>
             </div>
 
             <div class="info-item">

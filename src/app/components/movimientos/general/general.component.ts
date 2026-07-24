@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { alertRemoveSure, infoMessageAlert, successMessageAlert } from 'src/app/helpers/alerts';
-import { GeneralI, MovimientoI, PaginationI, RecintoI, ResponseI } from 'src/app/interfaces/all.interfaces';
+import { GeneralI, MovimientoI, PaginationI, RecintoI, ResponseI, TipoMovimientoI } from 'src/app/interfaces/all.interfaces';
 import { ClassImports } from 'src/app/material/class.components';
 import { MaterialModule } from 'src/app/material/material.module';
 import { ActivoService } from 'src/app/services/activo.service';
@@ -34,7 +34,7 @@ export class GeneralComponent {
   recintoList: Array<RecintoI> = [];
 
   areaList: Array<any> = [];
-  tipoMovimientoList: Array<GeneralI> = [];
+  tipoMovimientoList: Array<any> = [];
   areaBuscando: boolean = false;
   areaBusqueda: string = '';
 
@@ -60,6 +60,7 @@ export class GeneralComponent {
   asignacionData!: any;
 
   processRequest!: boolean
+  subtipoMovimientoList: any[] = [];
 
   @ViewChild('printAsignacion') printRef!: PrintMovimientoComponent;
 
@@ -77,15 +78,19 @@ export class GeneralComponent {
       tipoMovimientoId: ['', Validators.required],
       recinto: ['', Validators.required],
       area: ['', Validators.required],
-      numeroFactura: [''],
+      // numeroFactura: [''],
+      subtipoMovimientoId: [null],
       responsable: ['', Validators.required],
       observaciones: [''],
+      responsableUsuario: [''],
+
     });
 
     this.filterForm = this.fb.group({
       numfactura: [''],
       tipoMovimiento: [''],
       noformulario: [''],
+
       recinto: [''],
       creadopor: [''],
     });
@@ -97,9 +102,21 @@ export class GeneralComponent {
     this.getrecintos();
     this.getTiposMovmientos();
     this.getMovimiento();
+
+    this.miFormulario.get('tipoMovimientoId')?.valueChanges.subscribe(id => {
+      this.cargarSubtipos(id);
+    });
   }
 
+  cargarSubtipos(id: string) {
+    const tipo = this.tipoMovimientoList.find(x => x.id === id);
+    this.subtipoMovimientoList = tipo?.subtipos ?? [];
+    // Limpiar la selección anterior
+    this.miFormulario.patchValue({
+      subtipoMovimientoId: ''
+    });
 
+  }
 
   toggleVista(): void {
     if (this.mostrarBuscar) {
@@ -149,6 +166,22 @@ export class GeneralComponent {
     this.getMovimiento(event.pageIndex + 1, event.pageSize, this.currentFilters);
   }
 
+  formatearFecha(fecha: string | Date): string {
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    const dia = String(date.getDate()).padStart(2, '0');
+    const mes = String(date.getMonth() + 1).padStart(2, '0');
+    const anio = date.getFullYear();
+
+    let horas = date.getHours();
+    const minutos = String(date.getMinutes()).padStart(2, '0');
+
+    const ampm = horas >= 12 ? 'PM' : 'AM';
+    horas = horas % 12 || 12;
+
+    return `${dia}/${mes}/${anio} ${horas}:${minutos} ${ampm}`;
+  }
+
  limpiar() {
       this.activosSeleccionados = [];
       this.miFormulario.reset();
@@ -156,8 +189,9 @@ export class GeneralComponent {
         tipoMovimientoId: [''],
         recinto: [''],
         area: [''],
-        numeroFactura: [''],
+        // numeroFactura: [''],
         responsable: [''],
+        responsableUsuario: [''],
         observaciones: '',
       })
   }
@@ -186,6 +220,7 @@ export class GeneralComponent {
   seleccionarUsuario(usuario: any): void {
     const nombreCompleto = usuario.persona.nombre + ' ' + usuario.persona.apellidos;
     this.miFormulario.get('responsable')?.setValue(nombreCompleto);
+    this.miFormulario.get('responsableUsuario')?.setValue(usuario.usuario);
     this.usuriosList = [];
     this.usuarioBusqueda = '';
   }
@@ -217,6 +252,7 @@ export class GeneralComponent {
       this.recintoList = resp.data
     })
   }
+
   getTiposMovmientos() {
     this.movimientoService.getTipoMovimientos().subscribe((resp: ResponseI) => {
       this.tipoMovimientoList = resp.data
@@ -255,6 +291,7 @@ export class GeneralComponent {
     }
 
     this.activosSeleccionados.push(activo);
+
     this.activosResultados = [];
     this.activoBusqueda = '';
   }
@@ -334,6 +371,7 @@ export class GeneralComponent {
   }
 
   guardar(): void {
+
     if (this.miFormulario.invalid) {
       infoMessageAlert('Debe completar el formulario antes de guardar');
       return;
@@ -345,6 +383,7 @@ export class GeneralComponent {
 
     const payload = {
       ...this.miFormulario.value,
+      subtipoMovimientoId: this.miFormulario.value.subtipoMovimientoId || null,
       activosIds: this.activosSeleccionados.map(a => a.id)
     };
 

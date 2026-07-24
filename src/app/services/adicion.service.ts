@@ -39,6 +39,11 @@ export class AdicionService {
       .pipe(catchError((error) => {alertServerDown(); return throwError(error) }))
   }
 
+  getCuentaContable(objetal:string): Observable<ResponseI> {
+    const headers = this.getHeaders();
+    return this.http.get<ResponseI>(`${this.baseUrl}/CuentasContables?codigoobjetal=${objetal}&CurrentPage=1&PageSize=50`, {headers})
+      .pipe(catchError((error) => { alertServerDown(); return throwError(error) }))
+  }
   getAdicionById(id:string): Observable<ResponseI> {
     const headers = this.getHeaders();
     return this.http.get<ResponseI>(`${this.baseUrl}/Adiciones/${id}`, {headers})

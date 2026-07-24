@@ -5,6 +5,7 @@ import { map, shareReplay } from 'rxjs/operators';
 import { PermisosService } from 'src/app/services/permisos.service';
 import { UserI } from 'src/app/interfaces/all.interfaces';
 import { alertRemoveSure } from 'src/app/helpers/alerts';
+import { MatSidenav } from '@angular/material/sidenav';
 
 interface sidebarMenu {
   link: string;
@@ -20,11 +21,13 @@ interface sidebarMenu {
 export class FullComponent {
   usuarioActual!: UserI
   search: boolean = false;
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
-    .pipe(
-      map(result => result.matches),
-      shareReplay()
-    );
+  isSidebarOpen = true;
+  isMobileOrTablet$ = this.breakpointObserver
+  .observe([Breakpoints.Handset, Breakpoints.Tablet])
+  .pipe(
+    map(result => result.matches),
+    shareReplay()
+  );
 
 
   constructor(
@@ -33,6 +36,10 @@ export class FullComponent {
     this.usuarioActual = JSON.parse(sessionStorage.getItem("usuario")!);
   }
 
+  toggleSidebar(drawer: MatSidenav) {
+    this.isSidebarOpen = !this.isSidebarOpen;
+    drawer.toggle();
+  }
 
   async logOut() {
     let remove: boolean = await alertRemoveSure("Estas seguro que deseas salir?")

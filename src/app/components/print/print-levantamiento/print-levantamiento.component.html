@@ -1,0 +1,145 @@
+<div id="print-levantamiento-doc" class="print-container">
+
+  <!-- Encabezado del Reporte -->
+  <header class="doc-header">
+    <div class="header-left">
+      <h1 class="doc-title">Levantamiento de Activos Fijos</h1>
+      <p class="doc-subtitle">Reporte Oficial de Verificación e Inventario</p>
+    </div>
+    <div class="header-right">
+      <div class="meta-box">
+        <span class="meta-label">No. Formulario:</span>
+        <span class="meta-value">{{ levantamientoObtenido?.noFormulario || 'PENDIENTE' }}</span>
+      </div>
+      <div class="meta-box">
+        <span class="meta-label">Fecha Impresión:</span>
+        <span class="meta-value">{{ fechaHoy }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Datos Generales del Levantamiento -->
+  <section class="info-section">
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="label">Área / Unidad:</span>
+        <span class="value">{{ levantamientoObtenido?.area || 'N/A' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Recinto:</span>
+        <span class="value">{{ levantamientoObtenido?.recinto || 'N/A' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Elaborado Por:</span>
+        <span class="value">{{ levantamientoObtenido?.creadoPor || 'N/A' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Estado del Proceso:</span>
+        <span class="value badge-estado">{{ levantamientoObtenido?.estado || 'En Proceso' }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tabla 1: Activos Verificados / Registrados -->
+  <section class="table-section">
+    <h3 class="section-title">1. Activos Registrados en Levantamiento</h3>
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th style="width: 5%;">#</th>
+          <th style="width: 20%;">Activo</th>
+          <th style="width: 15%;">Cód. Inst.</th>
+          <th style="width: 15%;">Cód. BN</th>
+          <th style="width: 15%;">Responsable</th>
+          <th style="width: 10%;">Novedad</th>
+          <th style="width: 20%;">Observaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of levantamientosDetalles; let i = index">
+          <td class="text-center">{{ i + 1 }}</td>
+          <td>
+            <strong>{{ item.activo?.nombre || 'Sin nombre' }}</strong>
+          </td>
+          <td class="code-cell">{{ item.activo?.codInstitucional || 'N/A' }}</td>
+          <td class="code-cell">{{ item.activo?.codBienesNacionales || 'N/A' }}</td>
+          <td>{{ item.activo?.asignadoA || 'N/A' }}</td>
+          <td class="text-center">
+            <span class="novedad-tag">{{ item.tipoNovedad?.nombre || 'Normal' }}</span>
+          </td>
+          <td>{{ item.observaciones || '-' }}</td>
+        </tr>
+        <!-- Fila vacía en caso de no haber registros -->
+        <tr *ngIf="levantamientosDetalles.length === 0">
+          <td colspan="6" class="text-center empty-msg">No se registraron detalles asociados.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Tabla 2: Hallazgos (Activos No Encontrados en Sistema) -->
+  <section class="table-section" *ngIf="levantamientosHallazgos.length > 0">
+    <h3 class="section-title">2. Hallazgos (Activos No Empadronados)</h3>
+    <table class="doc-table table-hallazgos">
+      <thead>
+        <tr>
+          <th style="width: 5%;">#</th>
+          <th style="width: 20%;">Activo</th>
+          <th style="width: 15%;">Cód. Inst.</th>
+          <th style="width: 15%;">Cód. BN</th>
+          <th style="width: 15%;">Color</th>
+          <th style="width: 10%;">Marca / Modelo</th>
+          <th style="width: 20%;">Observaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of levantamientosHallazgos; let i = index">
+          <td class="text-center">{{ i + 1 }}</td>
+          <td>
+            <strong>{{ item.nombre }}</strong>
+            <span class="tag-hallazgo">NUEVO</span>
+          </td>
+          <td class="code-cell">{{ item.codInstitucional || 'S/C' }}</td>
+          <td>{{ item.codBienesNacionales || 'N/A' }}</td>
+          <td>{{ item.color || 'N/A' }}</td>
+          <td>{{ item.marca || 'N/A' }} {{ item.modelo }}</td>
+          <td>{{ item.observaciones || '-' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+  <footer>
+
+    <!-- Signatures -->
+    <ng-container *ngIf="firmasData?.recibidoNombre">
+      <!-- Primera fila: 2 Firmas alineadas -->
+      <div class="f-sigs">
+        <div class="f-sig-cell">
+          <div class="f-sig-label">Responsable del área</div>
+          <div class="f-sig-line"></div>
+          <div class="f-sig-name">{{ firmasData.recibidoNombre | uppercase }}</div>
+          <div class="f-sig-role">{{ firmasData.recibidoCargo }}</div>
+        </div>
+        <div class="f-sig-cell">
+          <div class="f-sig-label">Técnico del levantamiento</div>
+          <div class="f-sig-line"></div>
+          <div class="f-sig-name">{{ firmasData.entregadoNombre | uppercase }}</div>
+          <div class="f-sig-role">{{ firmasData.entregadoCargo }}</div>
+        </div>
+      </div>
+
+      <!-- Segunda fila: 1 Firma centrada con borde completo arriba -->
+      <div class="f-sigs-single">
+        <div class="f-sig-cell">
+          <div class="f-sig-label">Encargado de Activos Fijos</div>
+          <div class="f-sig-line"></div>
+          <div class="f-sig-name">{{ firmasData.apruebaNombre | uppercase }}</div>
+          <div class="f-sig-role">{{ firmasData.apruebaCargo }}</div>
+        </div>
+      </div>
+    </ng-container>
+
+  </footer>
+
+
+</div>

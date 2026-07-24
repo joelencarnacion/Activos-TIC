@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LoginService } from './login.service';
 import { Observable, catchError, throwError } from 'rxjs';
-import { alertServerDown, errorMessageAlert } from '../helpers/alerts';
+import { alertServerDown, errorMessageAlert, infoMessageAlert } from '../helpers/alerts';
 import { CategoriaI, ResponseI } from '../interfaces/all.interfaces';
 import { environment } from '../environments/environment';
 
@@ -28,11 +28,6 @@ export class ActivoService {
     }
   }
 
-  // getActivo(): Observable<ResponseI> {
-  //   const headers = this.getHeaders();
-  //   return this.http.get<ResponseI>(`${this.baseUrl}/Activos`, {headers})
-  //     .pipe(catchError((error) => { alertServerDown(); return throwError(error) }))
-  // }
   getActivo(params: any = {}): Observable<ResponseI> {
     let httpParams = new HttpParams()
     const headers = this.getHeaders();
@@ -62,6 +57,18 @@ export class ActivoService {
   updateActivo(activo: any, id: string): Observable<ResponseI> {
     const headers = this.getHeaders();
     return this.http.put<ResponseI>(`${this.baseUrl}/Activos/${id}`, activo,{headers})
-      .pipe(catchError((error) => { errorMessageAlert(error.error.message); return throwError(error) }))
+      .pipe(catchError((error) => { infoMessageAlert(error.error.message); return throwError(error) }))
+  }
+
+  postEstadoMantenimiento(id: string, valor: any): Observable<ResponseI> {
+    const headers = this.getHeaders();
+    return this.http.post<ResponseI>(`${this.baseUrl}/Activos/${id}/mantenimiento`, valor, {headers})
+    .pipe(catchError((error) => { infoMessageAlert(error.error.message); return throwError(error) }))
+  }
+
+  postRecibirTraslado(id: string): Observable<ResponseI> {
+    const headers = this.getHeaders();
+    return this.http.post<ResponseI>(`${this.baseUrl}/Activos/${id}/recibir-traslado`, {}, {headers})
+    .pipe(catchError((error) => { infoMessageAlert(error.error.message); return throwError(error) }))
   }
 }

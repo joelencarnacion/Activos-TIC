@@ -1,6 +1,6 @@
 export interface ResponseI {
   ok: boolean,
-  status: number,
+  statusCode: number,
   detail: string,
   data: []
   message: string
@@ -386,6 +386,12 @@ export interface GeneralI{
   nombre:string,
   descripcion:string
 }
+
+
+export interface TipoMovimientoI extends GeneralI{
+  subtipos:GeneralI;
+}
+
 export interface MovimientoI{
   id:string,
   noFormulario:string,
@@ -397,6 +403,7 @@ export interface MovimientoI{
   activos:number,
   activosIds:string[],
   tipoMovimientoId:string,
+  subtipoMovimiento:GeneralI
 }
 
 export interface AdicionI{
@@ -484,6 +491,30 @@ export interface ComentarioI {
   creadoPor: string;
   fechaCreacion: string;
 }
+export interface LevantamientoI {
+  id: string;
+  noFormulario: string;
+  recinto: string;
+  area: string;
+  fechaCreacion: string;
+  estado: string;
+  creadoPor: string;
+}
+
+export interface LevantamientoGetI extends LevantamientoI{
+  levantamientosHallazgos:number;
+  levantamientosDetalles:number;
+  inventarios:number;
+}
+
+export interface LevantamientoByIdI extends LevantamientoI{
+  levantamientosHallazgos:[];
+  levantamientosDetalles:[];
+  inventarios:[];
+}
+
+
+
 
 
 

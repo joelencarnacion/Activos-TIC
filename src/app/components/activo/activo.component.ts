@@ -10,6 +10,8 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivoDetalleComponent } from '../modals/activo-detalle/activo-detalle.component';
 import { PermisosService } from 'src/app/services/permisos.service';
+import { VerMovimientosComponent } from '../modals/ver-movimientos/ver-movimientos.component';
+import { alertIsSuccess, alertRemoveSure, successMessageAlert } from 'src/app/helpers/alerts';
 
 @Component({
   selector: 'app-activo',
@@ -19,19 +21,20 @@ import { PermisosService } from 'src/app/services/permisos.service';
   styleUrl: './activo.component.scss'
 })
 export class ActivoComponent {
-  displayedColumns: string[] = ['nombre','codInstitucional',   'recinto','codBienesNacionales' ,'asignadoA', 'activoEstado','acciones'];
+  displayedColumns: string[] = ['nombre', 'codInstitucional', 'recinto', 'codBienesNacionales', 'asignadoA', 'activoEstado', 'acciones'];
 
   searchExpanded = false;
-  ActivosList:Array<ActivoI> = [];
-  recintoList:Array<RecintoI> = [];
+  ActivosList: Array<ActivoI> = [];
+  recintoList: Array<RecintoI> = [];
   mostrarCargando: boolean = false;
   mostrarBuscar: boolean = false;
-  filterForm!:FormGroup
+  filterForm!: FormGroup
   currentFilters: any = {};
-  pagination!:PaginationI
+  pagination!: PaginationI
 
   ActivoSelecionado: any = null;
   isDetailModalOpen = false
+  processRequest:boolean = false
 
   constructor(
     private _router: Router,
@@ -43,8 +46,8 @@ export class ActivoComponent {
     public permisosService: PermisosService
 
   ) {
-     //formulario de filtro
-     this.filterForm = this.fb.group({
+    //formulario de filtro
+    this.filterForm = this.fb.group({
       recinto: [''],
       codbienesnacionales: [''],
       codinstitucional: [''],
@@ -53,10 +56,13 @@ export class ActivoComponent {
       desde: [''],
       hasta: [''],
     });
-   }
+
+    this.processRequest = JSON.parse(sessionStorage.getItem('processRequest') || 'false');
+
+  }
   ngOnInit(): void {
-    this.getActivos();
     this.getRecintos();
+    this.getActivos();
   }
 
 
@@ -84,10 +90,20 @@ export class ActivoComponent {
     });
   }
 
+  verMovimientosActivo(data: any) {
+    this.dialog.open(VerMovimientosComponent, {
+
+      autoFocus: false,
+      data: {
+        data
+      }
+    });
+  }
+
   limpiarSearch() {
     this.filterForm.reset();
     this.filterForm.patchValue({
-      recinto:''
+      recinto: ''
     })
     this.searchActivos();
   }
@@ -114,32 +130,47 @@ export class ActivoComponent {
       CurrentPage,
       pageSize
     }
-    this.activoService.getActivo(requestParams).subscribe((resp:ResponseI) => {
+    this.activoService.getActivo(requestParams).subscribe((resp: ResponseI) => {
       this.ActivosList = resp.data;
       this.pagination = resp.pagination;
       this.mostrarCargando = false
     });
   }
 
-  getRecintos(){
-    this.equipoService.getRecinto().subscribe((resp:ResponseI) => {
+  getRecintos() {
+    this.equipoService.getRecinto().subscribe((resp: ResponseI) => {
       this.recintoList = resp.data;
     });
   }
 
-  searchActivos(){
-      // Construir objeto de parámetros de búsqueda
-      const searchParams: any = {}
-      // Solo incluir parámetros con valores
-      Object.keys(this.filterForm.value).forEach((key) => {
-        const value = this.filterForm.value[key]
-        if (value !== null && value !== "") {
-          searchParams[key] = value
-        }
+  async devolverDeMantenimiento(id: string,start:boolean, end:boolean) {
+    const valor = {
+      startReparation: start,
+      endReparation: end,
+      returnFromMaintenance: false
+    }
+    let confirm: boolean = await alertRemoveSure("Estas seguro que deseas realizar esta acción?")
+    if (confirm) {
+      this.activoService.postEstadoMantenimiento(id, valor).subscribe((resp: ResponseI) => {
+        this.getActivos();
+        successMessageAlert(resp.message);
       })
-      // Llamar al método getEquipo con los parámetros de búsqueda
-      this.currentFilters = searchParams;
-      this.getActivos(1, 10, this.currentFilters )
+    }
+  }
+
+  searchActivos() {
+    // Construir objeto de parámetros de búsqueda
+    const searchParams: any = {}
+    // Solo incluir parámetros con valores
+    Object.keys(this.filterForm.value).forEach((key) => {
+      const value = this.filterForm.value[key]
+      if (value !== null && value !== "") {
+        searchParams[key] = value
+      }
+    })
+    // Llamar al método getEquipo con los parámetros de búsqueda
+    this.currentFilters = searchParams;
+    this.getActivos(1, 10, this.currentFilters)
   }
 
   onPageChange(event: PageEvent) {

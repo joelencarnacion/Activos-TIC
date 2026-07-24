@@ -284,6 +284,22 @@ export class DonacionComponent {
     }
   }
 
+  formatearFecha(fecha: string | Date): string {
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    const dia = String(date.getDate()).padStart(2, '0');
+    const mes = String(date.getMonth() + 1).padStart(2, '0');
+    const anio = date.getFullYear();
+
+    let horas = date.getHours();
+    const minutos = String(date.getMinutes()).padStart(2, '0');
+
+    const ampm = horas >= 12 ? 'PM' : 'AM';
+    horas = horas % 12 || 12;
+
+    return `${dia}/${mes}/${anio} ${horas}:${minutos} ${ampm}`;
+  }
+
   openDetalleActivos(id: string): void {
     this.dialog.open(VerActivosComponent, {
       width: '55%',

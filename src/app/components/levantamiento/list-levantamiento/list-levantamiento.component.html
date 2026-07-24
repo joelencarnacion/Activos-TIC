@@ -1,0 +1,274 @@
+<mat-card class="w-100">
+  <div class="dashboard-container">
+
+    <div class="header">
+      <div class="header-content">
+        <div class="header-left">
+          <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+
+              <!-- bullets -->
+              <line x1="9" y1="6" x2="20" y2="6"></line>
+              <line x1="9" y1="12" x2="20" y2="12"></line>
+              <line x1="9" y1="18" x2="20" y2="18"></line>
+
+              <!-- puntos -->
+              <circle cx="4" cy="6" r="1.5"></circle>
+              <circle cx="4" cy="12" r="1.5"></circle>
+              <circle cx="4" cy="18" r="1.5"></circle>
+
+            </svg>
+          </div>
+          <div class="header-title">
+            <h1>Lista de levantamiento</h1>
+            <!-- <p>Diferentes tipos de movimientos de activos</p> -->
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button type="button" class="btn btn-secondary" (click)="toggleBuscar()">
+            <!-- Cuando NO está activo -->
+            <ng-container *ngIf="!mostrarBuscar">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              Buscar
+            </ng-container>
+
+            <!-- Cuando está activo -->
+            <ng-container *ngIf="mostrarBuscar">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              Ocultar
+            </ng-container>
+
+          </button>
+
+          <!-- Icono agregar (cuando estás en lista) -->
+          <button *ngIf="permisosService.puede('Levantamientos', 'crear')"
+           type="button" class="btn btn-primary" (click)="agregarLevantamiento()">
+            <ng-container>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Agregar
+            </ng-container>
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="filter" *ngIf="mostrarBuscar">
+      <ng-container>
+        <form [formGroup]="filterForm">
+
+          <div class="form-grid" style="margin-bottom: 20px;">
+            <div class="form-group" style="position: relative;">
+              <label class="form-label">Área</label>
+              <input type="text" class="form-input" placeholder="Buscar área..." #asignadoareaInput
+                [value]="filterForm.get('area')?.value || areaActivoBusqueda"
+                (input)="buscarAreas(asignadoareaInput.value)" />
+
+              <ul *ngIf="areaActivoList.length > 0" [style.top]="getInputPosition(asignadoareaInput).top"
+                [style.left]="getInputPosition(asignadoareaInput).left"
+                [style.width]="getInputPosition(asignadoareaInput).width" style="position: fixed; z-index: 9999; background: white;
+                         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
+                         margin: 0; padding: 0; list-style: none;
+                         max-height: 200px; overflow-y: auto;">
+                <li *ngFor="let area of areaActivoList" (click)="seleccionarArea(area)"
+                  style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
+                  onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+                  onmouseout="this.style.background='white'; this.style.color='#333';">
+                                   {{ area.nombre || area.name || area.descripcion }}
+                </li>
+              </ul>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">No formulario</label>
+              <input type="text" formControlName="noformulario" class="form-input"
+              placeholder="Numero del formulario">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Creado por</label>
+              <input type="text" formControlName="creadopor" class="form-input"
+                placeholder="usuario ej: juan.perez">
+            </div>
+
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">
+                Recinto
+              </label>
+              <select class="form-select" formControlName="recinto">
+                <option value="">Seleccionar...</option>
+                <option *ngFor="let item of recintoList" [value]="item.siglas">{{item.siglas}}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Fecha desde</label>
+
+              <input type="date" formControlName="desde" class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Fecha hasta</label>
+
+              <input type="date" formControlName="hasta" class="form-input">
+            </div>
+
+          </div>
+        </form>
+
+        <div style=" display:flex; justify-content: space-between; margin-top: 20px; margin-bottom: 10px;">
+          <div class="header-left">
+
+          </div>
+          <div class="header-actions">
+            <button type="button" class="btn btn-secondary" (click)="limpiarSearch()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+
+                <path d="M3 6h18"></path>
+                <path d="M8 6V4h8v2"></path>
+                <path d="M19 6l-1 14H6L5 6"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+
+              </svg>
+              Limpiar
+            </button>
+
+            <button type="button" class="btn btn-primary" (click)="searchLevantamiento()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              Buscar
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+
+    <!-- Grid de Tarjetas
+  <main class="cards-grid">
+    <div *ngFor="let item of registros"
+         class="card"
+         [ngClass]="getEstadoClasses(item.estado).border">
+
+      <div class="card-header">
+        <span class="card-code">{{ item.codigo }}</span>
+        <span class="badge" [ngClass]="getEstadoClasses(item.estado).badge">
+          {{ item.estado }}
+        </span>
+      </div>
+
+      <div class="card-body">
+        <h3 class="card-title">{{ item.titulo }}</h3>
+        <p class="card-description">{{ item.descripcion }}</p>
+
+        <div class="card-meta">
+          <div class="meta-item">
+            <span class="icon">📍</span>
+            <span class="meta-text">{{ item.ubicacion }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="icon">👤</span>
+            <span class="meta-text">{{ item.encargado }}</span>
+          </div>
+        </div>
+      </div>
+
+      <footer class="card-footer">
+        <span class="card-date">{{ item.fecha }}</span>
+        <button class="btn-action">{{ item.accionTexto }}</button>
+      </footer>
+
+    </div>
+  </main> -->
+
+    <!-- Grid de Tarjetas -->
+    <main class="cards-grid">
+      <div *ngFor="let item of levantamientoList" class="card" [ngClass]="getEstadoClasses(item.estado).border">
+
+        <!-- Card Header -->
+        <div class="card-header">
+          <span class="card-code">{{ item.noFormulario }}</span>
+          <span class="badge" [ngClass]="getEstadoClasses(item.estado).badge">
+            {{ item.estado }}
+          </span>
+        </div>
+
+        <!-- Card Content -->
+        <div class="card-body">
+          <h3 class="card-title">{{ item.area }}</h3>
+          <p class="card-description">Novedades: {{ item.levantamientosDetalles }}</p>
+          <p class="card-description">Hallazgos: {{ item.levantamientosHallazgos }}</p>
+          <p class="card-description">Inventario: {{ item.inventarios }}</p>
+
+          <div class="card-meta">
+            <div class="meta-item">
+              <span class="icon">📍</span>
+              <span class="meta-text">{{ item.recinto }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="icon">👤</span>
+              <span class="meta-text">{{ item.creadoPor }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Footer -->
+        <footer class="card-footer">
+          <span class="card-date">{{ fechaService.formatearCorta(item.fechaCreacion) }}</span>
+          <button class="btn-action" *ngIf="item.estado == 'Finalizado'" (click)="imprimirLevantamiento(item.id)"> Imprimir</button>
+          <button class="btn-action" (click)="irAddLevantamiento(item.id)"> Detalle</button>
+        </footer>
+
+      </div>
+    </main>
+    <!-- Sin resultados -->
+    <div *ngIf="!mostrarCargando && levantamientoList.length === 0" class="no-results">
+      <mat-icon>search_off</mat-icon>
+      <h3>No se encontraron levantamientos</h3>
+      <p>Intenta ajustar los filtros de búsqueda</p>
+    </div>
+
+    <!-- Spinner de carga  -->
+    <div *ngIf="mostrarCargando" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Cargando levantamientos...</span>
+    </div>
+
+    <div class="pagination-container">
+      <mat-paginator *ngIf="levantamientoList && pagination" [length]="pagination.totalCount || 0"
+        [pageSize]="pagination.pageSize || 8" [pageIndex]="(pagination.currentPage || 1) - 1"
+        [pageSizeOptions]="[12 , 52  , 100]" (page)="onPageChange($event)">
+      </mat-paginator>
+    </div>
+    <!-- <footer class="pagination-container" *ngIf="!mostrarCargando">
+      <button class="btn-outline" >
+        Cargar más registros
+      </button>
+    </footer> -->
+
+  </div>
+
+</mat-card>
+
+<!-- Al final de list-levantamiento.component.html -->
+<app-print-levantamiento
+#printComp
+style="display: none;">
+</app-print-levantamiento>

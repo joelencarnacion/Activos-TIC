@@ -1,0 +1,163 @@
+
+<!-- <div
+  class="ad-backdrop"
+  *ngIf="activo"
+  (click)="onBackdropClick($event)"
+> -->
+  <div class="ad-modal" role="dialog" aria-modal="true" aria-labelledby="ad-titulo">
+    <!-- ====== Encabezado ====== -->
+    <header class="ad-header">
+      <div class="ad-header-info">
+        <div class="ad-header-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 7h-9"></path><path d="M14 17H5"></path>
+            <circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle>
+          </svg>
+        </div>
+        <div>
+          <h2 class="ad-titulo" id="ad-titulo">
+            {{ activo.nombre || 'Activo' }}
+            <!-- <span class="ad-estado" [ngClass]="estadoClase(activo.estado)">{{ activo.estado }}</span> -->
+          </h2>
+          <p class="ad-subtitulo">
+            {{ activo.descripcion }} · {{ activo.recinto }}
+          </p>
+        </div>
+      </div>
+      <button class="ad-cerrar" (click)="onCerrar()" aria-label="Cerrar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </header>
+
+    <!-- ====== Cuerpo ====== -->
+    <div class="ad-body">
+      <!-- Datos generales del activo -->
+      <section class="ad-resumen">
+        <div class="ad-dato"><span class="ad-dato-label">Código institucional</span><span class="ad-dato-valor">{{ activo.codInstitucional || '—' }}</span></div>
+        <div class="ad-dato"><span class="ad-dato-label">Bienes nacionales</span><span class="ad-dato-valor">{{ activo.codBienesNacionales || '—' }}</span></div>
+        <div class="ad-dato"><span class="ad-dato-label">Ubicación</span><span class="ad-dato-valor">{{ activo.ubicacion || '—' }}</span></div>
+        <div class="ad-dato"><span class="ad-dato-label">Responsable</span><span class="ad-dato-valor">{{ activo.responsableAdquisicion || '—' }}</span></div>
+        <div class="ad-dato"><span class="ad-dato-label">Costo</span><span class="ad-dato-valor">{{ activo.costo | currency:'DOP':'symbol-narrow':'1.2-2' }}</span></div>
+        <div class="ad-dato"><span class="ad-dato-label">Fecha adquisición</span><span class="ad-dato-valor">{{ activo.fechaAdquisicion | date:'dd/MM/yyyy' }}</span></div>
+      </section>
+
+      <!-- ====== MOVIMIENTOS ====== -->
+      <section class="ad-seccion">
+        <button class="ad-seccion-head" (click)="toggle('movimientos')" [attr.aria-expanded]="expandido.movimientos">
+          <span class="ad-seccion-titulo">
+            <svg class="ad-seccion-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+            Movimientos <span class="ad-chip">{{ conteo(activo.movimientos) }}</span>
+          </span>
+          <svg class="ad-chevron" [class.ad-chevron--abierto]="expandido.movimientos" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="ad-seccion-body" *ngIf="expandido.movimientos">
+          <p class="ad-vacio" *ngIf="conteo(activo.movimientos) === 0">Sin movimientos registrados.</p>
+          <article class="ad-item" *ngFor="let m of activo.movimientos">
+            <div class="ad-item-head">
+              <span class="ad-item-formulario">{{ m.noFormulario }}</span>
+              <span class="ad-estado" [ngClass]="estadoClase(m.estado)">{{ m.estado }}</span>
+            </div>
+            <div class="ad-item-grid">
+              <div><span class="ad-dato-label">Tipo</span><span class="ad-dato-valor">{{ m.tipoMovimiento?.nombre || '—' }}</span></div>
+              <div><span class="ad-dato-label">Recinto</span><span class="ad-dato-valor">{{ m.recinto }}</span></div>
+              <div><span class="ad-dato-label">Área</span><span class="ad-dato-valor">{{ m.area }}</span></div>
+              <div><span class="ad-dato-label">Responsable</span><span class="ad-dato-valor">{{ m.responsable }}</span></div>
+              <div><span class="ad-dato-label">No. Factura</span><span class="ad-dato-valor">{{ m.numeroFactura }}</span></div>
+              <div><span class="ad-dato-label">Fecha</span><span class="ad-dato-valor">{{ m.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</span></div>
+            </div>
+            <p class="ad-obs" *ngIf="m.observaciones">{{ m.observaciones }}</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ====== DONACIONES ====== -->
+      <section class="ad-seccion">
+        <button class="ad-seccion-head" (click)="toggle('donaciones')" [attr.aria-expanded]="expandido.donaciones">
+          <span class="ad-seccion-titulo">
+            <svg class="ad-seccion-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            Donaciones <span class="ad-chip">{{ conteo(activo.donaciones) }}</span>
+          </span>
+          <svg class="ad-chevron" [class.ad-chevron--abierto]="expandido.donaciones" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="ad-seccion-body" *ngIf="expandido.donaciones">
+          <p class="ad-vacio" *ngIf="conteo(activo.donaciones) === 0">Sin donaciones registradas.</p>
+          <article class="ad-item" *ngFor="let d of activo.donaciones">
+            <div class="ad-item-head">
+              <span class="ad-item-formulario">{{ d.noFormulario }}</span>
+              <span class="ad-estado" [ngClass]="estadoClase(d.estado)">{{ d.estado }}</span>
+            </div>
+            <div class="ad-item-grid">
+              <div><span class="ad-dato-label">Tipo</span><span class="ad-dato-valor">{{ d.tipoDonacion?.nombre || '—' }}</span></div>
+              <div><span class="ad-dato-label">Recinto</span><span class="ad-dato-valor">{{ d.recinto }}</span></div>
+              <div><span class="ad-dato-label">Área</span><span class="ad-dato-valor">{{ d.area }}</span></div>
+              <div><span class="ad-dato-label">Documento</span><span class="ad-dato-valor">{{ d.documentoIdentidad }}</span></div>
+              <div><span class="ad-dato-label">Creado por</span><span class="ad-dato-valor">{{ d.creadoPor }}</span></div>
+              <div><span class="ad-dato-label">Fecha</span><span class="ad-dato-valor">{{ d.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</span></div>
+            </div>
+            <p class="ad-obs" *ngIf="d.observaciones">{{ d.observaciones }}</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ====== REPARACIONES ====== -->
+      <section class="ad-seccion">
+        <button class="ad-seccion-head" (click)="toggle('reparacions')" [attr.aria-expanded]="expandido.reparacions">
+          <span class="ad-seccion-titulo">
+            <svg class="ad-seccion-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+            Reparaciones <span class="ad-chip">{{ conteo(activo.reparacions) }}</span>
+          </span>
+          <svg class="ad-chevron" [class.ad-chevron--abierto]="expandido.reparacions" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="ad-seccion-body" *ngIf="expandido.reparacions">
+          <p class="ad-vacio" *ngIf="conteo(activo.reparacions) === 0">Sin reparaciones registradas.</p>
+          <article class="ad-item" *ngFor="let r of activo.reparacions">
+            <div class="ad-item-head">
+              <span class="ad-item-formulario">{{ r.noFormulario }}</span>
+              <span class="ad-estado" [ngClass]="estadoClase(r.estado)">{{ r.estado }}</span>
+            </div>
+            <div class="ad-item-grid">
+              <div><span class="ad-dato-label">Tipo</span><span class="ad-dato-valor">{{ r.tipoReparacion?.nombre || '—' }}</span></div>
+              <div><span class="ad-dato-label">Recinto</span><span class="ad-dato-valor">{{ r.recinto }}</span></div>
+              <div><span class="ad-dato-label">Área</span><span class="ad-dato-valor">{{ r.area }}</span></div>
+              <div><span class="ad-dato-label">Área suplidor</span><span class="ad-dato-valor">{{ r.areaSuplidor }}</span></div>
+              <div><span class="ad-dato-label">Responsable</span><span class="ad-dato-valor">{{ r.responsable }}</span></div>
+              <div><span class="ad-dato-label">Fecha</span><span class="ad-dato-valor">{{ r.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</span></div>
+            </div>
+            <p class="ad-obs" *ngIf="r.observaciones">{{ r.observaciones }}</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ====== TRASLADOS ====== -->
+      <section class="ad-seccion">
+        <button class="ad-seccion-head" (click)="toggle('traslados')" [attr.aria-expanded]="expandido.traslados">
+          <span class="ad-seccion-titulo">
+            <svg class="ad-seccion-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="15 19 12 22 9 19"></polyline><polyline points="19 9 22 12 19 15"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></svg>
+            Traslados <span class="ad-chip">{{ conteo(activo.traslados) }}</span>
+          </span>
+          <svg class="ad-chevron" [class.ad-chevron--abierto]="expandido.traslados" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="ad-seccion-body" *ngIf="expandido.traslados">
+          <p class="ad-vacio" *ngIf="conteo(activo.traslados) === 0">Sin traslados registrados.</p>
+          <article class="ad-item" *ngFor="let t of activo.traslados">
+            <div class="ad-item-head">
+              <span class="ad-item-formulario">{{ t.noFormulario }}</span>
+              <span class="ad-estado" [ngClass]="estadoClase(t.estado)">{{ t.estado }}</span>
+            </div>
+            <div class="ad-item-grid">
+              <div><span class="ad-dato-label">Tipo</span><span class="ad-dato-valor">{{ t.tipoTraslado?.nombre || '—' }}</span></div>
+              <div><span class="ad-dato-label">Origen</span><span class="ad-dato-valor">{{ t.origenRecinto }} · {{ t.origenarea }}</span></div>
+              <div><span class="ad-dato-label">Destino</span><span class="ad-dato-valor">{{ t.destinoRecinto }} · {{ t.destinoarea }}</span></div>
+              <div><span class="ad-dato-label">Responsable</span><span class="ad-dato-valor">{{ t.responsable }}</span></div>
+              <div><span class="ad-dato-label">Área suplidor</span><span class="ad-dato-valor">{{ t.areaSuplidor }}</span></div>
+              <div><span class="ad-dato-label">Fecha</span><span class="ad-dato-valor">{{ t.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</span></div>
+            </div>
+            <p class="ad-obs" *ngIf="t.observaciones">{{ t.observaciones }}</p>
+          </article>
+        </div>
+      </section>
+    </div>
+  </div>
+<!-- </div> -->

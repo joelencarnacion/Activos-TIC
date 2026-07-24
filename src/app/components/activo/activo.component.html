@@ -261,6 +261,24 @@
                   <span>Detalles</span>
                 </button>
               </ng-container>
+              <ng-container>
+                <button mat-menu-item (click)="verMovimientosActivo(element)">
+                  <mat-icon class="btnInfoTable">format_indent_increase</mat-icon>
+                  <span>Movimientos</span>
+                </button>
+              </ng-container>
+              <ng-container *ngIf="element.estado == 'EnMantenimiento'  && processRequest">
+                <button mat-menu-item (click)="devolverDeMantenimiento(element.id, true, false)">
+                  <mat-icon class="btnDangerTable">rule_settings</mat-icon>
+                  <span>Iniciar</span>
+                </button>
+              </ng-container>
+              <ng-container *ngIf="element.estado == 'EnReparacion'  && processRequest">
+                <button mat-menu-item (click)="devolverDeMantenimiento(element.id, false, true)">
+                  <mat-icon class="btnEditTable">check</mat-icon>
+                  <span>Disponible</span>
+                </button>
+              </ng-container>
 
             </mat-menu>
           </td>

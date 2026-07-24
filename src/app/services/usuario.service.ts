@@ -16,16 +16,12 @@ export class UsuarioService {
   private idSistema = sistema.id;
   private baseUrlGenericc = environment.genericServicApi;
 
-
-
   constructor(
     public http: HttpClient,
     public loginS:LoginService,
     private informacionService:SystemInformationService
 
-  ) {
-
-  }
+  ){}
 
   getHeaders(): HttpHeaders {
     const token = JSON.parse(sessionStorage.getItem("tokenIntranet")!);
@@ -71,6 +67,7 @@ export class UsuarioService {
     return this.http.get<ResponseI>(`${this.baseUrlGenericc}/Rol/getrolesbyidsistema/${this.idSistema}`, { headers })
       .pipe(catchError((error) => { alertServerDown(); return throwError(error) }))
   }
+
   getAuthPermission(idRol:number): Observable<ResponseI> {
     const headers = this.getHeaders();
     return this.http.get<ResponseI>(`${this.baseUrl}/Auth/permissions/${idRol}`, { headers })
@@ -83,8 +80,6 @@ export class UsuarioService {
       .pipe(catchError((error) => { infoMessageAlert(error.error.message); return throwError(error) }))
   }
 
-
-
   postAutorizacion(auth:any): Observable<ResponseI> {
     const headers = this.getHeaders();
     return this.http.post<ResponseI>(`${this.baseUrlGenericc}/User/post/login`, auth, { headers })
@@ -94,9 +89,9 @@ export class UsuarioService {
         return throwError(error) }))
   }
 
-
   logout() {
     sessionStorage.clear();
   }
 }
+
 

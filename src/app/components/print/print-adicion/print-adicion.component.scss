@@ -45,6 +45,20 @@ $bg-section:   #edf0f7;
   overflow: hidden;
 }
 
+html,
+body {
+  height: 100%;
+}
+
+.documento {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.firmas {
+  margin-top: auto;
+}
 
 
 .f-logo {
@@ -150,6 +164,8 @@ $bg-section:   #edf0f7;
 .line{
   border-top: 1px solid $border;
 }
+
+
 .f-sigsCenter {
   display: grid;
   grid-template-columns: 1fr;

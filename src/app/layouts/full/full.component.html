@@ -1,13 +1,18 @@
 <mat-sidenav-container class="sidenav-container">
 
   <!-- Sidebar -->
-  <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-    [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
+  <mat-sidenav
+  #drawer
+  class="sidenav"
+  fixedInViewport
+  [mode]="(isMobileOrTablet$ | async) ? 'over' : 'side'"
+  [opened]="(isMobileOrTablet$ | async) ? true : isSidebarOpen">
 
     <div class="p-16">
       <div class="mb-16">
         <a href="javascript:void(0)" class="d-flex align-items-center">
-          <img src="assets/images/favicon.svg" alt=""> <span class="ms-16 fw-medium fs-26">Activos TIC</span>
+          <img src="assets/images/favicon.svg" alt="">
+           <span class="ms-16 fw-medium fs-26">Activos Fijos</span>
         </a>
 
       </div>
@@ -63,11 +68,21 @@
   <mat-sidenav-content>
 
     <!-- Header -->
-    <mat-toolbar class="header ps-24 pe-24">
-      <button type="button" class="ms-4" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()"
-        *ngIf="isHandset$ | async">
-        <i-feather name="menu" class="text-light-muted feather-base mt-n3"></i-feather>
-      </button>
+    <mat-toolbar class="headerMain ps-24 pe-24">
+      <button
+      type="button"
+      class="ms-4"
+      aria-label="Toggle sidenav"
+      mat-icon-button
+      (click)="toggleSidebar(drawer)"
+     >
+
+      <i-feather
+        name="menu"
+        class="text-light-muted feather-base mt-n3">
+      </i-feather>
+    </button>
+
       <!-- <button mat-icon-button class="ms-4 me-4" (click)="search=!search">
         <i-feather name="search" class="mt-n3 text-light-muted feather-base text-dark"></i-feather>
       </button> -->

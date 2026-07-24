@@ -143,6 +143,11 @@
               <input type="text" class="form-input" formControlName="proveedor" placeholder="Nombre del proveedor">
             </div>
             <div class="form-group">
+              <label class="form-label">Referencia Formulario</label>
+              <input type="text" class="form-input" formControlName="noFormularioFisico" placeholder="Número del formulario físico">
+            </div>
+
+            <div class="form-group">
               <label class="form-label">Costo Total</label>
               <div class="input-with-prefix">
                 <span class="input-prefix">$</span>
@@ -334,7 +339,6 @@
                           placeholder="Código único" [class.input-error]="hasActivoError(i, 'codBienesNacionales')">
                         <span class="error-message" *ngIf="esCodigo7Digitos(i, 'codBienesNacionales')">
                           El código debe contener exactamente 7 dígitos.
-
                         </span>
                       </div>
 
@@ -441,7 +445,7 @@
                         <label class="form-label">Responsable Adquisición</label>
                         <input type="text" class="form-input" placeholder="Buscar responsable..." #responsableInput
                           [value]="getActivoFormGroup(i).get('responsableAdquisicion')?.value || usuarioBusqueda"
-                          (input)="buscarUsuario(responsableInput.value)" />
+                          (input)="buscarUsuario(responsableInput.value, i)" />
 
                         <ul *ngIf="usuriosList.length > 0" [style.top]="getInputPosition(responsableInput).top"
                           [style.left]="getInputPosition(responsableInput).left"
@@ -457,11 +461,52 @@
                           </li>
                         </ul>
                       </div>
-                      <div class="form-group">
+
+                      <div class="form-group" style="position: relative;">
                         <label class="form-label">Asignado a</label>
-                        <input type="text" class="form-input" formControlName="asignadoA"
-                          placeholder="Usuario asignado">
+                        <input type="text" class="form-input" placeholder="Buscar asignado..." #asignadoInput
+                          [value]="getActivoFormGroup(i).get('asignadoA')?.value || ''"
+                          (input)="buscarAsignado(asignadoInput.value, i)" />
+
+                        <ul *ngIf="asignadoList.length > 0" [style.top]="getInputPosition(asignadoInput).top"
+                          [style.left]="getInputPosition(asignadoInput).left"
+                          [style.width]="getInputPosition(asignadoInput).width" style="position: fixed; z-index: 9999; background: white;
+                                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
+                                   margin: 0; padding: 0; list-style: none;
+                                   max-height: 200px; overflow-y: auto;">
+                          <li *ngFor="let asignado of asignadoList" (click)="seleccionarAsignado(asignado, i)"
+                            style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
+                            onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+                            onmouseout="this.style.background='white'; this.style.color='#333';">
+                            {{ asignado.persona.nombre }} {{ asignado.persona.apellidos }}
+                          </li>
+                        </ul>
                       </div>
+
+                      <div class="form-group" style="position: relative;">
+                        <label class="form-label">Área</label>
+                        <input type="text" class="form-input" placeholder="Buscar área del asignado..." #asignadoareaInput
+                          [value]="getActivoFormGroup(i).get('area')?.value || areaActivoBusqueda"
+                          (input)="buscarAreasActivo(asignadoareaInput.value, i)" />
+
+                        <ul *ngIf="areaActivoList.length > 0" [style.top]="getInputPosition(asignadoareaInput).top"
+                          [style.left]="getInputPosition(asignadoareaInput).left"
+                          [style.width]="getInputPosition(asignadoareaInput).width" style="position: fixed; z-index: 9999; background: white;
+                                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
+                                   margin: 0; padding: 0; list-style: none;
+                                   max-height: 200px; overflow-y: auto;">
+                          <li *ngFor="let area of areaActivoList" (click)="seleccionarAreaActivo(area, i)"
+                            style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
+                            onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+                            onmouseout="this.style.background='white'; this.style.color='#333';">
+                                             {{ area.nombre || area.name || area.descripcion }}
+                          </li>
+                        </ul>
+                      </div>
+
+
+
+
                     </div>
                   </div>
                 </div>
@@ -538,6 +583,41 @@
                   </div>
                   <div class="section-content" *ngIf="activosUI[i]?.seccionPresupuesto">
                     <div class="form-grid">
+
+                      <div class="form-group" style="position: relative;">
+                        <label class="form-label">Objetal SIAB</label>
+                        <input type="text" class="form-input" placeholder="Buscar objetal..." #objetalInput
+                          [value]="getActivoFormGroup(i).get('objetalSiab')?.value || objetalBusqueda"
+                          (input)="buscarObjetal(objetalInput.value, i)" />
+
+                        <ul *ngIf="objetalList.length > 0" [style.top]="getInputPosition(objetalInput).top"
+                          [style.left]="getInputPosition(objetalInput).left"
+                          [style.width]="getInputPosition(objetalInput).width" style="position: fixed; z-index: 9999; background: white;
+                                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
+                                   margin: 0; padding: 0; list-style: none;
+                                   max-height: 200px; overflow-y: auto;">
+                          <li *ngFor="let objetal of objetalList" (click)="seleccionarObjetal(objetal, i)"
+                            style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
+                            onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+                            onmouseout="this.style.background='white'; this.style.color='#333';">
+                            {{ objetal.codigoObjetal }}
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">Cuenta Contable Registro</label>
+                        <input type="text" class="form-input" formControlName="cuentaContableRegistroContable"
+                          readonly="true" placeholder="Número de cuenta">
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">Descripción SIAB</label>
+                        <input type="text" class="form-input" formControlName="descripcionSiab" readonly="true"
+                          placeholder="Número de cuenta">
+                      </div>
+
+
                       <div class="form-group">
                         <label class="form-label">Guía Presupuestaria</label>
                         <input type="text" class="form-input" formControlName="codGuiaPresupuestaria"
@@ -548,25 +628,28 @@
                         <input type="text" class="form-input" formControlName="codSiab" placeholder="Código SIAB">
                       </div>
 
-                      <div class="form-group">
+                      <!-- <div class="form-group">
                         <label class="form-label">Objetal SIAB</label>
                         <input type="text" class="form-input" formControlName="objetalSiab" placeholder="Objetal SIAB">
-                      </div>
+                      </div> -->
                       <div class="form-group">
                         <label class="form-label">Número transacciòn SIAB</label>
                         <input type="text" class="form-input" formControlName="noTransaccionSiab"
                           placeholder="Registro contable">
                       </div>
-                      <div class="form-group">
-                        <label class="form-label">Cuenta Contable Registro</label>
-                        <input type="text" class="form-input" formControlName="cuentaContableRegistroContable"
-                          placeholder="Número de cuenta">
-                      </div>
+
                       <div class="form-group">
                         <label class="form-label">No. Libramiento</label>
                         <input type="text" class="form-input" formControlName="noLibramiento"
                           placeholder="Número de libramiento">
                       </div>
+
+
+
+
+
+
+
                       <!-- <div class="form-group">
                         <label class="form-label">Vida Útil (años)</label>
                         <input type="number" class="form-input" formControlName="vidaUtil" placeholder="Años">
@@ -582,12 +665,14 @@
                   </div>
                 </div>
 
-                <div style="display: flex; justify-content: end;">
-                  <button type="button" class="btn btn-primary" (click)="updateActivo(activo)"
-                    *ngIf="idAdicion &&  permisosService.puede('Adición', 'editar')">
+                <ng-container  *ngIf="idAdicion &&  permisosService.puede('Adición', 'editar')" >
+                  <div style="display: flex; justify-content: end;">
+                    <button type="button" class="btn btn-primary" (click)="updateActivo(activo)"
+                    *ngIf="idAdicion && this.adicionRecibida.estado == 'Pendiente'">
                     Editar Activo
                   </button>
                 </div>
+              </ng-container>
               </div>
             </div>
           </div>

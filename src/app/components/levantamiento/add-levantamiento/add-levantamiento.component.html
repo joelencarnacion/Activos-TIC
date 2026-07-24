@@ -1,0 +1,417 @@
+<section class="page">
+  <!-- Header institucional -->
+  <header class="topbar">
+    <div class="topbar__brand">
+      <span class="topbar__logo">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+          <path d="M3.3 7L12 12l8.7-5M12 22V12" />
+        </svg>
+      </span>
+      <div>
+        <h1 class="topbar__title">Levantamiento</h1>
+        <p class="topbar__subtitle">Sistema de Gestión Institucional</p>
+      </div>
+    </div>
+
+    <div class="topbar__meta" *ngIf="LevantamientoObj">
+      <span class="chip">
+        <svg viewBox="0 0 24 24">
+          <path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+        </svg>
+        {{ fechaService.formatearCorta(LevantamientoObj.fechaCreacion)}}
+      </span>
+      <span class="chip chip--accent">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 7l9-4 9 4-9 4-9-4zM3 7v10l9 4 9-4V7" />
+        </svg>
+        {{ LevantamientoObj.area }}
+      </span>
+
+      <button type="button" (click)="irListLevantamiento()" class="btn-buscar" style="display: inline-flex; align-items: center; gap: 8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      Volver
+    </button>
+    </div>
+
+  </header>
+
+  <!-- Resumen -->
+  <div class="resumen" *ngIf="LevantamientoObj">
+    <div class="resumen__item">
+      <span class="resumen__num">{{this.LevantamientoObj.inventarios.length}}</span>
+      <span class="resumen__lbl">En inventario</span>
+    </div>
+    <div class="resumen__item">
+      <span class="resumen__num">{{this.LevantamientoObj.levantamientosHallazgos.length}}</span>
+      <span class="resumen__lbl">Activos Nuevos</span>
+    </div>
+    <!-- <div class="resumen__item">
+      <span class="resumen__num">1</span>
+      <span class="resumen__lbl">Con novedad</span>
+    </div> -->
+    <div class="resumen__item resumen__item--accent">
+      <span class="resumen__num">{{this.LevantamientoObj.levantamientosDetalles.length}}</span>
+      <span class="resumen__lbl">En levantamiento</span>
+    </div>
+
+  </div>
+
+  <!-- Dos columnas -->
+  <div class="grid">
+    <!-- INVENTARIO -->
+    <div class="card">
+      <div class="card__head">
+        <span class="card__icon card__icon--blue">
+          <svg viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <path d="M14 2v6h6M9 13h6M9 17h6" />
+          </svg>
+        </span>
+        <h2 class="card__title">Inventario</h2>
+        <span class="badge">{{ totalInventario }}</span>
+
+        <button type="button" class="btn-buscar" (click)="toggleBuscar()">
+          <!-- Cuando NO está activo -->
+          <ng-container *ngIf="!mostrarBuscar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            Buscar
+          </ng-container>
+
+          <!-- Cuando está activo -->
+          <ng-container *ngIf="mostrarBuscar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            Ocultar
+          </ng-container>
+
+        </button>
+
+
+      </div>
+      <form [formGroup]="filterForm">
+      <div class="form-flexFilter" *ngIf="mostrarBuscar">
+        <div class="form-group">
+            <label class="form-label">Responsable</label>
+            <input type="text" class="form-input" formControlName="asignadoa" placeholder="Usuario Ej: juan.perez">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Cod. Inst.</label>
+            <input type="text" class="form-input" formControlName="codinstitucional" placeholder="Código del activo">
+          </div>
+
+          <button type="button" class="btn-buscar" (click)="searchActivos()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </button>
+        </div>
+      </form>
+
+
+
+
+      <ul class="lista" *ngIf="inventario.length; else InvVacio">
+        <li *ngFor="let activo of inventario; trackBy: trackById" class="item"
+          [class.item--marcado]="activo.incidenciaId" [style.--acento]="acentoDe(activo)"
+          (click)="abrirModal(activo, 'inventario')">
+          <span class="item__avatar">{{ iniciales(activo.nombre) }}</span>
+          <span class="item__info">
+            <span class="item__nombre">{{ activo.nombre }}</span>
+            <span class="item__detalle">{{ activo.codInstitucional }} | {{activo.asignadoA || 'No asignado'}}</span>
+          </span>
+
+          <span class="item__estado" *ngIf="opcionDe(activo) as op" [style.background]="op.color">
+            {{ op.nombre }}
+          </span>
+          <span class="item__check" *ngIf="yaEnLevantamiento(activo)" title="En levantamiento">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+          </span>
+
+          <button type="button" class="item__menu" (click)="$event.stopPropagation(); abrirModal(activo, 'inventario')"
+            aria-label="Opciones">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="5" r="1.6" />
+              <circle cx="12" cy="12" r="1.6" />
+              <circle cx="12" cy="19" r="1.6" />
+            </svg>
+          </button>
+        </li>
+      </ul>
+
+      <!-- Spinner de carga  -->
+    <div *ngIf="mostrarCargando" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Cargando activos...</span>
+    </div>
+    <ng-template #InvVacio>
+          <ng-container  *ngIf="!mostrarCargando">
+          <div class="empty">
+            <svg viewBox="0 0 24 24">
+              <path
+              d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+          </svg>
+          <p>Aún no hay activos en el inventario de esta área.</p>
+        </div>
+      </ng-container>
+      </ng-template>
+
+      <footer class="card__foot">Total de activos: <b>{{ totalInventario }}</b></footer>
+    </div>
+
+    <!-- LEVANTAMIENTO -->
+    <div class="card">
+      <div class="card__head">
+        <span class="card__icon card__icon--green">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+          </svg>
+        </span>
+        <h2 class="card__title">Levantamiento</h2>
+        <span class="badge">{{ totalLevantamiento }}</span>
+        <button  *ngIf="LevantamientoObj.estado != 'Finalizado'" type="button" class="btn-agregar" (click)="abrirModalNuevoActivo()">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          Agregar activo
+        </button>
+      </div>
+
+      <ul class="lista" *ngIf="levantamiento.length; else vacio">
+        <li *ngFor="let activo of levantamiento; trackBy: trackById" class="item item--marcado"
+          [class.item--nuevo]="activo.esNuevo && !activo.incidenciaId" [style.--acento]="acentoDe(activo)">
+          <span class="item__avatar">{{ iniciales(activo.nombre) }}</span>
+          <span class="item__info">
+            <span class="item__nombre">{{ activo.nombre }}</span>
+            <span class="item__detalle">
+              {{ activo.codInstitucional }} | {{activo.asignadoA}}
+              <em *ngIf="activo.esNuevo" class="item__tag">Nuevo</em>
+            </span>
+          </span>
+
+          <span class="item__estado" *ngIf="opcionDe(activo) as op" [style.background]="op.color">
+            {{ op.nombre }}
+          </span>
+
+          <button type="button" class="item__menu item__menu--del" (click)="deleteLevantamiento(activo)"
+            aria-label="Quitar">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" />
+            </svg>
+          </button>
+        </li>
+      </ul>
+
+      <ng-template #vacio>
+        <div class="empty">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+          </svg>
+          <p>Aún no hay activos. Marca una novedad en el inventario o agrega uno nuevo.</p>
+        </div>
+      </ng-template>
+
+      <footer class="card__foot">Total de activos: <b>{{ totalLevantamiento }}</b></footer>
+    </div>
+    <div></div>
+
+    <ng-container  *ngIf="LevantamientoObj">
+      <div  *ngIf="LevantamientoObj.estado != 'Finalizado'" style="display: flex !important; justify-content: flex-end !important; align-items: center !important; gap: 10px !important; width: 100%; margin-bottom: 10px;">
+        <button type="button" (click)="postFinalizar()" class="btn-finalizar" style="display: inline-flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        Finalizar
+      </button>
+    </div>
+  </ng-container>
+  </div>
+
+  <!-- Leyenda
+  <footer class="leyenda">
+    <span class="leyenda__item">
+      <i class="leyenda__color" [style.background]="colorActivoNuevo"></i> Activo nuevo
+    </span>
+    <span class="leyenda__item" *ngFor="let op of opciones">
+      <i class="leyenda__color" [style.background]="op.color"></i> {{ op.nombre }}
+    </span>
+  </footer> -->
+
+  <!-- MODAL -->
+  <div class="overlay" *ngIf="modalAbiertoNuevoActivo">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__head">
+        <div>
+          <h3 class="modal__title">Datos del activo nuevo</h3>
+        </div>
+        <button type="button" class="modal__close" (click)="cerrarModalNuevoActivo()" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+      <form [formGroup]="formulario">
+        <ng-container>
+          <div class="form-gridFilter2">
+            <div class="form-group">
+              <label class="form-label">
+                Nombre
+                <span class="required">*</span>
+              </label>
+              <input type="text" class="form-input" formControlName="nombre" [class.input-error]="hasError('nombre')"
+                placeholder="Nombre del activo">
+              <span class="error-message" *ngIf="hasError('nombre')">
+                Este campo es requerido
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cod. Inst.</label>
+              <input type="text" class="form-input" formControlName="codInstitucional"
+                placeholder="código Institucional">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cod. BN</label>
+              <input type="text" class="form-input" formControlName="codBienesNacionales" placeholder="código de BN">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Color</label>
+              <input type="text" class="form-input" formControlName="color" placeholder="color del activo">
+            </div>
+            <div class="form-group">
+              <label class="form-label">
+                Condición
+                <span class="required">*</span>
+              </label>
+              <select class="form-select" formControlName="condicion" [class.input-error]="hasError('condicion')">
+                <option value="">Seleccionar...</option>
+                <option value="Bueno">Bueno</option>
+                <option value="Regular">Regular</option>
+                <option value="Reparar">Reparar</option>
+                <option value="Obsoleto">Obsoleto</option>
+              </select>
+              <span class="error-message" *ngIf="hasError('condicion')">
+                Este campo es requerido
+              </span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Serial</label>
+              <input type="text" class="form-input" formControlName="serial" placeholder="serial del activo">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Marca</label>
+              <select class="form-select" formControlName="marca">
+                <option value="">Seleccionar...</option>
+                <option *ngFor="let marca of marcaList" [value]="marca.nombre">
+                  {{ marca.nombre }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Modelo</label>
+              <select class="form-select" formControlName="modelo">
+                <option value="">Seleccionar...</option>
+                <option *ngFor="let modelo of modelosFiltrados" [value]="modelo.nombre">
+                  {{ modelo.nombre }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </ng-container>
+
+        <p class="modal__label">Descripción</p>
+        <textarea class="modal__input" rows="3" formControlName="descripcion"
+          placeholder="Escribe una observación (opcional)…"></textarea>
+      </form>
+      <div class="modal__acciones">
+        <button type="button" class="btn btn--cancelar" (click)="cerrarModalNuevoActivo()">Cancelar</button>
+        <button type="button" class="btn btn--registrar" (click)="registrarHallazgos()">Guardar</button>
+      </div>
+    </div>
+  </div>
+  <!-- MODAL -->
+  <div class="overlay" *ngIf="modalAbierto">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__head">
+        <div>
+          <h3 class="modal__title">Datos del activo</h3>
+          <p class="modal__sub" *ngIf="activoSeleccionado && !activoSeleccionado.esNuevo">
+            {{ activoSeleccionado.nombre }} · {{ activoSeleccionado.detalle }}
+          </p>
+        </div>
+        <button type="button" class="modal__close" (click)="cerrarModal()" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+
+      <p class="modal__label">Selecciona una novedad</p>
+      <div class="opciones">
+        <button type="button" class="opcion" *ngFor="let op of opcionesDisponibles"
+          [class.opcion--activa]="opcionSeleccionadaId === op.id" [style.--c]="op.color"
+          (click)="seleccionarOpcion(op)">
+          <span class="opcion__icon">
+            <!-- 1. Otro origen: Signo de interrogación / duda -->
+            <svg *ngIf="op.icon === 'help-circle'" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+
+            <!-- 2. Cumple para descargo: Documento / Acta -->
+            <svg *ngIf="op.icon === 'file-text'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <polyline points="10 9 9 9 8 9" />
+            </svg>
+
+            <!-- 3. No localizado: Pin de mapa de ubicación -->
+            <svg *ngIf="op.icon === 'map-pin'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+
+            <!-- 4. Verificado: Círculo con cotejo / check -->
+            <svg *ngIf="op.icon === 'check-circle'" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+          </span>
+          <span class="opcion__txt">{{ op.nombre }}</span>
+        </button>
+      </div>
+
+      <p class="modal__label">Observación</p>
+      <textarea class="modal__input" rows="3" placeholder="Escribe una observación (opcional)…"
+        [(ngModel)]="comentario"></textarea>
+
+      <div class="modal__acciones">
+        <button type="button" class="btn btn--cancelar" (click)="cerrarModal()">Cancelar</button>
+        <button type="button" class="btn btn--registrar" [disabled]="!opcionSeleccionadaId"
+          (click)="registrarLevantamiento()">Registrar</button>
+      </div>
+    </div>
+  </div>
+</section>

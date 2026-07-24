@@ -138,22 +138,12 @@
           <td>{{ item.condicion || ''}}</td>
           <td>{{ item.costo | number:'1.2-2' }}</td>
         </tr>
-        <tr *ngFor="let e of emptyRows; let i = index">
-          <td>{{ (data.items?.length ?? 0) + i + 1 }}</td>
-          <td></td>
-          <td></td>
-          <td class="desc"></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
+
       </tbody>
     </table>
 
     <!-- Observations -->
-    <div class="f-obs-head">Observaciones</div>
+    <div class="f-obs-head" style="margin-top: 15px;">Observaciones</div>
     <div class="f-obs-body">{{ donacionObtenida.observaciones }}</div>
 
     <!-- Signatures -->

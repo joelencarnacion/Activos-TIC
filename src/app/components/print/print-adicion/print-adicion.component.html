@@ -1,6 +1,6 @@
 <div class="preview-wrapper" *ngIf="adicionObtenida">
 
-
+  <div class="documento">
 
     <!-- DOCUMENTO (se copia al imprimir) -->
     <div id="print-adicion-doc" class="form-doc">
@@ -20,6 +20,10 @@
           <div class="f-meta-row">
             <span class="f-meta-label">No. Formulario:</span>
             <span class="f-meta-val">{{adicionObtenida.noFormulario|| ''}}</span>
+          </div>
+          <div class="f-meta-row" *ngIf="adicionObtenida.noFormularioFisico">
+            <span class="f-meta-label">No. Formulario Físico:</span>
+            <span class="f-meta-val">{{adicionObtenida.noFormularioFisico|| ''}}</span>
           </div>
           <div class="f-meta-row">
             <span class="f-meta-label">Estado:</span>
@@ -144,27 +148,16 @@
             <td>{{ item.cuentaContableRegistroContable || ''}}</td>
             <td>{{ item.objetalSiab || ''}}</td>
           </tr>
-          <tr *ngFor="let e of emptyRows; let i = index">
-            <td>{{ (data.items?.length ?? 0) + i + 1 }}</td>
-            <td></td>
-            <td></td>
-            <td class="desc"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
+
         </tbody>
       </table>
 
       <!-- Observations -->
-      <div class="f-obs-head">Observaciones</div>
+      <div class="f-obs-head" style="margin-top: 15px;">Observaciones</div>
       <div class="f-obs-body">{{ adicionObtenida.observaciones }}</div>
 
       <!-- Signatures -->
-
+      <div class="firmas">
       <div class="line"></div>
       <div class="f-sigsCenter">
         <div class="f-sig-cell">
@@ -175,7 +168,7 @@
         </div>
       </div>
       <div class="line"></div>
-
+    </div>
 
       <!-- Footer -->
       <div class="f-footer">
@@ -184,6 +177,7 @@
       </div>
 
     </div>
+  </div>
   </div>
 
 

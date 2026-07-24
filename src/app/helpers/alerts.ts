@@ -102,7 +102,7 @@ export function showLoading()
     {
       Swal.showLoading();
     },
-    width: '400px',
+    width: '300px',
     text: "Cargando...",
     allowOutsideClick: false
   });

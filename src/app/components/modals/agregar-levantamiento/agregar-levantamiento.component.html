@@ -1,0 +1,84 @@
+<h2 mat-dialog-title>Agregar levantamiento</h2>
+
+<mat-dialog-content>
+
+  <form [formGroup]="formulario">
+
+    <div class="form-group">
+      <label class="form-label">
+        Recinto
+        <span class="required">*</span>
+      </label>
+      <select class="form-select" formControlName="recinto">
+        <option value="">Seleccionar...</option>
+        <option *ngFor="let item of recintoList" [value]="item.siglas">{{item.siglas}}</option>
+      </select>
+      <!-- <span class="error-message" *ngIf="hasError('recinto')">
+        Este campo es requerido
+      </span> -->
+    </div>
+
+
+    <!-- <div class="form-group" style="position: relative;">
+      <label class="form-label">Área</label>
+      <input type="text" class="form-input" placeholder="Buscar área o departamento..." #areaInput
+        [value]="areaBusqueda || formulario.get('area')?.value" (input)="buscarAreas(areaInput.value)" />
+
+      <div *ngIf="areaBuscando" style="font-size: 12px; color: #888; margin-top: 4px;">
+        Buscando...
+      </div>
+
+      <ul *ngIf="areaList.length > 0" class="selectOpcion">
+        <li *ngFor="let area of areaList" (click)="seleccionarArea(area)" style="
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+            border-bottom: 1px solid #f5f5f5;
+            transition: background 0.15s;
+          " onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+          onmouseout="this.style.background='white'; this.style.color='#333';">
+          {{ area.nombre || area.name || area.descripcion }}
+        </li>
+      </ul>
+    </div> -->
+
+
+    <div class="form-group" style="position: relative;">
+      <label class="form-label">Área
+        <span class="required">*</span>
+      </label>
+      <input type="text" class="form-input" placeholder="Buscar área o departamento..." #areaInput
+        [value]="areaBusqueda || formulario.get('area')?.value"
+        (input)="buscarAreas(areaInput.value)" />
+
+      <ul *ngIf="areaList.length > 0" [style.top]="getInputPosition(areaInput).top"
+        [style.left]="getInputPosition(areaInput).left" [style.width]="getInputPosition(areaInput).width"
+        style="position: fixed; z-index: 9999; background: white;
+         box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;
+         margin: 0; padding: 0; list-style: none;
+         max-height: 200px; overflow-y: auto;">
+        <li *ngFor="let area of areaList" (click)="seleccionarArea(area)"
+          style="padding: 10px 14px; cursor: pointer; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5;"
+          onmouseover="this.style.background='#f0f7ff'; this.style.color='#1a73e8';"
+          onmouseout="this.style.background='white'; this.style.color='#333';">
+                   {{ area.nombre || area.name || area.descripcion }}
+        </li>
+      </ul>
+    </div>
+
+  </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+  <button mat-button mat-dialog-close>
+    Cancelar
+  </button>
+
+  <button mat-raised-button color="primary" (click)="guardar()">
+    Guardar
+  </button>
+
+</mat-dialog-actions>
